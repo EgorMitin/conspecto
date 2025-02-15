@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
-import { useCoverImage } from "~/hooks";
+import { useCoverImage } from "~/hooks/hooks";
 import { useState } from "react";
 import { useParams, useFetcher } from "@remix-run/react";
 import SingleImageDropzone from "../Img-dropzone";
@@ -56,7 +56,7 @@ export default function CoverImageModal() {
           <h2 className="text-center text-lg font-semibold">Cover Image</h2>
         </DialogHeader>
         <SingleImageDropzone
-          className="w-full outline-none z-[99999999]"
+          className="w-full outline-none z-[99]"
           disabled={isSubmitting}
           value={file}
           onChange={onUpload}

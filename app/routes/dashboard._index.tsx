@@ -4,7 +4,7 @@ import { useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import { PlusCircle } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { useUser } from "~/hooks";
+import { useUser } from "~/hooks/hooks";
 import { createNote } from "~/services/notes.server";
 import { getUserFromSession } from "~/services/session.server";
 import { toast } from "sonner";

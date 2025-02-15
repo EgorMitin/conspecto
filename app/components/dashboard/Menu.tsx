@@ -10,7 +10,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
-import { useUser } from "~/hooks";
+import { useUser } from "~/hooks/hooks";
 import type { Note } from "~/lib/types";
 
 interface MenuProps {

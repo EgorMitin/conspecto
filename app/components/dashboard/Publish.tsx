@@ -4,7 +4,7 @@ import { Check, Copy, Globe } from "lucide-react";
 
 import { PopoverTrigger, Popover, PopoverContent } from "../ui/popover";
 import { Button } from "../ui/button";
-import { useOrigin } from "~/hooks";
+import { useOrigin } from "~/hooks/hooks";
 import type { Note } from "~/lib/types";
 
 interface PublishProps {

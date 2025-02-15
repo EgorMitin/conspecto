@@ -4,7 +4,7 @@ import { ModeToggle } from "~/components/Mode-toggle";
 import { Button } from "~/components/ui/button";
 import { Link, Form, useNavigation } from "@remix-run/react";
 import { LogIn, LogOut } from "lucide-react";
-import { useUser, useScrollTop } from "~/hooks";
+import { useUser, useScrollTop } from "~/hooks/hooks";
 
 export default function Navbar() {
   const isScrolled = useScrollTop();

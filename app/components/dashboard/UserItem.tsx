@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Form, useNavigation } from "@remix-run/react";
-import { useUser } from "~/hooks";
+import { useUser } from "~/hooks/hooks";
 
 export default function UserItem() {
   const navigation = useNavigation();

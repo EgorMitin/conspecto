@@ -21,7 +21,7 @@ import NoteList from "./NoteList";
 import TrashBox from "./Trash-box";
 import Navbar from "./Navbar";
 import type { Note } from "~/lib/types";
-import { useSettings, useSearch } from "~/hooks";
+import { useSettings, useSearch } from "~/hooks/hooks";
 
 interface NavigationProps {
   notes: Note[];
@@ -190,7 +190,7 @@ export default function Navigation({ notes }: NavigationProps) {
       <div
         ref={navbarRef}
         className={cn(
-          "absolute top-0 z-[50] left-60 w-[calc(100%-250px)]",
+          "absolute top-0 z-50 left-60 w-[calc(100%-250px)]",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full",
         )}

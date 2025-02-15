@@ -5,3 +5,4 @@ node_modules
 .env
 .env.*
 app/routes/dashboard.notes.$noteId.tsx
+serviceAccountKey.json

@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "./ui/command";
-import { useSearch, useUser } from "~/hooks";
+import { useSearch, useUser } from "~/hooks/hooks";
 import type { Note } from "~/lib/types";
 
 export default function Search({ notes }: { notes: Note[] }) {

@@ -35,3 +35,8 @@ export interface UserSession {
   nickname: string;
   notes: string[];
 }
+
+export type EditorContentType = {
+  type: 'doc',
+  content: Array<any>
+}

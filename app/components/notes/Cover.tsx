@@ -2,7 +2,7 @@ import { ImageIcon, X } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
-import { useCoverImage } from "~/hooks";
+import { useCoverImage } from "~/hooks/hooks";
 import { useFetcher } from "@remix-run/react";
 
 interface CoverImageProps {

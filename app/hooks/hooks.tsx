@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMatches } from "@remix-run/react";
-import { RootLoaderData } from "./root";
+import { RootLoaderData } from "../root";
 import { create } from "zustand";
 
 

@@ -27,7 +27,6 @@ export default function Notestudy () {
 
   useEffect(() => {
     setIsMounted(true);
-    let questions = generate_questions(note);
 
     // Import Editor component only on client side!!!
     import("~/components/notes/Editor").then((module) => {

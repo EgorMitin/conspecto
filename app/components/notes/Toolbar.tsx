@@ -3,7 +3,7 @@ import { ImageIcon, Smile, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { useFetcher } from "@remix-run/react";
 
-import { useCoverImage } from "~/hooks";
+import { useCoverImage } from "~/hooks/hooks";
 import type { Note } from "~/lib/types";
 import { Button } from "../ui/button";
 

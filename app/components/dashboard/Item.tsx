@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
-import { useUser } from "~/hooks";
+import { useUser } from "~/hooks/hooks";
 import { useFetcher, useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
 import { toast } from "sonner";

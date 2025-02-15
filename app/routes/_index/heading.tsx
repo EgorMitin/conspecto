@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { useUser } from "~/hooks";
+import { useUser } from "~/hooks/hooks";
 import { Link } from "@remix-run/react";
 
 export default function Heading() {

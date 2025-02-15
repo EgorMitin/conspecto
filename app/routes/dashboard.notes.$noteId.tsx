@@ -8,6 +8,8 @@ import invariant from "tiny-invariant";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { useState, useEffect } from "react";
 import type { Note } from "~/lib/types";
+import Tiptap from "~/components/notes/Tiptap";
+import { BlockEditor } from "~/components/tiptap/BlockEditor";
 
 interface UpdateNotePayload {
   title?: string;
@@ -49,10 +51,7 @@ export default function NoteIdPage() {
     initialContent: string;
   }> | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-
-  const generateQuestions = (note: Note | null) => {
-    // Received an email
-  }
+  const initialContent = note?.content ? JSON.parse(note.content) : null;
 
   useEffect(() => {
     setIsMounted(true);
@@ -61,11 +60,6 @@ export default function NoteIdPage() {
     import("~/components/notes/Editor").then((module) => {
       setEditorComponent(() => module.default);
     });
-    return () => generateQuestions(note ? {
-      ...note,
-      createdAt: new Date(note.createdAt),
-      updatedAt: new Date(note.updatedAt)
-    } : null);
   }, []);
 
   if (note === null) {
@@ -96,7 +90,7 @@ export default function NoteIdPage() {
   }
 
   return (
-    <div className="pb-40 dark:bg-[#1F1F1F]">
+    <div className=" dark:bg-[#1F1F1F]">
       <Cover url={note.coverImage} noteId={note.id} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar
@@ -106,7 +100,8 @@ export default function NoteIdPage() {
             updatedAt: new Date(note.updatedAt),
           }}
         />
-        <EditorComponent onChange={onChange} initialContent={note.content} />
+        <BlockEditor initialContent={initialContent} onChange={onChange} />
+        {/* <EditorComponent onChange={onChange} initialContent={note.content} /> */}
       </div>
     </div>
   );

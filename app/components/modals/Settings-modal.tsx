@@ -1,7 +1,7 @@
 import { ModeToggle } from "../Mode-toggle";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Label } from "../ui/label";
-import { useSettings } from "~/hooks";
+import { useSettings } from "~/hooks/hooks";
 
 export default function SettingsModal() {
   const { isOpen, onClose } = useSettings();
