@@ -20,17 +20,33 @@ export const ContentItemMenu = ({ editor, isEditable = true }: ContentItemMenuPr
   const actions = useContentItemActions(editor, data.currentNode, data.currentNodePos)
 
   useEffect(() => {
-    if (menuOpen) {
-      editor.commands.setMeta('lockDragHandle', true)
-    } else {
-      editor.commands.setMeta('lockDragHandle', false)
+    const updateCurrentNode = ({ editor }: { editor: Editor }) => {
+      const { selection, doc } = editor.state
+      const pos = selection.anchor
+      const node = pos >= 0 ? doc.nodeAt(pos) : null
+
+      data.handleNodeChange({
+        node,
+        editor,
+        pos
+      })
     }
-  }, [editor, menuOpen])
+
+    // Listen for selection changes
+    editor.on('selectionUpdate', updateCurrentNode)
+    // Initial update
+    updateCurrentNode({ editor })
+
+    return () => {
+      editor.off('selectionUpdate', updateCurrentNode)
+    }
+  }, [editor, data])
 
   return (
     <>
       {isEditable
-      ? (<div className="flex items-center gap-0.5">
+      ? (
+      <div className="flex items-center gap-0.5">
           <Toolbar.Button onClick={actions.handleAdd}>
             <Icon name="Plus" />
           </Toolbar.Button>

@@ -16,14 +16,23 @@ export const useBlockEditor = ({
   ...editorOptions
 }: {
   initialContent: EditorContentType | null
-  onChange?: (content: string) => void
+  onChange: (content: string) => void
 } & Partial<Omit<EditorOptions, 'extensions'>>) => {
+
+  initialContent = initialContent || {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: [{ type: 'text', text: '' }]
+      }
+    ]
+  }
 
   const editor = useEditor(
     {
       ...editorOptions,
       immediatelyRender: true,
-      content: initialContent,
       shouldRerenderOnTransaction: false,
       autofocus: true,
       onCreate: ctx => {
@@ -31,11 +40,13 @@ export const useBlockEditor = ({
           ctx.editor.commands.setContent(initialContent)
           ctx.editor.commands.focus('start', { scrollIntoView: true })
         }
+        console.count("editor create")
       },
       onUpdate: ({ editor }) => {
         // Convert editor content to JSON string and call onChange
         const content = JSON.stringify(editor.getJSON())
-        onChange?.(content)
+        onChange(content)
+        console.count("editor update")
       },
       extensions: [
         ...ExtensionKit({}),
@@ -54,5 +65,5 @@ export const useBlockEditor = ({
 
   window.editor = editor
 
-  return { editor }
+  return editor
 }

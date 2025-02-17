@@ -72,7 +72,6 @@ export async function updateNote(
     ...data,
     updatedAt: now.toLocaleString(),
   };
-  console.log(updateData);
 
   await notesCollection.doc(noteId).update(updateData);
 }

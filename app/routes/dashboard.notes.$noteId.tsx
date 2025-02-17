@@ -9,7 +9,8 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { useState, useEffect } from "react";
 import type { Note } from "~/lib/types";
 import Tiptap from "~/components/notes/Tiptap";
-import { BlockEditor } from "~/components/tiptap/BlockEditor";
+import BlockEditor from "~/components/tiptap/BlockEditor/BlockEditor";
+import { useMemo } from "react";
 
 interface UpdateNotePayload {
   title?: string;
@@ -51,7 +52,15 @@ export default function NoteIdPage() {
     initialContent: string;
   }> | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const initialContent = note?.content ? JSON.parse(note.content) : null;
+  const initialContent = useMemo(() => {
+    if (!note?.content) return null;
+    try {
+      return JSON.parse(note.content);
+    } catch (e) {
+      console.error('Failed to parse note content:', e);
+      return null;
+    }
+  }, [note?.content]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -65,13 +74,6 @@ export default function NoteIdPage() {
   if (note === null) {
     return <div>Not found</div>;
   }
-
-  const onChange = (content: string) => {
-    fetcher.submit(
-      { content },
-      { method: "post", action: `/dashboard/notes/${note.id}` },
-    );
-  };
 
   if (!isMounted || !EditorComponent) {
     return (
@@ -100,7 +102,8 @@ export default function NoteIdPage() {
             updatedAt: new Date(note.updatedAt),
           }}
         />
-        <BlockEditor initialContent={initialContent} onChange={onChange} />
+        {/* <Tiptap initialContent={initialContent} /> */}
+        <BlockEditor initialContent={initialContent} noteId={note.id} />
         {/* <EditorComponent onChange={onChange} initialContent={note.content} /> */}
       </div>
     </div>

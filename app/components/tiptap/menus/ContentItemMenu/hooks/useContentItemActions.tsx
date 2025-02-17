@@ -43,31 +43,25 @@ const useContentItemActions = (editor: Editor, currentNode: Node | null, current
     if (currentNodePos !== -1) {
       const currentNodeSize = currentNode?.nodeSize || 0
       const insertPos = currentNodePos + currentNodeSize
-      const currentNodeIsEmptyParagraph = 
-        currentNode?.type.name === 'paragraph' && 
-        currentNode?.content?.size === 0
-  
+      const currentNodeIsEmptyParagraph = currentNode?.type.name === 'paragraph' && currentNode?.content?.size === 0
+      const focusPos = currentNodeIsEmptyParagraph ? currentNodePos + 2 : insertPos + 2
+
       editor
         .chain()
         .command(({ dispatch, tr, state }) => {
           if (dispatch) {
             if (currentNodeIsEmptyParagraph) {
-              // Insert slash directly in empty paragraph
-              tr.insertText('/', currentNodePos + 1)
+              tr.insertText('/', currentNodePos, currentNodePos + 1)
             } else {
-              // Create new paragraph with slash
-              tr.insert(
-                insertPos,
-                state.schema.nodes.paragraph.create(null, [
-                  state.schema.text('/')
-                ])
-              )
+              tr.insert(insertPos, state.schema.nodes.paragraph.create(null, [state.schema.text('/')]))
             }
+
             return dispatch(tr)
           }
+
           return true
         })
-        .focus() // Focus at end of inserted content
+        .focus(focusPos)
         .run()
     }
   }, [currentNode, currentNodePos, editor])

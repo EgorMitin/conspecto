@@ -7,29 +7,38 @@ import { useBlockEditor } from '~/hooks/useBlockEditor'
 
 import '../styles/index.css'
 
-import ImageBlockMenu from '~/extensions/ImageBlock/components/ImageBlockMenu'
+import { ImageBlockMenu } from '~/extensions/ImageBlock/components/ImageBlockMenu'
 import { ColumnsMenu } from '~/extensions/MultiColumn/menus'
 import { TableColumnMenu, TableRowMenu } from '~/extensions/Table/menus'
 import { EditorHeader } from './components/EditorHeader'
 import { TextMenu } from '../menus/TextMenu'
 import { ContentItemMenu } from '../menus/ContentItemMenu'
+import { useFetcher } from '@remix-run/react'
 
 
 
-export const BlockEditor = ({
+export default function BlockEditor ({
   initialContent,
-  onChange,
+  noteId,
 }: {
   initialContent: EditorContentType | null
-  onChange?: (content: string) => void  
-}) => {
+  noteId: string
+}) {
   const [isEditable, setIsEditable] = useState(true)
   const menuContainerRef = useRef(null)
+  const fetcher = useFetcher()
 
-  const { editor } = useBlockEditor({
+  const onChange = (content: string) => {
+    fetcher.submit(
+      { content },
+      { method: "post", action: `/dashboard/notes/${noteId}` },
+    );
+  };
+
+  const editor = useBlockEditor({
     initialContent,
     onChange,
-    onTransaction({ editor: currentEditor }) {
+    onTransaction: ({ editor: currentEditor }) => {
       setIsEditable(currentEditor.isEditable)
     },
   })
@@ -39,11 +48,8 @@ export const BlockEditor = ({
   }
 
   return (
-    <div className="flex h-full" ref={menuContainerRef}>
-      <div className="relative flex flex-col flex-1 h-full overflow-visible">
-        <EditorHeader
-          editor={editor}
-        />
+    <div className="relative flex flex-col flex-1 h-full overflow-visible" ref={menuContainerRef}>
+        <EditorHeader editor={editor} />
         <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
         <ContentItemMenu editor={editor} isEditable={isEditable} />
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
@@ -52,9 +58,6 @@ export const BlockEditor = ({
         <TableRowMenu editor={editor} appendTo={menuContainerRef} />
         <TableColumnMenu editor={editor} appendTo={menuContainerRef} />
         <ImageBlockMenu editor={editor} appendTo={menuContainerRef} />
-      </div>
     </div>
   )
 }
-
-export default BlockEditor

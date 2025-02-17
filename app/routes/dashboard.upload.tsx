@@ -36,7 +36,6 @@ export const action: ActionFunction = async ({ request }) => {
     // Delete previous file if exists
     if (previousUrl) {
       const newUrl = previousUrl.replace("https://storage.googleapis.com/conspecto-86468.firebasestorage.app/", '').replace("%2F", '/')
-      console.log(previousUrl);
       try {
         const previousFile = bucket.file(newUrl);
         await previousFile.delete();

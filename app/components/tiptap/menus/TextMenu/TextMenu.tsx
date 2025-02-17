@@ -3,7 +3,7 @@ import { Toolbar } from '../../ui/Toolbar'
 import { useTextmenuCommands } from './hooks/useTextmenuCommands'
 import { useTextmenuStates } from './hooks/useTextmenuStates'
 import { BubbleMenu, Editor } from '@tiptap/react'
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import { Surface } from '../../ui/Surface'
 import { ColorPicker } from '../../panels'
@@ -26,39 +26,12 @@ export type TextMenuProps = {
 }
 
 export const TextMenu = ({ editor }: TextMenuProps) => {
-  const [selecting, setSelecting] = useState(false)
   const commands = useTextmenuCommands(editor)
   const states = useTextmenuStates(editor)
   const blockOptions = useTextmenuContentTypes(editor)
 
-  useEffect(() => {
-    const controller = new AbortController()
-    let selectionTimeout: number
-
-    document.addEventListener(
-      'selectionchange',
-      () => {
-        setSelecting(true)
-
-        if (selectionTimeout) {
-          window.clearTimeout(selectionTimeout)
-        }
-
-        selectionTimeout = window.setTimeout(() => {
-          setSelecting(false)
-        }, 500)
-      },
-      { signal: controller.signal },
-    )
-
-    return () => {
-      controller.abort()
-    }
-  }, [])
-
   return (
     <BubbleMenu
-      className={selecting ? 'hidden' : ''}
       tippyOptions={{
         popperOptions: {
           placement: 'top-start',
@@ -92,7 +65,12 @@ export const TextMenu = ({ editor }: TextMenuProps) => {
         <MemoFontFamilyPicker onChange={commands.onSetFont} value={states.currentFont || ''} />
         <MemoFontSizePicker onChange={commands.onSetFontSize} value={states.currentSize || ''} />
         <Toolbar.Divider />
-        <MemoButton tooltip="Bold" tooltipShortcut={['Mod', 'B']} onClick={commands.onBold} active={states.isBold}>
+        <MemoButton
+          tooltip="Bold"
+          tooltipShortcut={['Mod', 'B']}
+          onClick={commands.onBold}
+          active={states.isBold}
+        >
           <Icon name="Bold" />
         </MemoButton>
         <MemoButton

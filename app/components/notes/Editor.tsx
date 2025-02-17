@@ -16,7 +16,6 @@ import {
   useCreateBlockNote,
 } from "@blocknote/react";
 import { PartialBlock } from "@blocknote/core";
-import { QAButton } from "./QuestionButton";
 
 interface EditorProps {
   onChange: (value: string) => void;
