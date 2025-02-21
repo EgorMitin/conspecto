@@ -66,16 +66,6 @@ export const GROUPS: Group[] = [
         },
       },
       {
-        name: 'toggleList',
-        label: 'Toggle List',
-        iconName: 'ListCollapse',
-        description: 'Toggles can show and hide content',
-        aliases: ['toggle'],
-        action: editor => {
-          editor.chain().focus().setDetails().run()
-        },
-      },
-      {
         name: 'blockquote',
         label: 'Blockquote',
         iconName: 'Quote',
@@ -144,17 +134,6 @@ export const GROUPS: Group[] = [
         aliases: ['hr'],
         action: editor => {
           editor.chain().focus().setHorizontalRule().run()
-        },
-      },
-      {
-        name: 'toc',
-        label: 'Table of Contents',
-        iconName: 'Book',
-        aliases: ['outline'],
-        description: 'Insert a table of contents',
-        shouldBeHidden: editor => editor.isActive('columns'),
-        action: editor => {
-          editor.chain().focus().insertTableOfContents().run()
         },
       },
     ],

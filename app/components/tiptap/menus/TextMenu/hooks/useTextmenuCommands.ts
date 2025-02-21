@@ -52,6 +52,21 @@ export const useTextmenuCommands = (editor: Editor) => {
     [editor],
   )
 
+  const onSaveQA = useCallback(
+    (question: string) => {
+      if (!question) return
+      editor.chain().extendMarkRange('qa').focus().setQa(question).run()
+    },
+    [editor]
+  )
+
+  const onDeleteQA = useCallback(
+    () => {
+      editor.chain().extendMarkRange('qa').focus().unsetQa().run()
+    },
+    [editor]
+  )
+
   return {
     onBold,
     onItalic,
@@ -72,5 +87,7 @@ export const useTextmenuCommands = (editor: Editor) => {
     onSetFont,
     onSetFontSize,
     onLink,
+    onSaveQA,
+    onDeleteQA,
   }
 }

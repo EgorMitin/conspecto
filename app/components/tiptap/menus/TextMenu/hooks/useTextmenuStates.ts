@@ -17,6 +17,7 @@ export const useTextmenuStates = (editor: Editor) => {
         isCode: ctx.editor.isActive('code'),
         isSubscript: ctx.editor.isActive('subscript'),
         isSuperscript: ctx.editor.isActive('superscript'),
+        isQA: ctx.editor.isActive('qa'),
         isAlignLeft: ctx.editor.isActive({ textAlign: 'left' }),
         isAlignCenter: ctx.editor.isActive({ textAlign: 'center' }),
         isAlignRight: ctx.editor.isActive({ textAlign: 'right' }),
@@ -25,6 +26,7 @@ export const useTextmenuStates = (editor: Editor) => {
         currentHighlight: ctx.editor.getAttributes('highlight')?.color || undefined,
         currentFont: ctx.editor.getAttributes('textStyle')?.fontFamily || undefined,
         currentSize: ctx.editor.getAttributes('textStyle')?.fontSize || undefined,
+        currentQuestion: ctx.editor.getAttributes('qa')?.question || undefined,
       }
     },
   })

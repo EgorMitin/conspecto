@@ -7,8 +7,6 @@ import { getNoteById, updateNote } from "~/services/notes.server";
 import invariant from "tiny-invariant";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { useState, useEffect } from "react";
-import type { Note } from "~/lib/types";
-import Tiptap from "~/components/notes/Tiptap";
 import BlockEditor from "~/components/tiptap/BlockEditor/BlockEditor";
 import { useMemo } from "react";
 
@@ -45,12 +43,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export default function NoteIdPage() {
-  const fetcher = useFetcher();
   const { note } = useLoaderData<typeof loader>();
-  const [EditorComponent, setEditorComponent] = useState<React.ComponentType<{
-    onChange: (content: string) => void;
-    initialContent: string;
-  }> | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const initialContent = useMemo(() => {
     if (!note?.content) return null;
@@ -64,18 +57,13 @@ export default function NoteIdPage() {
 
   useEffect(() => {
     setIsMounted(true);
-
-    // Import Editor component only on client side!!!
-    import("~/components/notes/Editor").then((module) => {
-      setEditorComponent(() => module.default);
-    });
   }, []);
 
   if (note === null) {
     return <div>Not found</div>;
   }
 
-  if (!isMounted || !EditorComponent) {
+  if (!isMounted) {
     return (
       <div>
         <Cover.Skeleton />
@@ -102,9 +90,7 @@ export default function NoteIdPage() {
             updatedAt: new Date(note.updatedAt),
           }}
         />
-        {/* <Tiptap initialContent={initialContent} /> */}
         <BlockEditor initialContent={initialContent} noteId={note.id} />
-        {/* <EditorComponent onChange={onChange} initialContent={note.content} /> */}
       </div>
     </div>
   );

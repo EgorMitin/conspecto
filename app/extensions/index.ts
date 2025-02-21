@@ -1,3 +1,5 @@
+import { Study } from './Study'
+
 export { StarterKit } from '@tiptap/starter-kit'
 export { Highlight } from '@tiptap/extension-highlight'
 export { CharacterCount } from '@tiptap/extension-character-count'
@@ -38,3 +40,4 @@ export { Link } from './Link'
 export { ImageUpload } from './ImageUpload'
 export { ImageBlock } from './ImageBlock'
 export { Columns, Column } from './MultiColumn'
+export { Qa } from './QuestionAnswer'

@@ -1,5 +1,5 @@
 import { EditorContent } from '@tiptap/react'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import type { EditorContentType } from '~/lib/types'
 import { LinkMenu } from '../menus'
 
@@ -13,20 +13,21 @@ import { TableColumnMenu, TableRowMenu } from '~/extensions/Table/menus'
 import { EditorHeader } from './components/EditorHeader'
 import { TextMenu } from '../menus/TextMenu'
 import { ContentItemMenu } from '../menus/ContentItemMenu'
-import { useFetcher } from '@remix-run/react'
+
+import { useFetcher, useLocation } from '@remix-run/react'
 
 
 
 export default function BlockEditor ({
   initialContent,
-  noteId,
+  noteId
 }: {
   initialContent: EditorContentType | null
   noteId: string
 }) {
-  const [isEditable, setIsEditable] = useState(true)
   const menuContainerRef = useRef(null)
   const fetcher = useFetcher()
+  const isStudyMode = useLocation().pathname.endsWith('/study')
 
   const onChange = (content: string) => {
     fetcher.submit(
@@ -38,9 +39,7 @@ export default function BlockEditor ({
   const editor = useBlockEditor({
     initialContent,
     onChange,
-    onTransaction: ({ editor: currentEditor }) => {
-      setIsEditable(currentEditor.isEditable)
-    },
+    isStudyMode
   })
 
   if (!editor) {
@@ -51,7 +50,7 @@ export default function BlockEditor ({
     <div className="relative flex flex-col flex-1 h-full overflow-visible" ref={menuContainerRef}>
         <EditorHeader editor={editor} />
         <EditorContent editor={editor} className="flex-1 overflow-y-auto" />
-        <ContentItemMenu editor={editor} isEditable={isEditable} />
+        <ContentItemMenu editor={editor} isEditable={!isStudyMode} />
         <LinkMenu editor={editor} appendTo={menuContainerRef} />
         <TextMenu editor={editor} />
         <ColumnsMenu editor={editor} appendTo={menuContainerRef} />

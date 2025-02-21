@@ -1,4 +1,4 @@
-import { useParams, Link } from "@remix-run/react";
+import { useParams, Link, useLocation } from "@remix-run/react";
 import { MenuIcon } from "lucide-react";
 
 import { Button } from "../ui/button";
@@ -21,6 +21,7 @@ export default function Navbar({
   notes,
 }: NavbarProps) {
   const noteId = useParams().noteId;
+  const isStudyMode = useLocation().pathname.endsWith('/study')
 
   const note = notes.find((el) => el.id == noteId);
 
@@ -52,7 +53,7 @@ export default function Navbar({
         <div className="flex items-center justify-between w-full">
           <Title note={note} />
           <div className="flex items-center gap-x-2">
-            <Link to={`/dashboard/notes/${note.id}/study`}>
+            <Link to={`/dashboard/notes/${note.id}` + (isStudyMode ? "" : "/study")}>
               <Button
                 className="
                 bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500
@@ -70,7 +71,7 @@ export default function Navbar({
                 active:shadow-inner
               "
               >
-                Study
+                {isStudyMode ? "Edit" : "Study"}
               </Button>
             </Link>
             <Publish note={note} />

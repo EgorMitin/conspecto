@@ -33,7 +33,7 @@ export const TableHeader = TiptapTableHeader.extend({
       new Plugin({
         props: {
           decorations: state => {
-            const { isEditable } = this.editor
+            const { isEditable } = !this.editor.options.editorProps.attributes['data-study-mode']
 
             if (!isEditable) {
               return DecorationSet.empty

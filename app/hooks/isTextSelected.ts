@@ -15,7 +15,7 @@ export default function isTextSelected ({ editor }: { editor: Editor }) {
   // So we check also for an empty text size.
   const isEmptyTextBlock = !doc.textBetween(from, to).length && isTextSelection(selection)
 
-  if (empty || isEmptyTextBlock || !editor.isEditable) {
+  if (empty || isEmptyTextBlock || editor.options.editorProps.attributes['data-study-mode']) {
     return false
   }
 

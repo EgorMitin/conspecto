@@ -33,11 +33,13 @@ import {
   Column,
   TaskItem,
   TaskList,
+  Qa,
 } from '.'
 
 import { ImageUpload } from './ImageUpload'
 
-export const ExtensionKit = ({ provider }: ExtensionKitProps) => [
+
+export const ExtensionKit = () => [
   Document,
   Columns,
   TaskList,
@@ -71,9 +73,7 @@ export const ExtensionKit = ({ provider }: ExtensionKitProps) => [
   Highlight.configure({ multicolor: true }),
   Underline,
   CharacterCount.configure({ limit: 50000 }),
-  ImageUpload.configure({
-    clientId: provider?.document?.clientID,
-  }),
+  ImageUpload,
   ImageBlock,
   TextAlign.extend({
     addKeyboardShortcuts() {
@@ -102,6 +102,7 @@ export const ExtensionKit = ({ provider }: ExtensionKitProps) => [
     width: 2,
     class: 'ProseMirror-dropcursor border-black',
   }),
+  Qa,
 ]
 
 export default ExtensionKit

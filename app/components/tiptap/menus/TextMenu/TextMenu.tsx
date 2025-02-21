@@ -3,7 +3,7 @@ import { Toolbar } from '../../ui/Toolbar'
 import { useTextmenuCommands } from './hooks/useTextmenuCommands'
 import { useTextmenuStates } from './hooks/useTextmenuStates'
 import { BubbleMenu, Editor } from '@tiptap/react'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import { Surface } from '../../ui/Surface'
 import { ColorPicker } from '../../panels'
@@ -12,6 +12,7 @@ import { FontSizePicker } from './components/FontSizePicker'
 import { useTextmenuContentTypes } from './hooks/useTextmenuContentTypes'
 import { ContentTypePicker } from './components/ContentTypePicker'
 import { EditLinkPopover } from './components/EditLinkPopover'
+import { QADialog } from './components/QADialog'
 
 // We memorize the button so each button is not rerendered
 // on every editor state change
@@ -29,6 +30,7 @@ export const TextMenu = ({ editor }: TextMenuProps) => {
   const commands = useTextmenuCommands(editor)
   const states = useTextmenuStates(editor)
   const blockOptions = useTextmenuContentTypes(editor)
+  const [isQAOpen, setIsQAOpen] = useState(false)
 
   return (
     <BubbleMenu
@@ -64,6 +66,22 @@ export const TextMenu = ({ editor }: TextMenuProps) => {
         <MemoContentTypePicker options={blockOptions} />
         <MemoFontFamilyPicker onChange={commands.onSetFont} value={states.currentFont || ''} />
         <MemoFontSizePicker onChange={commands.onSetFontSize} value={states.currentSize || ''} />
+        <Toolbar.Divider />
+        <MemoButton
+          tooltip="Add Q&A"
+          onClick={() => setIsQAOpen(true)}
+          active={states.isQA}
+        >
+          <Icon name="MessageCircleQuestion" />
+        </MemoButton>
+
+        <QADialog
+          open={isQAOpen}
+          onOpenChange={setIsQAOpen}
+          onSave={commands.onSaveQA}
+          onDelete={commands.onDeleteQA}
+          value={states.currentQuestion || ''}
+        />
         <Toolbar.Divider />
         <MemoButton
           tooltip="Bold"
