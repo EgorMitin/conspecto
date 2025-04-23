@@ -1,0 +1,731 @@
+[2025-04-23T09:19:41.222Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:19:41.223Z] [ERROR] Error saving note
+[2025-04-23T09:19:46.212Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:19:46.212Z] [ERROR] Error saving note
+[2025-04-23T09:19:51.553Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:19:51.553Z] [ERROR] Error saving note
+[2025-04-23T09:19:53.308Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:19:53.309Z] [ERROR] Error saving note
+[2025-04-23T09:21:11.537Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:21:11.538Z] [ERROR] Error saving note
+[2025-04-23T09:21:16.463Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:21:16.463Z] [ERROR] Error saving note
+[2025-04-23T09:21:20.436Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:21:20.436Z] [ERROR] Error saving note
+[2025-04-23T09:27:58.920Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:27:58.920Z] [ERROR] Error loading note
+[2025-04-23T09:46:20.834Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:46:20.834Z] [ERROR] Error loading note
+[2025-04-23T09:46:20.898Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:46:20.898Z] [ERROR] Error loading note
+[2025-04-23T09:46:23.250Z] [ERROR] Error saving note
+[2025-04-23T09:46:23.250Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:46:26.966Z] [ERROR] POSTGRES_URL environment variable is required
+[2025-04-23T09:46:26.966Z] [ERROR] Error saving note
+[2025-04-23T09:47:26.463Z] [INFO] Database service initialized
+[2025-04-23T09:47:26.467Z] [INFO] Database service initialized
+[2025-04-23T09:47:28.465Z] [ERROR] Failed to initialize database
+[2025-04-23T09:47:28.533Z] [ERROR] Error loading note
+[2025-04-23T09:47:28.578Z] [ERROR] Failed to initialize database
+[2025-04-23T09:47:28.615Z] [ERROR] Error loading note
+[2025-04-23T09:47:28.654Z] [INFO] Database service initialized
+[2025-04-23T09:47:29.372Z] [INFO] Database tables initialized
+[2025-04-23T09:47:29.374Z] [INFO] Database initialized successfully
+[2025-04-23T09:47:29.611Z] [ERROR] Failed to save note
+[2025-04-23T09:47:29.645Z] [ERROR] Error saving note
+[2025-04-23T09:47:31.675Z] [ERROR] Failed to save note
+[2025-04-23T09:47:31.763Z] [ERROR] Error saving note
+[2025-04-23T09:48:17.654Z] [INFO] Database service initialized
+[2025-04-23T09:48:17.658Z] [INFO] Database service initialized
+[2025-04-23T09:48:18.298Z] [INFO] Database tables initialized
+[2025-04-23T09:48:18.298Z] [INFO] Database initialized successfully
+[2025-04-23T09:48:18.360Z] [INFO] Database initialized successfully
+[2025-04-23T09:48:18.360Z] [INFO] Database tables initialized
+[2025-04-23T09:48:18.403Z] [ERROR] Failed to get note with ID create
+[2025-04-23T09:48:18.438Z] [ERROR] Error loading note
+[2025-04-23T09:48:19.293Z] [ERROR] Failed to get note with ID create
+[2025-04-23T09:48:19.353Z] [ERROR] Error loading note
+[2025-04-23T09:48:19.998Z] [ERROR] Failed to save note
+[2025-04-23T09:48:20.042Z] [ERROR] Error saving note
+[2025-04-23T11:26:57.478Z] [ERROR] Failed to get note with ID create
+[2025-04-23T11:26:57.545Z] [ERROR] Error loading note
+[2025-04-23T11:26:57.968Z] [ERROR] Failed to get note with ID create
+[2025-04-23T11:26:58.002Z] [ERROR] Error loading note
+[2025-04-23T11:26:58.322Z] [ERROR] Failed to save note
+[2025-04-23T11:26:58.357Z] [ERROR] Error saving note
+[2025-04-23T11:57:15.987Z] [INFO] Database service initialized
+[2025-04-23T11:57:17.167Z] [INFO] Database tables initialized
+[2025-04-23T11:57:17.168Z] [INFO] Database initialized successfully
+[2025-04-23T11:57:17.267Z] [INFO] Loading note with ID: create
+[2025-04-23T11:57:17.353Z] [ERROR] Failed to get note with ID create
+[2025-04-23T11:57:17.386Z] [ERROR] Error loading note: invalid input syntax for type uuid: "create"
+[2025-04-23T12:11:08.324Z] [INFO] Database service initialized
+[2025-04-23T12:11:09.523Z] [INFO] Database tables initialized
+[2025-04-23T12:11:09.526Z] [INFO] Database initialized successfully
+[2025-04-23T12:11:09.588Z] [INFO] Loading note with ID: create
+[2025-04-23T12:11:09.657Z] [ERROR] Failed to get note with ID create
+[2025-04-23T12:11:09.688Z] [ERROR] Error loading note: invalid input syntax for type uuid: "create"
+[2025-04-23T12:11:19.345Z] [INFO] Database service initialized
+[2025-04-23T12:11:19.856Z] [INFO] Database tables initialized
+[2025-04-23T12:11:19.858Z] [INFO] Database initialized successfully
+[2025-04-23T12:11:20.032Z] [INFO] Created new note with ID: aea0b89d-ee66-4089-a5ab-21a719ac778b
+[2025-04-23T12:11:20.032Z] [ERROR] Error creating new note
+[2025-04-23T12:13:12.604Z] [INFO] Database service initialized
+[2025-04-23T12:13:13.190Z] [INFO] Database tables initialized
+[2025-04-23T12:13:13.192Z] [INFO] Database initialized successfully
+[2025-04-23T12:13:13.354Z] [ERROR] Failed to save note with ID: 9e5453fb-0f10-4088-966b-d239943b9b48
+[2025-04-23T12:13:13.354Z] [ERROR] Error creating new note
+[2025-04-23T12:20:50.569Z] [INFO] Database service initialized
+[2025-04-23T12:20:51.753Z] [INFO] Database tables initialized
+[2025-04-23T12:20:51.755Z] [INFO] Database initialized successfully
+[2025-04-23T12:20:51.939Z] [INFO] Created new note with database-generated ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:20:59.027Z] [INFO] Database service initialized
+[2025-04-23T12:20:59.028Z] [INFO] Database service initialized
+[2025-04-23T12:20:59.573Z] [INFO] Database tables initialized
+[2025-04-23T12:20:59.614Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:20:59.574Z] [INFO] Database initialized successfully
+[2025-04-23T12:20:59.615Z] [INFO] Database tables initialized
+[2025-04-23T12:20:59.649Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:20:59.615Z] [INFO] Database initialized successfully
+[2025-04-23T12:20:59.673Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:20:59.992Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:21:11.589Z] [INFO] Database service initialized
+[2025-04-23T12:21:12.170Z] [INFO] Database tables initialized
+[2025-04-23T12:21:12.170Z] [INFO] Database initialized successfully
+[2025-04-23T12:21:15.871Z] [INFO] Database service initialized
+[2025-04-23T12:21:15.874Z] [INFO] Database service initialized
+[2025-04-23T12:21:16.449Z] [INFO] Database tables initialized
+[2025-04-23T12:21:16.449Z] [INFO] Database initialized successfully
+[2025-04-23T12:21:16.493Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:21:16.537Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:21:16.551Z] [INFO] Database tables initialized
+[2025-04-23T12:21:16.551Z] [INFO] Database initialized successfully
+[2025-04-23T12:21:16.589Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:21:16.652Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:35.990Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:36.016Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:36.832Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:36.834Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:59.650Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:59.676Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:59.718Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:27:59.719Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:29:07.052Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:29:07.080Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:29:07.123Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:29:07.787Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:35:04.420Z] [INFO] Database service initialized
+[2025-04-23T12:35:04.422Z] [INFO] Database service initialized
+[2025-04-23T12:35:05.332Z] [INFO] Database tables initialized
+[2025-04-23T12:35:05.333Z] [INFO] Database initialized successfully
+[2025-04-23T12:35:05.410Z] [ERROR] Failed to create database tables
+[2025-04-23T12:35:05.459Z] [ERROR] Failed to initialize database
+[2025-04-23T12:35:05.497Z] [ERROR] Error getting comments
+[2025-04-23T12:37:12.769Z] [INFO] Database service initialized
+[2025-04-23T12:37:12.770Z] [INFO] Database service initialized
+[2025-04-23T12:37:13.892Z] [INFO] Database service initialized
+[2025-04-23T12:37:13.894Z] [INFO] Database service initialized
+[2025-04-23T12:37:13.930Z] [INFO] Database service initialized
+[2025-04-23T12:37:13.970Z] [INFO] Database service initialized
+[2025-04-23T12:37:14.115Z] [INFO] Database tables initialized
+[2025-04-23T12:37:14.116Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:14.161Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:37:14.161Z] [INFO] Database tables initialized
+[2025-04-23T12:37:14.162Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:14.198Z] [INFO] Loading note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:37:15.064Z] [INFO] Database tables initialized
+[2025-04-23T12:37:15.064Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:15.066Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:37:15.068Z] [INFO] Successfully loaded note with ID: 6b3c717c-b179-42e4-a1b9-6895a0e2f11d
+[2025-04-23T12:37:15.069Z] [INFO] Database tables initialized
+[2025-04-23T12:37:15.069Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:15.143Z] [ERROR] Failed to get comments for note create
+[2025-04-23T12:37:15.180Z] [ERROR] Error getting comments
+[2025-04-23T12:37:15.218Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:15.218Z] [INFO] Database tables initialized
+[2025-04-23T12:37:15.254Z] [INFO] Loading note with ID: create
+[2025-04-23T12:37:15.255Z] [INFO] Database tables initialized
+[2025-04-23T12:37:15.290Z] [INFO] Loading note with ID: create
+[2025-04-23T12:37:15.255Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:15.313Z] [ERROR] Failed to get note with ID create
+[2025-04-23T12:37:15.348Z] [ERROR] Error loading note: invalid input syntax for type uuid: "create"
+[2025-04-23T12:37:15.383Z] [ERROR] Failed to get note with ID create
+[2025-04-23T12:37:15.414Z] [ERROR] Error loading note: invalid input syntax for type uuid: "create"
+[2025-04-23T12:37:15.732Z] [ERROR] Failed to get comments for note create
+[2025-04-23T12:37:15.770Z] [ERROR] Error getting comments
+[2025-04-23T12:37:16.415Z] [INFO] Database service initialized
+[2025-04-23T12:37:17.226Z] [INFO] Database tables initialized
+[2025-04-23T12:37:17.226Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:17.512Z] [INFO] Created new note with database-generated ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:18.193Z] [INFO] Database service initialized
+[2025-04-23T12:37:18.195Z] [INFO] Database service initialized
+[2025-04-23T12:37:18.211Z] [INFO] Database service initialized
+[2025-04-23T12:37:18.267Z] [INFO] Database service initialized
+[2025-04-23T12:37:19.032Z] [INFO] Database tables initialized
+[2025-04-23T12:37:19.033Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:19.037Z] [INFO] Database tables initialized
+[2025-04-23T12:37:19.037Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:19.111Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:19.111Z] [INFO] Database tables initialized
+[2025-04-23T12:37:19.111Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:19.112Z] [INFO] Database tables initialized
+[2025-04-23T12:37:19.112Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:19.148Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:19.337Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:19.839Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:21.639Z] [INFO] Database service initialized
+[2025-04-23T12:37:22.213Z] [INFO] Database tables initialized
+[2025-04-23T12:37:22.214Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:47.120Z] [INFO] Database service initialized
+[2025-04-23T12:37:47.122Z] [INFO] Database service initialized
+[2025-04-23T12:37:47.140Z] [INFO] Database service initialized
+[2025-04-23T12:37:47.203Z] [INFO] Database service initialized
+[2025-04-23T12:37:47.947Z] [INFO] Database tables initialized
+[2025-04-23T12:37:47.947Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:48.001Z] [INFO] Database tables initialized
+[2025-04-23T12:37:48.001Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:48.144Z] [INFO] Database tables initialized
+[2025-04-23T12:37:48.186Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:48.186Z] [INFO] Database tables initialized
+[2025-04-23T12:37:48.145Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:48.186Z] [INFO] Database initialized successfully
+[2025-04-23T12:37:48.218Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:48.279Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:37:48.818Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:38:08.820Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:38:08.847Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:38:08.888Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:38:08.898Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:01.698Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:01.726Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:03.087Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:03.601Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:11.760Z] [ERROR] Failed to save comment
+[2025-04-23T12:49:11.837Z] [ERROR] Error saving comment
+[2025-04-23T12:49:16.339Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:16.365Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:16.435Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:49:16.437Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:52:53.898Z] [INFO] Database service initialized
+[2025-04-23T12:52:53.899Z] [INFO] Database service initialized
+[2025-04-23T12:52:54.556Z] [INFO] Database tables initialized
+[2025-04-23T12:52:54.557Z] [INFO] Database initialized successfully
+[2025-04-23T12:52:54.615Z] [INFO] Database tables initialized
+[2025-04-23T12:52:54.615Z] [INFO] Database initialized successfully
+[2025-04-23T12:53:00.046Z] [INFO] Database service initialized
+[2025-04-23T12:53:00.046Z] [INFO] Database service initialized
+[2025-04-23T12:53:00.754Z] [INFO] Database tables initialized
+[2025-04-23T12:53:00.754Z] [INFO] Database initialized successfully
+[2025-04-23T12:53:00.818Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:53:00.818Z] [INFO] Database initialized successfully
+[2025-04-23T12:53:00.818Z] [INFO] Database tables initialized
+[2025-04-23T12:53:00.857Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:53:00.864Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:53:01.518Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:55:43.958Z] [INFO] Database service initialized
+[2025-04-23T12:55:43.962Z] [INFO] Database service initialized
+[2025-04-23T12:55:43.966Z] [INFO] Database service initialized
+[2025-04-23T12:55:43.966Z] [INFO] Database service initialized
+[2025-04-23T12:55:45.309Z] [INFO] Database tables initialized
+[2025-04-23T12:55:45.369Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:55:45.309Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:45.370Z] [INFO] Database tables initialized
+[2025-04-23T12:55:45.370Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:45.406Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:55:45.406Z] [INFO] Database tables initialized
+[2025-04-23T12:55:45.406Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:45.406Z] [INFO] Database tables initialized
+[2025-04-23T12:55:45.406Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:45.424Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:55:45.867Z] [INFO] Database service initialized
+[2025-04-23T12:55:46.088Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T12:55:46.777Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:46.776Z] [INFO] Database tables initialized
+[2025-04-23T12:55:55.774Z] [INFO] Database service initialized
+[2025-04-23T12:55:55.779Z] [INFO] Database service initialized
+[2025-04-23T12:55:56.462Z] [INFO] Database tables initialized
+[2025-04-23T12:55:56.462Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:56.463Z] [INFO] Database initialized successfully
+[2025-04-23T12:55:56.463Z] [INFO] Database tables initialized
+[2025-04-23T13:06:10.990Z] [INFO] Database service initialized
+[2025-04-23T13:06:10.991Z] [INFO] Database service initialized
+[2025-04-23T13:06:11.384Z] [INFO] Database service initialized
+[2025-04-23T13:06:11.384Z] [INFO] Database service initialized
+[2025-04-23T13:06:12.384Z] [INFO] Database service initialized
+[2025-04-23T13:06:12.880Z] [INFO] Database tables initialized
+[2025-04-23T13:06:12.880Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:12.935Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:12.936Z] [INFO] Database tables initialized
+[2025-04-23T13:06:12.936Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:13.021Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:13.318Z] [INFO] Database tables initialized
+[2025-04-23T13:06:13.319Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:13.327Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:13.368Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:13.326Z] [INFO] Database tables initialized
+[2025-04-23T13:06:13.369Z] [INFO] Database tables initialized
+[2025-04-23T13:06:13.369Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:13.557Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:18.212Z] [INFO] Database service initialized
+[2025-04-23T13:06:18.220Z] [INFO] Database service initialized
+[2025-04-23T13:06:18.279Z] [INFO] Database service initialized
+[2025-04-23T13:06:18.301Z] [INFO] Database service initialized
+[2025-04-23T13:06:19.089Z] [INFO] Database tables initialized
+[2025-04-23T13:06:19.091Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:19.105Z] [INFO] Database tables initialized
+[2025-04-23T13:06:19.106Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:19.120Z] [INFO] Database tables initialized
+[2025-04-23T13:06:19.120Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:19.182Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:19.182Z] [INFO] Database tables initialized
+[2025-04-23T13:06:19.182Z] [INFO] Database initialized successfully
+[2025-04-23T13:06:19.222Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:19.235Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:19.798Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:06:32.177Z] [INFO] Comment save request payload: {"id":"itnph","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":null,"content":"","author":"System","quote":"note","timeStamp":1745413592157,"deleted":false,"type":"thread"}
+[2025-04-23T13:06:32.181Z] [INFO] Comment save request payload: {"id":"ybhah","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"itnph","content":"new comment","author":"Playground User","quote":null,"timeStamp":1745413592153.0002,"deleted":false,"type":"comment"}
+[2025-04-23T13:06:32.592Z] [ERROR] Failed to save comment
+[2025-04-23T13:06:32.627Z] [ERROR] Error saving comment: invalid input syntax for type bigint: "1745413592153.0002"
+[2025-04-23T13:09:05.411Z] [INFO] Database service initialized
+[2025-04-23T13:09:05.412Z] [INFO] Database service initialized
+[2025-04-23T13:09:06.177Z] [INFO] Database tables initialized
+[2025-04-23T13:09:06.178Z] [INFO] Database tables initialized
+[2025-04-23T13:09:06.178Z] [INFO] Database initialized successfully
+[2025-04-23T13:09:06.178Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:09.307Z] [INFO] Database service initialized
+[2025-04-23T13:10:09.310Z] [INFO] Database service initialized
+[2025-04-23T13:10:09.832Z] [INFO] Database service initialized
+[2025-04-23T13:10:09.833Z] [INFO] Database service initialized
+[2025-04-23T13:10:10.071Z] [INFO] Database tables initialized
+[2025-04-23T13:10:10.071Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:10.103Z] [INFO] Database tables initialized
+[2025-04-23T13:10:10.103Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:10.668Z] [INFO] Database tables initialized
+[2025-04-23T13:10:10.668Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:10.715Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:10.716Z] [INFO] Database tables initialized
+[2025-04-23T13:10:10.716Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:10.753Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:10.807Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:11.315Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:17.381Z] [INFO] Database service initialized
+[2025-04-23T13:10:17.391Z] [INFO] Database service initialized
+[2025-04-23T13:10:18.095Z] [INFO] Database tables initialized
+[2025-04-23T13:10:18.098Z] [INFO] Database tables initialized
+[2025-04-23T13:10:18.097Z] [INFO] Comment save request payload: {"id":"glwnu","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"ndnvm","content":"new comment","author":"Playground User","quote":null,"timeStamp":1745413817352,"deleted":false,"type":"comment"}
+[2025-04-23T13:10:18.096Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:18.098Z] [INFO] Database initialized successfully
+[2025-04-23T13:10:18.098Z] [INFO] Comment save request payload: {"id":"ndnvm","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":null,"content":"","author":"System","quote":"note","timeStamp":1745413817354,"deleted":false,"type":"thread"}
+[2025-04-23T13:10:23.391Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:23.418Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:23.469Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:10:23.949Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:12:39.893Z] [INFO] Comment save request payload: {"id":"jwypd","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":null,"content":"","author":"System","quote":"note","timeStamp":1745413959860,"deleted":false,"type":"thread"}
+[2025-04-23T13:12:39.899Z] [INFO] Comment save request payload: {"id":"nvhta","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"jwypd","content":"new comment","author":"Playground User","quote":null,"timeStamp":1745413959858,"deleted":false,"type":"comment"}
+[2025-04-23T13:13:59.125Z] [INFO] Database service initialized
+[2025-04-23T13:13:59.125Z] [INFO] Database service initialized
+[2025-04-23T13:13:59.799Z] [INFO] Database tables initialized
+[2025-04-23T13:13:59.800Z] [INFO] Database initialized successfully
+[2025-04-23T13:13:59.878Z] [INFO] Database tables initialized
+[2025-04-23T13:13:59.879Z] [INFO] Database initialized successfully
+[2025-04-23T13:16:29.071Z] [INFO] Database service initialized
+[2025-04-23T13:16:29.072Z] [INFO] Database service initialized
+[2025-04-23T13:16:29.730Z] [INFO] Database tables initialized
+[2025-04-23T13:16:29.731Z] [INFO] Database initialized successfully
+[2025-04-23T13:16:29.733Z] [INFO] Database tables initialized
+[2025-04-23T13:16:29.733Z] [INFO] Database initialized successfully
+[2025-04-23T13:19:59.864Z] [INFO] Database service initialized
+[2025-04-23T13:19:59.864Z] [INFO] Database service initialized
+[2025-04-23T13:20:00.642Z] [INFO] Database tables initialized
+[2025-04-23T13:20:00.643Z] [INFO] Database initialized successfully
+[2025-04-23T13:20:00.652Z] [INFO] Database tables initialized
+[2025-04-23T13:20:00.653Z] [INFO] Database initialized successfully
+[2025-04-23T13:21:52.804Z] [INFO] Database service initialized
+[2025-04-23T13:21:52.805Z] [INFO] Database service initialized
+[2025-04-23T13:21:52.808Z] [INFO] Database service initialized
+[2025-04-23T13:21:52.808Z] [INFO] Database service initialized
+[2025-04-23T13:21:53.347Z] [INFO] Database initialized successfully
+[2025-04-23T13:21:53.347Z] [INFO] Database tables initialized
+[2025-04-23T13:21:53.393Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:21:53.394Z] [INFO] Database tables initialized
+[2025-04-23T13:21:53.394Z] [INFO] Database initialized successfully
+[2025-04-23T13:21:53.448Z] [INFO] Database tables initialized
+[2025-04-23T13:21:53.485Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:21:53.485Z] [INFO] Database initialized successfully
+[2025-04-23T13:21:53.448Z] [INFO] Database initialized successfully
+[2025-04-23T13:21:53.485Z] [INFO] Database tables initialized
+[2025-04-23T13:21:53.921Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:21:53.957Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:23:14.770Z] [INFO] Database service initialized
+[2025-04-23T13:23:14.771Z] [INFO] Database service initialized
+[2025-04-23T13:23:15.493Z] [INFO] Database tables initialized
+[2025-04-23T13:23:15.494Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:15.495Z] [INFO] Database tables initialized
+[2025-04-23T13:23:15.495Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:16.914Z] [INFO] Database service initialized
+[2025-04-23T13:23:16.914Z] [INFO] Database service initialized
+[2025-04-23T13:23:17.652Z] [INFO] Database tables initialized
+[2025-04-23T13:23:17.652Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:17.712Z] [INFO] Database tables initialized
+[2025-04-23T13:23:17.712Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:20.181Z] [INFO] Database service initialized
+[2025-04-23T13:23:20.181Z] [INFO] Database service initialized
+[2025-04-23T13:23:20.774Z] [INFO] Database tables initialized
+[2025-04-23T13:23:20.774Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:20.797Z] [INFO] Database tables initialized
+[2025-04-23T13:23:20.797Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:23.440Z] [INFO] Database service initialized
+[2025-04-23T13:23:23.441Z] [INFO] Database service initialized
+[2025-04-23T13:23:24.002Z] [INFO] Database tables initialized
+[2025-04-23T13:23:24.002Z] [INFO] Database initialized successfully
+[2025-04-23T13:23:24.058Z] [INFO] Database tables initialized
+[2025-04-23T13:23:24.058Z] [INFO] Database initialized successfully
+[2025-04-23T13:28:25.073Z] [INFO] Database service initialized
+[2025-04-23T13:28:25.074Z] [INFO] Database service initialized
+[2025-04-23T13:28:26.111Z] [INFO] Database tables initialized
+[2025-04-23T13:28:26.112Z] [INFO] Database initialized successfully
+[2025-04-23T13:28:26.157Z] [INFO] Database tables initialized
+[2025-04-23T13:28:26.157Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:12.935Z] [INFO] Database service initialized
+[2025-04-23T13:31:12.935Z] [INFO] Database service initialized
+[2025-04-23T13:31:12.938Z] [INFO] Database service initialized
+[2025-04-23T13:31:12.938Z] [INFO] Database service initialized
+[2025-04-23T13:31:14.667Z] [INFO] Database tables initialized
+[2025-04-23T13:31:14.667Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:14.754Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:31:14.755Z] [INFO] Database tables initialized
+[2025-04-23T13:31:14.755Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:14.795Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:31:14.890Z] [INFO] Database tables initialized
+[2025-04-23T13:31:14.891Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:14.962Z] [INFO] Database tables initialized
+[2025-04-23T13:31:14.963Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:15.134Z] [INFO] Database service initialized
+[2025-04-23T13:31:15.439Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:31:15.439Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:31:15.981Z] [INFO] Database tables initialized
+[2025-04-23T13:31:15.982Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:24.608Z] [INFO] Database service initialized
+[2025-04-23T13:31:24.613Z] [INFO] Database service initialized
+[2025-04-23T13:31:25.325Z] [INFO] Database tables initialized
+[2025-04-23T13:31:25.325Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:25.325Z] [INFO] Comment save request payload: {"id":"rdfha","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"jiyeu","content":"new comment","author":"Playground User","quote":null,"timeStamp":1745415084580,"deleted":false,"type":"comment"}
+[2025-04-23T13:31:25.442Z] [INFO] Database tables initialized
+[2025-04-23T13:31:25.443Z] [INFO] Comment save request payload: {"id":"jiyeu","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":null,"content":"","author":"System","quote":"","timeStamp":1745415084582,"deleted":false,"type":"thread"}
+[2025-04-23T13:31:25.442Z] [INFO] Database initialized successfully
+[2025-04-23T13:31:27.207Z] [INFO] Comment save request payload: {"id":"vcisw","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":null,"content":"","author":"System","quote":"","timeStamp":1745415087184,"deleted":false,"type":"thread"}
+[2025-04-23T13:31:27.213Z] [INFO] Comment save request payload: {"id":"hbzku","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"vcisw","content":"new comment","author":"Playground User","quote":null,"timeStamp":1745415087183,"deleted":false,"type":"comment"}
+[2025-04-23T13:32:01.086Z] [INFO] Database service initialized
+[2025-04-23T13:32:01.086Z] [INFO] Database service initialized
+[2025-04-23T13:32:01.922Z] [INFO] Database tables initialized
+[2025-04-23T13:32:01.923Z] [INFO] Database initialized successfully
+[2025-04-23T13:32:02.186Z] [INFO] Database tables initialized
+[2025-04-23T13:32:02.186Z] [INFO] Database initialized successfully
+[2025-04-23T13:37:57.021Z] [INFO] Database service initialized
+[2025-04-23T13:37:57.021Z] [INFO] Database service initialized
+[2025-04-23T13:37:58.342Z] [INFO] Database tables initialized
+[2025-04-23T13:37:58.343Z] [INFO] Database initialized successfully
+[2025-04-23T13:37:58.348Z] [INFO] Database tables initialized
+[2025-04-23T13:37:58.348Z] [INFO] Database initialized successfully
+[2025-04-23T13:39:35.294Z] [INFO] Database service initialized
+[2025-04-23T13:39:35.295Z] [INFO] Database service initialized
+[2025-04-23T13:39:35.298Z] [INFO] Database service initialized
+[2025-04-23T13:39:35.298Z] [INFO] Database service initialized
+[2025-04-23T13:39:36.016Z] [INFO] Database tables initialized
+[2025-04-23T13:39:36.016Z] [INFO] Database initialized successfully
+[2025-04-23T13:39:36.070Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:39:36.070Z] [INFO] Database tables initialized
+[2025-04-23T13:39:36.070Z] [INFO] Database initialized successfully
+[2025-04-23T13:39:36.071Z] [INFO] Database tables initialized
+[2025-04-23T13:39:36.071Z] [INFO] Database initialized successfully
+[2025-04-23T13:39:36.130Z] [INFO] Database tables initialized
+[2025-04-23T13:39:36.130Z] [INFO] Database initialized successfully
+[2025-04-23T13:39:36.168Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:39:36.220Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:39:36.736Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T13:39:48.915Z] [INFO] Database service initialized
+[2025-04-23T13:39:48.916Z] [INFO] Database service initialized
+[2025-04-23T13:39:49.654Z] [INFO] Database tables initialized
+[2025-04-23T13:39:49.654Z] [INFO] Database initialized successfully
+[2025-04-23T13:39:49.661Z] [INFO] Database tables initialized
+[2025-04-23T13:39:49.661Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:28.912Z] [INFO] Database service initialized
+[2025-04-23T14:02:28.914Z] [INFO] Database service initialized
+[2025-04-23T14:02:28.932Z] [INFO] Database service initialized
+[2025-04-23T14:02:28.932Z] [INFO] Database service initialized
+[2025-04-23T14:02:30.543Z] [INFO] Database tables initialized
+[2025-04-23T14:02:30.607Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:02:30.543Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:30.608Z] [INFO] Database tables initialized
+[2025-04-23T14:02:30.608Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:30.608Z] [INFO] Database tables initialized
+[2025-04-23T14:02:30.608Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:30.609Z] [INFO] Database tables initialized
+[2025-04-23T14:02:30.609Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:30.645Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:02:30.671Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:02:31.191Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:02:37.103Z] [INFO] Database service initialized
+[2025-04-23T14:02:37.614Z] [INFO] Database tables initialized
+[2025-04-23T14:02:37.614Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:41.821Z] [INFO] Database service initialized
+[2025-04-23T14:02:41.824Z] [INFO] Database service initialized
+[2025-04-23T14:02:42.355Z] [INFO] Database tables initialized
+[2025-04-23T14:02:42.355Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:42.356Z] [INFO] Comment save request payload: {"id":"pqnsw","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"daaal","content":"question","author":"Playground User","quote":null,"timeStamp":1745416961799,"deleted":false,"type":"comment"}
+[2025-04-23T14:02:42.379Z] [INFO] Database tables initialized
+[2025-04-23T14:02:42.379Z] [INFO] Database initialized successfully
+[2025-04-23T14:02:42.379Z] [INFO] Comment save request payload: {"id":"daaal","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":null,"content":"","author":"System","quote":"chance","timeStamp":1745416961801,"deleted":false,"type":"thread"}
+[2025-04-23T14:03:02.879Z] [INFO] Comment save request payload: {"id":"zskqu","noteId":"63f3ae28-78da-4ff8-b35b-a33a91afe023","threadId":"daaal","content":"new question","author":"Playground User","quote":null,"timeStamp":1745416982854,"deleted":false,"type":"comment"}
+[2025-04-23T14:03:07.333Z] [INFO] Database service initialized
+[2025-04-23T14:03:07.337Z] [INFO] Database service initialized
+[2025-04-23T14:03:07.936Z] [INFO] Database tables initialized
+[2025-04-23T14:03:07.936Z] [INFO] Database initialized successfully
+[2025-04-23T14:03:07.984Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:03:07.985Z] [INFO] Database tables initialized
+[2025-04-23T14:03:08.020Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:03:07.985Z] [INFO] Database initialized successfully
+[2025-04-23T14:03:08.020Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:03:08.400Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:04:09.980Z] [INFO] Database service initialized
+[2025-04-23T14:04:10.741Z] [INFO] Database tables initialized
+[2025-04-23T14:04:10.741Z] [INFO] Database initialized successfully
+[2025-04-23T14:04:10.781Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:04:10.822Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:04:19.256Z] [INFO] Database service initialized
+[2025-04-23T14:04:19.256Z] [INFO] Database service initialized
+[2025-04-23T14:04:19.259Z] [INFO] Database service initialized
+[2025-04-23T14:04:19.259Z] [INFO] Database service initialized
+[2025-04-23T14:04:19.792Z] [INFO] Database tables initialized
+[2025-04-23T14:04:19.792Z] [INFO] Database initialized successfully
+[2025-04-23T14:04:19.829Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:04:19.832Z] [INFO] Database tables initialized
+[2025-04-23T14:04:19.833Z] [INFO] Database initialized successfully
+[2025-04-23T14:04:19.866Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:04:19.892Z] [INFO] Database initialized successfully
+[2025-04-23T14:04:19.893Z] [INFO] Database initialized successfully
+[2025-04-23T14:04:19.929Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:04:19.892Z] [INFO] Database tables initialized
+[2025-04-23T14:04:19.892Z] [INFO] Database tables initialized
+[2025-04-23T14:04:20.449Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:09:24.576Z] [INFO] Database service initialized
+[2025-04-23T14:09:24.576Z] [INFO] Database service initialized
+[2025-04-23T14:09:25.331Z] [INFO] Database tables initialized
+[2025-04-23T14:09:25.343Z] [INFO] Database tables initialized
+[2025-04-23T14:09:25.345Z] [INFO] Database initialized successfully
+[2025-04-23T14:09:25.336Z] [INFO] Database initialized successfully
+[2025-04-23T14:13:30.895Z] [INFO] Database service initialized
+[2025-04-23T14:13:30.895Z] [INFO] Database service initialized
+[2025-04-23T14:13:31.762Z] [INFO] Database tables initialized
+[2025-04-23T14:13:31.762Z] [INFO] Database initialized successfully
+[2025-04-23T14:13:31.770Z] [INFO] Database tables initialized
+[2025-04-23T14:13:31.770Z] [INFO] Database initialized successfully
+[2025-04-23T14:18:54.733Z] [INFO] Database service initialized
+[2025-04-23T14:18:54.734Z] [INFO] Database service initialized
+[2025-04-23T14:18:54.736Z] [INFO] Database service initialized
+[2025-04-23T14:18:54.736Z] [INFO] Database service initialized
+[2025-04-23T14:18:55.539Z] [INFO] Database tables initialized
+[2025-04-23T14:18:55.602Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:18:55.540Z] [INFO] Database initialized successfully
+[2025-04-23T14:18:55.602Z] [INFO] Database tables initialized
+[2025-04-23T14:18:55.603Z] [INFO] Database initialized successfully
+[2025-04-23T14:18:55.638Z] [INFO] Loading note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:18:55.638Z] [INFO] Database tables initialized
+[2025-04-23T14:18:55.639Z] [INFO] Database initialized successfully
+[2025-04-23T14:18:55.639Z] [INFO] Database tables initialized
+[2025-04-23T14:18:55.639Z] [INFO] Database initialized successfully
+[2025-04-23T14:18:56.220Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:18:56.225Z] [INFO] Successfully loaded note with ID: 63f3ae28-78da-4ff8-b35b-a33a91afe023
+[2025-04-23T14:19:01.722Z] [INFO] Database service initialized
+[2025-04-23T14:19:03.639Z] [INFO] Database tables initialized
+[2025-04-23T14:19:03.639Z] [INFO] Database initialized successfully
+[2025-04-23T14:19:35.000Z] [INFO] Database service initialized
+[2025-04-23T14:19:35.663Z] [INFO] Database tables initialized
+[2025-04-23T14:19:35.663Z] [INFO] Database initialized successfully
+[2025-04-23T14:19:35.929Z] [INFO] Created new note with database-generated ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:19:37.149Z] [INFO] Database service initialized
+[2025-04-23T14:19:37.151Z] [INFO] Database service initialized
+[2025-04-23T14:19:37.172Z] [INFO] Database service initialized
+[2025-04-23T14:19:37.181Z] [INFO] Database service initialized
+[2025-04-23T14:19:37.845Z] [INFO] Database initialized successfully
+[2025-04-23T14:19:37.845Z] [INFO] Database tables initialized
+[2025-04-23T14:19:37.905Z] [INFO] Database tables initialized
+[2025-04-23T14:19:37.905Z] [INFO] Database initialized successfully
+[2025-04-23T14:19:38.072Z] [INFO] Database tables initialized
+[2025-04-23T14:19:38.072Z] [INFO] Database initialized successfully
+[2025-04-23T14:19:38.115Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:19:38.115Z] [INFO] Database initialized successfully
+[2025-04-23T14:19:38.150Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:19:38.115Z] [INFO] Database tables initialized
+[2025-04-23T14:19:38.179Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:19:38.832Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:19:43.691Z] [INFO] Database service initialized
+[2025-04-23T14:19:45.179Z] [INFO] Database tables initialized
+[2025-04-23T14:19:45.179Z] [INFO] Database initialized successfully
+[2025-04-23T14:20:01.725Z] [INFO] Comment save request payload: {"id":"bwebb","noteId":"cf03cf8c-eab7-4292-867a-869ca183395b","threadId":null,"content":"new comment","author":"Playground User","quote":"note","timeStamp":1745418001700,"deleted":false,"type":"comment"}
+[2025-04-23T14:21:06.588Z] [INFO] Database service initialized
+[2025-04-23T14:21:06.588Z] [INFO] Database service initialized
+[2025-04-23T14:21:06.588Z] [INFO] Database service initialized
+[2025-04-23T14:21:06.588Z] [INFO] Database service initialized
+[2025-04-23T14:21:07.398Z] [INFO] Database tables initialized
+[2025-04-23T14:21:07.402Z] [INFO] Database tables initialized
+[2025-04-23T14:21:07.402Z] [INFO] Database initialized successfully
+[2025-04-23T14:21:07.399Z] [INFO] Database initialized successfully
+[2025-04-23T14:21:07.403Z] [INFO] Database tables initialized
+[2025-04-23T14:21:07.403Z] [INFO] Database initialized successfully
+[2025-04-23T14:21:07.410Z] [INFO] Database tables initialized
+[2025-04-23T14:21:07.410Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:28.575Z] [INFO] Database service initialized
+[2025-04-23T14:26:28.576Z] [INFO] Database service initialized
+[2025-04-23T14:26:28.583Z] [INFO] Database service initialized
+[2025-04-23T14:26:28.583Z] [INFO] Database service initialized
+[2025-04-23T14:26:29.968Z] [INFO] Database tables initialized
+[2025-04-23T14:26:29.968Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:29.970Z] [INFO] Database tables initialized
+[2025-04-23T14:26:29.971Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:30.033Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:30.033Z] [INFO] Database tables initialized
+[2025-04-23T14:26:30.033Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:30.034Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:30.034Z] [INFO] Database tables initialized
+[2025-04-23T14:26:30.072Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:30.141Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:30.626Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:33.819Z] [INFO] Database service initialized
+[2025-04-23T14:26:33.820Z] [INFO] Database service initialized
+[2025-04-23T14:26:33.821Z] [INFO] Database service initialized
+[2025-04-23T14:26:33.821Z] [INFO] Database service initialized
+[2025-04-23T14:26:34.479Z] [INFO] Database tables initialized
+[2025-04-23T14:26:34.480Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:34.522Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:34.522Z] [INFO] Database tables initialized
+[2025-04-23T14:26:34.522Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:34.562Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:34.562Z] [INFO] Database tables initialized
+[2025-04-23T14:26:34.562Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:34.562Z] [INFO] Database tables initialized
+[2025-04-23T14:26:34.562Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:34.617Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:35.139Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:37.390Z] [INFO] Database service initialized
+[2025-04-23T14:26:37.392Z] [INFO] Database service initialized
+[2025-04-23T14:26:37.434Z] [INFO] Database service initialized
+[2025-04-23T14:26:37.446Z] [INFO] Database service initialized
+[2025-04-23T14:26:38.098Z] [INFO] Database tables initialized
+[2025-04-23T14:26:38.155Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:38.098Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:38.156Z] [INFO] Database tables initialized
+[2025-04-23T14:26:38.195Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:38.195Z] [INFO] Database tables initialized
+[2025-04-23T14:26:38.195Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:38.195Z] [INFO] Database tables initialized
+[2025-04-23T14:26:38.156Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:38.195Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:38.203Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:38.617Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:41.497Z] [INFO] Database service initialized
+[2025-04-23T14:26:42.233Z] [INFO] Database tables initialized
+[2025-04-23T14:26:42.233Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:42.274Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:42.329Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:45.244Z] [INFO] Database service initialized
+[2025-04-23T14:26:45.245Z] [INFO] Database service initialized
+[2025-04-23T14:26:45.245Z] [INFO] Database service initialized
+[2025-04-23T14:26:45.932Z] [INFO] Database tables initialized
+[2025-04-23T14:26:45.932Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:45.972Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:45.975Z] [INFO] Database tables initialized
+[2025-04-23T14:26:45.975Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:46.031Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:46.082Z] [INFO] Database tables initialized
+[2025-04-23T14:26:46.083Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:48.054Z] [INFO] Database service initialized
+[2025-04-23T14:26:48.672Z] [INFO] Database tables initialized
+[2025-04-23T14:26:48.672Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:48.719Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:48.778Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:57.413Z] [INFO] Database service initialized
+[2025-04-23T14:26:58.055Z] [INFO] Database tables initialized
+[2025-04-23T14:26:58.056Z] [INFO] Database initialized successfully
+[2025-04-23T14:26:58.094Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:26:58.154Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:04.098Z] [INFO] Database service initialized
+[2025-04-23T14:35:04.099Z] [INFO] Database service initialized
+[2025-04-23T14:35:04.099Z] [INFO] Database service initialized
+[2025-04-23T14:35:04.100Z] [INFO] Database service initialized
+[2025-04-23T14:35:04.105Z] [INFO] Database service initialized
+[2025-04-23T14:35:04.105Z] [INFO] Database service initialized
+[2025-04-23T14:35:05.525Z] [INFO] Database tables initialized
+[2025-04-23T14:35:05.526Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:05.527Z] [INFO] Database tables initialized
+[2025-04-23T14:35:05.527Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:05.528Z] [INFO] Database tables initialized
+[2025-04-23T14:35:05.528Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:05.583Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:05.584Z] [INFO] Database tables initialized
+[2025-04-23T14:35:05.584Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:05.622Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:05.689Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:05.734Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:05.881Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:05.915Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:06.140Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:06.189Z] [INFO] Database tables initialized
+[2025-04-23T14:35:06.189Z] [INFO] Database tables initialized
+[2025-04-23T14:35:06.189Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:06.189Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:06.232Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:07.184Z] [INFO] Database service initialized
+[2025-04-23T14:35:07.184Z] [INFO] Database service initialized
+[2025-04-23T14:35:07.187Z] [INFO] Database service initialized
+[2025-04-23T14:35:07.193Z] [INFO] Database service initialized
+[2025-04-23T14:35:07.842Z] [INFO] Database tables initialized
+[2025-04-23T14:35:07.842Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:07.855Z] [INFO] Database tables initialized
+[2025-04-23T14:35:07.855Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:07.909Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:07.913Z] [INFO] Database tables initialized
+[2025-04-23T14:35:07.913Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:07.913Z] [INFO] Database tables initialized
+[2025-04-23T14:35:07.913Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:08.527Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:57.363Z] [INFO] Database service initialized
+[2025-04-23T14:35:58.071Z] [INFO] Database tables initialized
+[2025-04-23T14:35:58.072Z] [INFO] Database initialized successfully
+[2025-04-23T14:35:58.120Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:35:58.161Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:17.300Z] [INFO] Database service initialized
+[2025-04-23T14:38:17.300Z] [INFO] Database service initialized
+[2025-04-23T14:38:17.304Z] [INFO] Database service initialized
+[2025-04-23T14:38:17.304Z] [INFO] Database service initialized
+[2025-04-23T14:38:18.119Z] [INFO] Database tables initialized
+[2025-04-23T14:38:18.120Z] [INFO] Database tables initialized
+[2025-04-23T14:38:18.120Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:18.120Z] [INFO] Database tables initialized
+[2025-04-23T14:38:18.121Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:18.119Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:18.182Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:18.187Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:18.187Z] [INFO] Database tables initialized
+[2025-04-23T14:38:18.222Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:18.288Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:18.791Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:23.916Z] [INFO] Database service initialized
+[2025-04-23T14:38:24.537Z] [INFO] Database tables initialized
+[2025-04-23T14:38:24.538Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:31.537Z] [INFO] Database service initialized
+[2025-04-23T14:38:31.539Z] [INFO] Database service initialized
+[2025-04-23T14:38:31.551Z] [INFO] Database service initialized
+[2025-04-23T14:38:31.560Z] [INFO] Database service initialized
+[2025-04-23T14:38:32.190Z] [INFO] Database tables initialized
+[2025-04-23T14:38:32.190Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:32.232Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:32.233Z] [INFO] Database tables initialized
+[2025-04-23T14:38:32.233Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:32.233Z] [INFO] Database tables initialized
+[2025-04-23T14:38:32.233Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:32.292Z] [INFO] Database tables initialized
+[2025-04-23T14:38:32.335Z] [INFO] Loading note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:32.292Z] [INFO] Database initialized successfully
+[2025-04-23T14:38:32.390Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b
+[2025-04-23T14:38:32.867Z] [INFO] Successfully loaded note with ID: cf03cf8c-eab7-4292-867a-869ca183395b

@@ -1,5 +1,5 @@
 {
-  "name": "nice-try-news",
+  "name": "conspecto",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,19 +9,55 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.0",
+    "@lexical/clipboard": "0.30.0",
+    "@lexical/code": "0.30.0",
+    "@lexical/file": "0.30.0",
+    "@lexical/hashtag": "0.30.0",
+    "@lexical/link": "0.30.0",
+    "@lexical/list": "0.30.0",
+    "@lexical/mark": "0.30.0",
+    "@lexical/overflow": "0.30.0",
+    "@lexical/plain-text": "0.30.0",
+    "@lexical/react": "^0.30.0",
+    "@lexical/rich-text": "0.30.0",
+    "@lexical/selection": "0.30.0",
+    "@lexical/table": "0.30.0",
+    "@lexical/utils": "0.30.0",
+    "@types/pg": "^8.11.13",
+    "@types/uuid": "^10.0.0",
+    "estree": "link:prettier/plugins/estree",
+    "katex": "^0.16.22",
+    "lexical": "^0.30.0",
+    "lodash-es": "^4.17.21",
+    "next": "15.3.1-canary.15",
+    "pg": "^8.14.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.1"
+    "react-error-boundary": "^3.1.4",
+    "uuid": "^11.1.0",
+    "y-websocket": "^3.0.0",
+    "yjs": ">=13.5.42"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@babel/plugin-transform-flow-strip-types": "^7.24.7",
+    "@babel/preset-react": "^7.24.7",
+    "@eslint/eslintrc": "^3",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@tailwindcss/postcss": "^4",
+    "@types/lodash-es": "^4.14.182",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
-    "@eslint/eslintrc": "^3"
+    "prettier": "^2.8.8",
+    "rollup-plugin-copy": "^3.5.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vite": "^5.2.11",
+    "vite-plugin-static-copy": "^2.3.0"
   }
 }
