@@ -62,7 +62,7 @@ import {Dispatch, useEffect} from 'react';
 
 import {useToolbarState} from '../../context/ToolbarContext';
 import {sanitizeUrl} from '../../utils/url';
-import {INSERT_INLINE_COMMAND} from '../CommentPlugin';
+import {INSERT_INLINE_COMMAND} from '../QuestionPlugin';
 import {
   clearFormatting,
   formatBulletList,

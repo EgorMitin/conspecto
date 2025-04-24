@@ -1,5 +1,4 @@
-
-import type {LexicalEditor} from 'lexical';
+import type {LexicalEditor, SerializedLexicalNode} from 'lexical';
 import type {JSX} from 'react';
 
 import {$createCodeNode, $isCodeNode} from '@lexical/code';
@@ -41,6 +40,21 @@ import {
   SPEECH_TO_TEXT_COMMAND,
   SUPPORT_SPEECH_RECOGNITION,
 } from '../SpeechToTextPlugin';
+import { getUser } from '../QuestionPlugin';
+import type { SerializedEditorState } from 'lexical';
+
+import {
+  FiMic,
+  FiUpload,
+  FiDownload,
+  FiSave,
+  FiShare2,
+  FiTrash2,
+  FiLoader
+} from 'react-icons/fi';
+
+import type {Note} from '@/types/Note';
+
 
 // Debounce function to prevent too many API calls
 function debounce(func: Function, wait: number) {
@@ -65,13 +79,10 @@ async function saveEditorContentToDb(
 ): Promise<{success: boolean; id?: string; message?: string}> {
   try {
     // Convert editor state to markdown for storing in DB
-    let content = '';
-    editor.getEditorState().read(() => {
-      content = $convertToMarkdownString(PLAYGROUND_TRANSFORMERS);
-    });
+    let content = editor.getEditorState().toJSON();
 
     // If content is empty, don't save
-    if (!content.trim()) {
+    if (!content) {
       return { success: false, message: 'Content is empty' };
     }
 
@@ -80,7 +91,7 @@ async function saveEditorContentToDb(
       id: noteId, // Always use the ID from the route params
       title: title || 'Untitled Note',
       content,
-      userId: 'anonymous' // Use anonymous user for now
+      userId: getUser()
     };
 
     // Send to API
@@ -135,25 +146,6 @@ async function shareDoc(doc: SerializedDocument): Promise<void> {
   await window.navigator.clipboard.writeText(newUrl);
 }
 
-/**
- * Load note from database using the path parameter
- */
-async function loadNoteFromDb(noteId: string): Promise<{success: boolean; note?: any}> {
-  try {
-    const response = await fetch(`/api/notes/load/${noteId}`);
-    const data = await response.json();
-    
-    if (response.ok && data.note) {
-      return { success: true, note: data.note };
-    }
-    
-    return { success: false };
-  } catch (error) {
-    console.error('Error loading note:', error);
-    return { success: false };
-  }
-}
-
 export default function ActionsPlugin({
   isRichText,
   shouldPreserveNewLinesInMarkdown,
@@ -172,16 +164,13 @@ export default function ActionsPlugin({
   const {isCollabActive} = useCollaborationContext();
   const params = useParams();
   const noteId = params.id as string; // Get ID from route params
-  const lastSavedContentRef = useRef<string>('');
+  const lastSavedContentRef = useRef<SerializedEditorState<SerializedLexicalNode> | null>(null);
   const [noteTitle, setNoteTitle] = useState('Untitled Note');
   
   // Create a debounced save function to avoid too many saves
   const debouncedSave = useCallback(
     debounce(async (noteId: string) => {
-      let currentContent = '';
-      editor.getEditorState().read(() => {
-        currentContent = $convertToMarkdownString(PLAYGROUND_TRANSFORMERS);
-      });
+      let currentContent = editor.getEditorState().toJSON();
       
       // Don't save if content hasn't changed since last save
       if (currentContent === lastSavedContentRef.current) {
@@ -205,39 +194,27 @@ export default function ActionsPlugin({
 
   // Load note from database if ID is present
   useEffect(() => {
-    if (noteId) {
-      loadNoteFromDb(noteId).then(({success, note}) => {
-        if (success && note) {
-          // Set title
-          setNoteTitle(note.title);
-          
-          // Set content
-          editor.update(() => {
-            const root = $getRoot();
-            root.clear();
-            
-            // Import markdown content
-            $convertFromMarkdownString(
-              note.content,
-              PLAYGROUND_TRANSFORMERS,
-              undefined,
-              shouldPreserveNewLinesInMarkdown,
-            );
-            
-            // Save initial content reference
-            lastSavedContentRef.current = note.content;
-          });
-          
-          showFlashMessage('Note loaded');
-        }
-      });
-    }
-  }, [noteId, editor, shouldPreserveNewLinesInMarkdown, showFlashMessage]);
+    if (!noteId) return;
+
+    // Show loading indicator immediately
+    setIsSaving(true); // Reuse saving state or create a new loading state
+
+    // Parse the editor state outside the update callback
+    const editorState = editor.parseEditorState(note.content);
+
+    // Apply changes in a single update
+    editor.update(() => {
+      const root = $getRoot();
+      root.clear();
+      editor.setEditorState(editorState);
+      lastSavedContentRef.current = editorState.toJSON();
+    });
+
+    setNoteTitle(note.title);
+    showFlashMessage('Note loaded');
+  }, [noteId, editor]);
 
   useEffect(() => {
-    if (INITIAL_SETTINGS.isCollab) {
-      return;
-    }
     docFromHash(window.location.hash).then((doc) => {
       if (doc && doc.source === 'Playground') {
         editor.setEditorState(editorStateFromSerializedDocument(editor, doc));
@@ -340,7 +317,7 @@ export default function ActionsPlugin({
     
     if (result.success) {
       editor.getEditorState().read(() => {
-        lastSavedContentRef.current = $convertToMarkdownString(PLAYGROUND_TRANSFORMERS);
+        lastSavedContentRef.current = editor.getEditorState().toJSON();
       });
       showFlashMessage('Note saved successfully');
     } else {
@@ -366,7 +343,7 @@ export default function ActionsPlugin({
           aria-label={`${
             isSpeechToText ? 'Enable' : 'Disable'
           } speech to text`}>
-          <i className="mic" />
+          <FiMic />
         </button>
       )}
       <button
@@ -374,7 +351,7 @@ export default function ActionsPlugin({
         onClick={() => importFile(editor)}
         title="Import"
         aria-label="Import editor state from JSON">
-        <i className="import" />
+        <FiUpload />
       </button>
 
       <button
@@ -387,7 +364,7 @@ export default function ActionsPlugin({
         }
         title="Export"
         aria-label="Export editor state to JSON">
-        <i className="export" />
+        <FiDownload />
       </button>
       
       {/* Save button */}
@@ -397,7 +374,7 @@ export default function ActionsPlugin({
         disabled={isEditorEmpty || isSaving || !noteId}
         title="Save"
         aria-label="Save note to database">
-        <i className={isSaving ? 'loading' : 'save'} />
+      {isSaving ? <FiLoader className="icon-spin" /> : <FiSave />}
       </button>
       
       <button
@@ -415,7 +392,7 @@ export default function ActionsPlugin({
         }
         title="Share"
         aria-label="Share link to current editor state">
-        <i className="share" />
+      <FiShare2 />
       </button>
       <button
         className="action-button clear"
@@ -427,7 +404,7 @@ export default function ActionsPlugin({
         }}
         title="Clear"
         aria-label="Clear editor contents">
-        <i className="clear" />
+      <FiTrash2 />
       </button>
       {modal}
     </div>

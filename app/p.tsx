@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Home() {
+function Home() {
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
 
@@ -55,3 +55,27 @@ export default function Home() {
     </div>
   );
 }
+
+
+
+/**
+ * Conspecto: Your Brain’s Backup Plan
+ * Description:
+Remember that thing you kinda learned but forgot right before the test, meeting, or life moment?
+Yeah. Us too.
+Conspecto turns every note into a trap — for forgetting. Add smart question cards while you type, then review them when your brain’s most likely to fail you. AI and spaced repetition do the heavy lifting, so you can stop relearning the same stuff 7 times.
+
+Slogan:
+“You don’t forget. You just never review it right.”
+“The plot twist your brain didn’t see coming.”
+
+
+Title:
+Conspecto: Notes That Fight Back
+
+Description:
+Regular notes just sit there. Conspecto’s notes clap back.
+They quiz you. They question you. They whisper “Did you really get that?”
+Built for brains that wander and minds that scroll, Conspecto’s active notes and AI-generated questions turn passive reading into real memory — using spaced repetition that actually works.
+It’s like flashcards, if flashcards had brains and an attitude.
+ */

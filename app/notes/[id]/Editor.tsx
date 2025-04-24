@@ -1,4 +1,5 @@
 'use client';
+
 import dynamic from 'next/dynamic';
 
 // Dynamically import the Editor with SSR disabled
@@ -7,9 +8,8 @@ const EditorApp = dynamic(
   { ssr: false }
 );
 
-
-export default function Editor() {
+export default async function Editor({content}: {content: string}) {
   return (
-    <EditorApp />
+    <EditorApp content={content} />
   );
 }

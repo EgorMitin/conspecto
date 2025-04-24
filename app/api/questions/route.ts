@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import databaseService, { CommentData } from '@/services/DatabaseService';
+import databaseService from '@/services/DatabaseService';
 import { logger } from '@/utils/logger';
 import { initializeDatabase } from '@/config/dbInit';
+import type { Question } from '@/types/Question';
 
 // Initialize database on first request
 let isInitialized = false;
@@ -17,8 +18,8 @@ async function ensureDbInitialized() {
 }
 
 /**
- * POST /api/comments
- * Saves a comment to the database
+ * POST /api/questions
+ * Saves a question to the database
  */
 export async function POST(request: NextRequest) {
   try {
@@ -29,14 +30,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Debug the incoming payload
-    logger.info(`Comment save request payload: ${JSON.stringify(body)}`);
+    logger.debug(`Question save request payload: ${JSON.stringify(body)}`);
     
     // Validate required fields with more detailed error message
     const missingFields = [];
     if (!body.id) missingFields.push('id');
     if (!body.noteId) missingFields.push('noteId');
-    if (body.type !== 'thread' && !body.content) missingFields.push('content');
-    if (!body.type) missingFields.push('type');
+    if (!body.userId) missingFields.push('userId');
+    if (!body.answer) missingFields.push('answer');
+    if (!body.question) missingFields.push('question');
+    if (!body.timeStamp) missingFields.push('timeStamp');
+    if (!body.history) missingFields.push('history');
     
     if (missingFields.length > 0) {
       const errorMsg = `Required fields missing: ${missingFields.join(', ')}`;
@@ -47,41 +51,41 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Special handling for thread type comments which might not have content
-    const content = body.type === 'thread' ? (body.content || '') : body.content;
-    
-    // Create comment data object
-    const commentData: CommentData = {
+    // Create question data object
+    const questionData: Question = {
       id: body.id,
       noteId: body.noteId,
-      threadId: body.threadId || null,
-      content: content,
-      author: body.author || 'Anonymous',
-      quote: body.quote || null,
-      timeStamp: body.timeStamp || Date.now(),
-      deleted: body.deleted || false,
-      type: body.type
+      userId: body.userId,
+      answer: body.answer,
+      question: body.question,
+      timeStamp: body.timeStamp,
+      repetition: body.repetition,
+      interval: body.interval,
+      easeFactor: body.easeFactor,
+      nextReview: body.nextReview,
+      lastReview: body.lastReview,
+      history: body.history,
     };
     
-    // Save comment to database
-    const savedComment = await databaseService.saveComment(commentData);
+    // Save question to database
+    const savedQuestion = await databaseService.saveQuestion(questionData);
     
-    // Return saved comment
+    // Return saved question
     return NextResponse.json({
       success: true,
-      message: 'Comment saved successfully',
-      comment: savedComment
+      message: 'Question saved successfully',
+      comment: savedQuestion
     }, { status: 200 });
     
   } catch (error) {
     // Log error with more details
-    logger.error(`Error saving comment: ${(error as Error).message}`, error);
+    logger.error(`Error saving question: ${(error as Error).message}`, error);
     
     // Return error response
     return NextResponse.json(
       { 
         success: false, 
-        message: 'Failed to save comment',
+        message: 'Failed to save question',
         error: (error as Error).message
       }, 
       { status: 500 }
@@ -90,31 +94,31 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * DELETE /api/comments?id={id}
- * Deletes a comment
+ * DELETE /api/questions?id={id}
+ * Deletes a question
  */
 export async function DELETE(request: NextRequest) {
   try {
     // Initialize database if not already done
     await ensureDbInitialized();
     
-    // Get comment ID from query parameters
+    // Get question ID from query parameters
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     
     if (!id) {
       return NextResponse.json(
-        { error: 'Comment ID is required' }, 
+        { error: 'Question ID is required' }, 
         { status: 400 }
       );
     }
     
-    // Delete comment
-    const success = await databaseService.deleteComment(id);
+    // Delete question
+    const success = await databaseService.deleteQuestion(id);
     
     if (!success) {
       return NextResponse.json(
-        { error: 'Comment not found' }, 
+        { error: 'Question not found' }, 
         { status: 404 }
       );
     }
@@ -122,18 +126,18 @@ export async function DELETE(request: NextRequest) {
     // Return success
     return NextResponse.json({
       success: true,
-      message: 'Comment deleted successfully'
+      message: 'Question deleted successfully'
     }, { status: 200 });
     
   } catch (error) {
     // Log error
-    logger.error('Error deleting comment', error);
+    logger.error('Error deleting question', error);
     
     // Return error response
     return NextResponse.json(
       { 
         success: false, 
-        message: 'Failed to delete comment',
+        message: 'Failed to delete question',
         error: (error as Error).message
       }, 
       { status: 500 }
@@ -142,8 +146,8 @@ export async function DELETE(request: NextRequest) {
 }
 
 /**
- * GET /api/comments?noteId={noteId}
- * Gets all comments for a note
+ * GET /api/questions?noteId={noteId}
+ * Gets all questions for a note
  */
 export async function GET(request: NextRequest) {
   try {
@@ -161,24 +165,24 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Get comments for note
-    const comments = await databaseService.getCommentsByNoteId(noteId);
+    // Get questions for note
+    const questions = await databaseService.getQuestionsByNoteId(noteId);
     
-    // Return comments
+    // Return questions
     return NextResponse.json({
       success: true,
-      comments
+      questions
     }, { status: 200 });
     
   } catch (error) {
     // Log error
-    logger.error('Error getting comments', error);
+    logger.error('Error getting questions', error);
     
     // Return error response
     return NextResponse.json(
       { 
         success: false, 
-        message: 'Failed to get comments',
+        message: 'Failed to get questions',
         error: (error as Error).message
       }, 
       { status: 500 }

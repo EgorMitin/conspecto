@@ -1,43 +1,28 @@
 import { Pool, PoolClient } from 'pg';
 import { logger } from '../utils/logger';
+import { Question } from '@/types/Question';
 
 /**
  * Interface for editor content data
  */
 export interface EditorContent {
-  id?: string;
+  id: string;
   title: string;
   content: string;
-  userId?: string;
+  userId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 /**
- * Interface for comment data
- */
-export interface CommentData {
-  id: string;
-  noteId: string;
-  threadId?: string;
-  content: string;
-  author: string;
-  quote?: string;
-  timeStamp: number;
-  deleted?: boolean;
-  type: 'comment' | 'thread';
-}
-
-/**
  * Database Service - Singleton pattern implementation
- * Handles all database interactions with PostgreSQL
+ * Handles all database interactions
  */
 export class DatabaseService {
   private static instance: DatabaseService;
   private pool: Pool | null = null;
   
   private constructor() {
-    // Private constructor to enforce singleton pattern
   }
 
   /**
@@ -57,12 +42,11 @@ export class DatabaseService {
     try {
       this.pool = new Pool({
         connectionString,
-        max: 20, // Maximum number of clients in the pool
-        idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
-        connectionTimeoutMillis: 2000, // How long to wait for a connection to become available
+        max: 20,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 2000,
       });
 
-      // Test connection
       this.pool.on('error', (err) => {
         logger.error('Unexpected error on idle PostgreSQL client', err);
       });
@@ -104,25 +88,28 @@ export class DatabaseService {
         );
       `);
       
-      // Create comments table if it doesn't exist
+      // Create questions table if it doesn't exist
       await client.query(`
-        CREATE TABLE IF NOT EXISTS comments (
+        CREATE TABLE IF NOT EXISTS questions (
           id VARCHAR(255) PRIMARY KEY,
           note_id UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
-          thread_id VARCHAR(255),
-          content TEXT NOT NULL,
-          author VARCHAR(255) NOT NULL,
-          quote TEXT,
+          user_id VARCHAR(255),
+          question TEXT NOT NULL,
+          answer TEXT,
           time_stamp BIGINT NOT NULL,
-          deleted BOOLEAN DEFAULT FALSE,
-          type VARCHAR(20) NOT NULL,
+          repetition INTEGER DEFAULT 0,
+          interval INTEGER DEFAULT 0,
+          ease_factor FLOAT DEFAULT 2.5,
+          next_review TIMESTAMP WITH TIME ZONE,
+          last_review TIMESTAMP WITH TIME ZONE,
+          history JSONB,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           CONSTRAINT fk_note FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
         );
       `);
       
       await client.query('COMMIT');
-      logger.info('Database tables initialized');
+      logger.debug('Database tables initialized');
     } catch (error) {
       await client.query('ROLLBACK');
       logger.error('Failed to create database tables', error);
@@ -182,7 +169,7 @@ export class DatabaseService {
     const client = await this.getClient();
     try {
       const { rows } = await client.query(
-        `SELECT id, title, content, user_id as "userId", created_at as "createdAt", updated_at as "updatedAt" 
+        `SELECT id, title, content, user_id as "userId", created_at as "createdAt", updated_at as "updatedAt"
          FROM notes 
          WHERE id = $1`,
         [id]
@@ -204,7 +191,7 @@ export class DatabaseService {
     const client = await this.getClient();
     try {
       const { rows } = await client.query(
-        `SELECT id, title, content, user_id as "userId", created_at as "createdAt", updated_at as "updatedAt" 
+        `SELECT id, title, content, user_id as "userId", created_at as "createdAt", updated_at as "updatedAt"
          FROM notes 
          WHERE user_id = $1
          ORDER BY updated_at DESC`,
@@ -221,47 +208,50 @@ export class DatabaseService {
   }
 
   /**
-   * Save a comment to the database
+   * Save a question to the database
    */
-  public async saveComment(comment: CommentData): Promise<CommentData> {
+  public async saveQuestion(question: Question): Promise<Question> {
     const client = await this.getClient();
     try {
       await client.query('BEGIN');
       
-      // Check if the comment already exists
-      const existingComment = await client.query(
-        `SELECT id FROM comments WHERE id = $1`,
-        [comment.id]
+      // Check if the question already exists
+      const existingQuestion = await client.query(
+        `SELECT id FROM questions WHERE id = $1`,
+        [question.id]
       );
       
-      if (existingComment.rows.length > 0) {
-        // Update existing comment
+      if (existingQuestion.rows.length > 0) {
+        // Update existing question
         const { rows } = await client.query(
-          `UPDATE comments 
-           SET content = $1, deleted = $2
-           WHERE id = $3
-           RETURNING id, note_id as "noteId", thread_id as "threadId", content, author, quote, time_stamp as "timeStamp", deleted, type`,
-          [comment.content, comment.deleted || false, comment.id]
+          `UPDATE questions
+           SET question = $1
+           WHERE id = $2
+           RETURNING id, note_id as "noteId", user_id as "userId", question, answer, time_stamp as "timeStamp", repetition, interval, ease_factor as "easeFactor", next_review as "nextReview", last_review as "lastReview", history`,
+          [question.question, question.id]
         );
         
         await client.query('COMMIT');
         return rows[0];
       } else {
-        // Create new comment
+        // Create new question
         const { rows } = await client.query(
-          `INSERT INTO comments (id, note_id, thread_id, content, author, quote, time_stamp, deleted, type)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-           RETURNING id, note_id as "noteId", thread_id as "threadId", content, author, quote, time_stamp as "timeStamp", deleted, type`,
+          `INSERT INTO questions (id, note_id, user_id, question, answer, time_stamp, repetition, interval, ease_factor, next_review, last_review, history)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+           RETURNING id, note_id as "noteId", user_id as "userId", question, answer, time_stamp as "timeStamp", repetition, interval, ease_factor as "easeFactor", next_review as "nextReview", last_review as "lastReview", history`,
           [
-            comment.id, 
-            comment.noteId, 
-            comment.threadId || null, 
-            comment.content, 
-            comment.author, 
-            comment.quote || null, 
-            comment.timeStamp, 
-            comment.deleted || false, 
-            comment.type
+            question.id,
+            question.noteId,
+            question.userId,
+            question.question,
+            question.answer,
+            question.timeStamp,
+            question.repetition,
+            question.interval,
+            question.easeFactor,
+            question.nextReview,
+            question.lastReview,
+            question.history
           ]
         );
         
@@ -270,7 +260,7 @@ export class DatabaseService {
       }
     } catch (error) {
       await client.query('ROLLBACK');
-      logger.error('Failed to save comment', error);
+      logger.error('Failed to save question', error);
       throw error;
     } finally {
       client.release();
@@ -278,14 +268,14 @@ export class DatabaseService {
   }
 
   /**
-   * Get all comments for a note
+   * Get all questions for a note
    */
-  public async getCommentsByNoteId(noteId: string): Promise<CommentData[]> {
+  public async getQuestionsByNoteId(noteId: string): Promise<Question[]> {
     const client = await this.getClient();
     try {
       const { rows } = await client.query(
-        `SELECT id, note_id as "noteId", thread_id as "threadId", content, author, quote, time_stamp as "timeStamp", deleted, type
-         FROM comments 
+        `SELECT id, note_id as "noteId", user_id as "userId", question, answer, time_stamp as "timeStamp", repetition, interval, ease_factor as "easeFactor", next_review as "nextReview", last_review as "lastReview", history
+         FROM questions
          WHERE note_id = $1
          ORDER BY time_stamp ASC`,
         [noteId]
@@ -293,7 +283,7 @@ export class DatabaseService {
       
       return rows;
     } catch (error) {
-      logger.error(`Failed to get comments for note ${noteId}`, error);
+      logger.error(`Failed to get questions for note ${noteId}`, error);
       throw error;
     } finally {
       client.release();
@@ -301,24 +291,23 @@ export class DatabaseService {
   }
 
   /**
-   * Delete a comment
+   * Delete a question by ID
    */
-  public async deleteComment(id: string): Promise<boolean> {
+  public async deleteQuestion(id: string): Promise<boolean> {
     const client = await this.getClient();
     try {
       await client.query('BEGIN');
       
-      // Mark comment as deleted instead of actually deleting it
       const result = await client.query(
-        `UPDATE comments SET deleted = true WHERE id = $1`,
+        `DELETE FROM questions WHERE id = $1`,
         [id]
       );
       
       await client.query('COMMIT');
-      return result.rowCount > 0;
+      return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       await client.query('ROLLBACK');
-      logger.error(`Failed to delete comment with ID ${id}`, error);
+      logger.error(`Failed to delete question with ID ${id}`, error);
       throw error;
     } finally {
       client.release();
