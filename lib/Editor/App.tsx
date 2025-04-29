@@ -2,39 +2,30 @@
 
 import type {JSX} from 'react';
 
-import {$createLinkNode} from '@lexical/link';
-import {$createListItemNode, $createListNode} from '@lexical/list';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
-import {$createHeadingNode, $createQuoteNode} from '@lexical/rich-text';
 import {
-  $createParagraphNode,
-  $createTextNode,
-  $getRoot,
+  SerializedEditorState,
+  SerializedLexicalNode,
   $isTextNode,
   DOMConversionMap,
   TextNode,
 } from 'lexical';
 
-import {isDevPlayground} from './appSettings';
 import {FlashMessageContext} from './context/FlashMessageContext';
-import {SettingsContext, useSettings} from './context/SettingsContext';
+import {SettingsContext} from './context/SettingsContext';
 import {SharedHistoryContext} from './context/SharedHistoryContext';
 import {ToolbarContext} from './context/ToolbarContext';
 import Editor from './Editor';
-import logo from './images/logo.svg';
 import PlaygroundNodes from './nodes/PlaygroundNodes';
-import DocsPlugin from './plugins/DocsPlugin';
-import PasteLogPlugin from './plugins/PasteLogPlugin';
 import {TableContext} from './plugins/TablePlugin';
-import TestRecorderPlugin from './plugins/TestRecorderPlugin';
 import {parseAllowedFontSize} from './plugins/ToolbarPlugin/fontSize';
-import TypingPerfPlugin from './plugins/TypingPerfPlugin';
-import Settings from './Settings';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 import {parseAllowedColor} from './ui/ColorPicker';
+import { useTheme } from 'next-themes';
+
+import type { EditorSettings } from '@/types/Editor';
 
 import './index.css';
-import { Note } from '@/types/Note';
 
 function getExtraStyles(element: HTMLElement): string {
   // Parse styles from pasted input, but only if they match exactly the
@@ -101,10 +92,12 @@ function buildImportMap(): DOMConversionMap {
   return importMap;
 }
 
-function App({ initialContent = '' }: { initialContent?: string }): JSX.Element {
-  const {
-    settings: {isCollab, emptyEditor, measureTypingPerf},
-  } = useSettings();
+function App({
+  save,
+  initialContent = ''
+}:{
+  save?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{success: boolean; id?: string; message?: string}>,
+  initialContent?: string }): JSX.Element {
 
   const initialConfig = {
     editorState: initialContent || null,
@@ -123,7 +116,7 @@ function App({ initialContent = '' }: { initialContent?: string }): JSX.Element 
         <TableContext>
           <ToolbarContext>
             <div className="editor-shell">
-              <Editor />
+              <Editor save={save} />
             </div>
           </ToolbarContext>
         </TableContext>
@@ -132,11 +125,20 @@ function App({ initialContent = '' }: { initialContent?: string }): JSX.Element 
   );
 }
 
-export default function EditorApp({ content = '' }: {content?: string}): JSX.Element {
+export default function EditorApp({
+  save,
+  content = '',
+  settings = {}
+}:{
+  save?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{success: boolean; id?: string; message?: string}>,
+  content?: string,
+  settings?: EditorSettings
+}): JSX.Element {
+
   return (
     <SettingsContext>
       <FlashMessageContext>
-        <App initialContent={content} />
+          <App save={save} initialContent={content} />
       </FlashMessageContext>
     </SettingsContext>
   );

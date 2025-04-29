@@ -1,6 +1,6 @@
 .PollNode__container {
-  border: 1px solid #eee;
-  background-color: #fcfcfc;
+  border: 1px solid var(--editor-border); /* Using border for #eee */
+  background-color: var(--editor-card, var(--editor-background)); /* Using card or background */
   border-radius: 10px;
   max-width: 600px;
   min-width: 400px;
@@ -8,7 +8,7 @@
   user-select: none;
 }
 .PollNode__container.focused {
-  outline: 2px solid rgb(60, 132, 244);
+  outline: 2px solid var(--editor-ring); /* Using ring for rgb(60, 132, 244) */
 }
 .PollNode__inner {
   margin: 15px;
@@ -19,7 +19,7 @@
   margin-top: 0px;
   margin-right: 0px;
   margin-bottom: 15px;
-  color: #444;
+  color: var(--editor-secondary-foreground); /* Using secondary foreground for #444 */
   text-align: center;
   font-size: 18px;
 }
@@ -32,7 +32,7 @@
 .PollNode__optionInputWrapper {
   display: flex;
   flex: 10px;
-  border: 1px solid rgb(61, 135, 245);
+  border: 1px solid var(--editor-primary); /* Using primary for rgb(61, 135, 245) */
   border-radius: 5px;
   position: relative;
   overflow: hidden;
@@ -43,7 +43,7 @@
   flex: 1px;
   border: 0px;
   padding: 7px;
-  color: rgb(61, 135, 245);
+  color: var(--editor-primary); /* Using primary for rgb(61, 135, 245) */
   background-color: transparent;
   font-weight: bold;
   outline: 0px;
@@ -51,10 +51,10 @@
 }
 .PollNode__optionInput::placeholder {
   font-weight: normal;
-  color: #999;
+  color: var(--editor-placeholder); /* Using placeholder for #999 */
 }
 .PollNode__optionInputVotes {
-  background-color: rgb(236, 243, 254);
+  background-color: var(--editor-poll-option-votes-background); /* Using poll votes background variable */
   height: 100%;
   position: absolute;
   top: 0px;
@@ -63,7 +63,7 @@
   z-index: 0;
 }
 .PollNode__optionInputVotesCount {
-  color: rgb(61, 135, 245);
+  color: var(--editor-primary); /* Using primary for rgb(61, 135, 245) */
   position: absolute;
   right: 15px;
   font-size: 12px;
@@ -74,18 +74,18 @@
   display: flex;
   width: 22px;
   height: 22px;
-  border: 1px solid #999;
+  border: 1px solid var(--editor-muted-foreground); /* Using muted foreground for #999 */
   margin-right: 10px;
   border-radius: 5px;
 }
 .PollNode__optionCheckboxChecked {
-  border: 1px solid rgb(61, 135, 245);
-  background-color: rgb(61, 135, 245);
+  border: 1px solid var(--editor-primary); /* Using primary for rgb(61, 135, 245) */
+  background-color: var(--editor-primary); /* Using primary for rgb(61, 135, 245) */
 }
 .PollNode__optionCheckboxChecked:after {
   content: '';
   cursor: pointer;
-  border-color: #fff;
+  border-color: var(--editor-primary-foreground); /* Using primary foreground for #fff */
   border-style: solid;
   position: absolute;
   display: block;
@@ -127,7 +127,7 @@
   position: absolute;
   display: block;
   content: '';
-  background-color: #999;
+  background-color: var(--editor-muted-foreground); /* Using muted foreground for #999 */
   width: 2px;
   height: 15px;
   top: 6px;
@@ -141,7 +141,7 @@
 }
 .PollNode__optionDelete:hover {
   opacity: 1;
-  background-color: #eee;
+  background-color: var(--editor-secondary-background); /* Using secondary background for #eee */
 }
 .PollNode__optionDeleteDisabled {
   cursor: not-allowed;

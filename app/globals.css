@@ -76,6 +76,45 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --editor-background: var(--background);
+  --editor-foreground: var(--foreground);
+  --editor-muted-foreground: var(--muted-foreground);
+  --editor-border: var(--border);
+  --editor-input-background: var(--input);
+  --editor-secondary-background: var(--secondary);
+  --editor-secondary-foreground: var(--secondary-foreground);
+  --editor-accent-background: var(--accent);
+  --editor-accent-foreground: var(--accent-foreground);
+  --editor-primary: var(--primary);
+  --editor-primary-foreground: var(--primary-foreground);
+  --editor-ring: var(--ring);
+  --editor-destructive: var(--destructive);
+  --editor-code-background: oklch(0.968 0.007 247.896); /* #f7f7f8 */
+  --editor-code-foreground: var(--foreground);
+  --editor-keyword: oklch(0.6 0.18 30); /* #f1765e */
+  --editor-link: var(--primary);
+  --editor-mention-focus-shadow: 0 0 0 2px var(--editor-ring);
+  --editor-image-focus-outline: 2px solid var(--editor-ring);
+  --editor-image-caption-background: oklch(1 0 0 / 0.9); /* white 90% */
+  --editor-image-caption-foreground: var(--editor-foreground);
+  --editor-image-button-background: oklch(0 0 0 / 0.5); /* black 50% */
+  --editor-image-button-foreground: oklch(1 0 0); /* white */
+  --editor-image-button-hover-background: oklch(0.6 0.118 184.704 / 0.5); /* primary with alpha */
+  --editor-sticky-yellow-background: linear-gradient(135deg, #ffff88 81%, #ffff88 82%, #ffff88 82%, #ffffc6 100%);
+  --editor-sticky-yellow-border: #fdfd86;
+  --editor-sticky-pink-background: linear-gradient(135deg, #f7cbe8 81%, #f7cbe8 82%, #f7cbe8 82%, #e7bfe1 100%);
+  --editor-sticky-pink-border: #e7d1e4;
+  --editor-sticky-shadow: 2px 15px 5px rgba(0, 0, 0, 0.4);
+  --editor-poll-option-votes-background: oklch(0.95 0.03 250); /* #ecf3fe */
+  --editor-switch-background: oklch(0.93 0.01 240 / 0.7); /* #eee 70% */
+  --editor-switch-button-background: oklch(0.88 0.01 240); /* #ceced4 */
+  --editor-switch-button-thumb: oklch(1 0 0); /* white */
+  --editor-switch-button-checked-background: var(--editor-primary);
+  --editor-button-active-background: oklch(0.9 0.05 230); /* #dfe8fa */
+  --editor-button-hover-background: var(--muted);
+  --editor-scrollbar-thumb: var(--editor-muted-foreground);
+  --editor-placeholder: var(--editor-muted-foreground);
+  --editor-caret-color: var(--editor-foreground);
 }
 
 .dark {
@@ -110,8 +149,46 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --editor-background: var(--background);
+  --editor-foreground: var(--foreground);
+  --editor-muted-foreground: var(--muted-foreground);
+  --editor-border: var(--border);
+  --editor-input-background: var(--input);
+  --editor-secondary-background: var(--secondary);
+  --editor-secondary-foreground: var(--secondary-foreground);
+  --editor-accent-background: var(--accent);
+  --editor-accent-foreground: var(--accent-foreground);
+  --editor-primary: var(--primary);
+  --editor-primary-foreground: var(--primary-foreground);
+  --editor-ring: var(--ring);
+  --editor-destructive: var(--destructive);
+  --editor-code-background: oklch(0.279 0.041 260.031); /* #3f3f46 */
+  --editor-code-foreground: var(--foreground);
+  --editor-keyword: oklch(0.75 0.18 50); /* Lighter Orange-ish */
+  --editor-link: var(--primary);
+  --editor-mention-focus-shadow: 0 0 0 2px var(--editor-ring);
+  --editor-image-focus-outline: 2px solid var(--editor-ring);
+  --editor-image-caption-background: oklch(0.1 0.02 260 / 0.9); /* dark 90% */
+  --editor-image-caption-foreground: var(--editor-foreground);
+  --editor-image-button-background: oklch(0.1 0.02 260 / 0.5); /* dark 50% */
+  --editor-image-button-foreground: oklch(1 0 0); /* white */
+  --editor-image-button-hover-background: oklch(0.7 0.17 162.48 / 0.5); /* primary with alpha */
+  --editor-sticky-yellow-background: linear-gradient(135deg, #5a5a3d 81%, #5a5a3d 82%, #5a5a3d 82%, #6b6b4e 100%); /* Darker yellow */
+  --editor-sticky-yellow-border: #7c7c5d;
+  --editor-sticky-pink-background: linear-gradient(135deg, #6c5b6a 81%, #6c5b6a 82%, #6c5b6a 82%, #e7bfe1 100%); /* Darker pink */
+  --editor-sticky-pink-border: #8e7d8b;
+  --editor-sticky-shadow: 2px 15px 5px rgba(255, 255, 255, 0.2); /* Lighter shadow */
+  --editor-poll-option-votes-background: oklch(0.3 0.05 230); /* Darker blue */
+  --editor-switch-background: oklch(0.2 0.02 240 / 0.7); /* dark 70% */
+  --editor-switch-button-background: oklch(0.3 0.02 240); /* darker */
+  --editor-switch-button-thumb: oklch(0.1 0.01 240); /* very dark */
+  --editor-switch-button-checked-background: var(--editor-primary);
+  --editor-button-active-background: oklch(0.3 0.05 230); /* Darker blue */
+  --editor-button-hover-background: var(--muted);
+  --editor-scrollbar-thumb: var(--editor-muted-foreground);
+  --editor-placeholder: var(--editor-muted-foreground);
+  --editor-caret-color: var(--editor-foreground);
 }
-
 
 @layer base {
   :root {

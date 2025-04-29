@@ -2,13 +2,6 @@
 
 let isDevPlaygroundValue = false;
 
-if (typeof window !== 'undefined') {
-  const hostName = window.location.hostname;
-  isDevPlaygroundValue = 
-    hostName !== 'playground.lexical.dev' &&
-    hostName !== 'lexical-playground.vercel.app';
-}
-
 export const isDevPlayground: boolean = isDevPlaygroundValue;
 
 export const DEFAULT_SETTINGS = {
@@ -33,6 +26,8 @@ export const DEFAULT_SETTINGS = {
   tableCellBackgroundColor: true,
   tableCellMerge: true,
   tableHorizontalScroll: true,
+  useQuestions: false,
+  useActionButtons: false,
 } as const;
 
 // These are mutated in setupEnv

@@ -1,5 +1,7 @@
+'use client'
+
 import TitleSection from '@/components/landing-page/title-section'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { PRICING_PLANS, PRICING_CARDS } from '@/lib/constants'
@@ -8,12 +10,15 @@ import { CardTitle, CardContent } from '@/components/ui/card'
 import Diamond from '../../public/icons/diamond.svg';
 import CheckIcon from '../../public/icons/check.svg';
 import clsx from 'clsx'
+import ScrollHighlightEditor from '@/components/landing-page/scroll-highlight-editor'
 
 const Landing = () => {
+  const containerRef = useRef<HTMLDivElement>(null)
+
   return (
-    <>
+    <div ref={containerRef}>
     <section
-        className='overflow-hidden px-4 sm:px-6 mt-10 sm:flex sm:flex-col gap-4 md:items-center md:justify-center'
+        className='overflow-hidden pt-10 sm:flex sm:flex-col gap-4 md:items-center md:justify-center'
       >
         <TitleSection
           pill='The plot twist your brain didn’t see coming.'
@@ -23,19 +28,19 @@ const Landing = () => {
           className="bg-white
           p-[2px]
           mt-6
-          rounded-xl
+          rounded-sm
           bg-gradient-to-r
           from-primary
-          to-brand-primaryBlue
+          to-primary
           sm:w-[300px]
         "
         >
           <Button
             variant="secondary"
             className=" w-full
-            rounded-[10px]
-            p-6
-            text-2xl
+            rounded-[4px]
+            p-7
+            text-xl
             bg-background
           "
           >
@@ -43,30 +48,26 @@ const Landing = () => {
           </Button>
         </div>
         <div
-          className="md:mt-[-90px]
-          sm:w-full
-          w-[750px]
+          className="md:mt-[90px]
           flex
           justify-center
           items-center
-          mt-[-40px]
+          mt-[40px]
           relative
-          sm:ml-0
-          ml-[-50px]
         "
         >
-          {/* Editor instance */}
-          <div
+          <ScrollHighlightEditor page={containerRef} />
+          {/* <div
             className="bottom-0
-            top-[50%]
+            top-[70%]
             bg-gradient-to-t
-            dark:from-background
+            from-background
             left-0
             right-0
             absolute
-            z-10
+            z--10
           "
-          ></div>
+          ></div> */}
         </div>
       </section>
       <section
@@ -187,8 +188,8 @@ const Landing = () => {
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
-export default Landing 
+export default Landing

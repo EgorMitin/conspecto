@@ -2,7 +2,7 @@ import React from 'react'
 
 const LandingLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main>{children}</main>
+    <main className='bg-background'>{children}</main>
   )
 }
 

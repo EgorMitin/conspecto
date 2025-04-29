@@ -1,7 +1,6 @@
 import type {LexicalEditor, SerializedLexicalNode} from 'lexical';
 import type {JSX} from 'react';
 
-import {$createCodeNode, $isCodeNode} from '@lexical/code';
 import {
   editorStateFromSerializedDocument,
   exportFile,
@@ -9,23 +8,13 @@ import {
   SerializedDocument,
   serializedDocumentFromEditorState,
 } from '@lexical/file';
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
 import {useCollaborationContext} from '@lexical/react/LexicalCollaborationContext';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {mergeRegister} from '@lexical/utils';
-import {CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND} from '@lexical/yjs';
 import {
-  $createTextNode,
   $getRoot,
   $isParagraphNode,
   CLEAR_EDITOR_COMMAND,
   CLEAR_HISTORY_COMMAND,
-  COLLABORATION_TAG,
-  COMMAND_PRIORITY_EDITOR,
-  HISTORIC_TAG,
 } from 'lexical';
 import {useCallback, useEffect, useState, useRef} from 'react';
 import {useParams} from 'next/navigation';
@@ -35,7 +24,6 @@ import useFlashMessage from '../../hooks/useFlashMessage';
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
 import {docFromHash, docToHash} from '../../utils/docSerialization';
-import {PLAYGROUND_TRANSFORMERS} from '../MarkdownTransformers';
 import {
   SPEECH_TO_TEXT_COMMAND,
   SUPPORT_SPEECH_RECOGNITION,
@@ -54,6 +42,7 @@ import {
 } from 'react-icons/fi';
 
 import type {Note} from '@/types/Note';
+import { SerializedLinkNode } from '@lexical/link';
 
 
 // Debounce function to prevent too many API calls
@@ -69,75 +58,6 @@ function debounce(func: Function, wait: number) {
   };
 }
 
-/**
- * Save editor content to PostgreSQL database via API
- */
-async function saveEditorContentToDb(
-  editor: LexicalEditor, 
-  noteId: string,
-  title: string
-): Promise<{success: boolean; id?: string; message?: string}> {
-  try {
-    // Convert editor state to markdown for storing in DB
-    let content = editor.getEditorState().toJSON();
-
-    // If content is empty, don't save
-    if (!content) {
-      return { success: false, message: 'Content is empty' };
-    }
-
-    // Create payload for API
-    const payload = {
-      id: noteId, // Always use the ID from the route params
-      title: title || 'Untitled Note',
-      content,
-      userId: getUser()
-    };
-
-    // Send to API
-    const response = await fetch('/api/notes/save', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-    
-    return { 
-      success: result.success,
-      id: result.note?.id,
-      message: result.message || 'Failed to save note'
-    };
-  } catch (error) {
-    console.error('Error saving note:', error);
-    return { success: false, message: 'Error saving note' };
-  }
-}
-
-async function validateEditorState(editor: LexicalEditor): Promise<void> {
-  const stringifiedEditorState = JSON.stringify(editor.getEditorState());
-  let response = null;
-  try {
-    response = await fetch('http://localhost:1235/validateEditorState', {
-      body: stringifiedEditorState,
-      headers: {
-        Accept: 'application/json',
-        'Content-type': 'application/json',
-      },
-      method: 'POST',
-    });
-  } catch {
-    // NO-OP
-  }
-  if (response !== null && response.status === 403) {
-    throw new Error(
-      'Editor state validation failed! Server did not accept changes.',
-    );
-  }
-}
-
 async function shareDoc(doc: SerializedDocument): Promise<void> {
   const url = new URL(window.location.toString());
   url.hash = await docToHash(doc);
@@ -149,9 +69,11 @@ async function shareDoc(doc: SerializedDocument): Promise<void> {
 export default function ActionsPlugin({
   isRichText,
   shouldPreserveNewLinesInMarkdown,
+  saveFunction,
 }: {
   isRichText: boolean;
   shouldPreserveNewLinesInMarkdown: boolean;
+  saveFunction?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{success: boolean; id?: string; message?: string}>;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
@@ -162,14 +84,15 @@ export default function ActionsPlugin({
   const [modal, showModal] = useModal();
   const showFlashMessage = useFlashMessage();
   const {isCollabActive} = useCollaborationContext();
+
   const params = useParams();
   const noteId = params.id as string; // Get ID from route params
   const lastSavedContentRef = useRef<SerializedEditorState<SerializedLexicalNode> | null>(null);
-  const [noteTitle, setNoteTitle] = useState('Untitled Note');
   
   // Create a debounced save function to avoid too many saves
   const debouncedSave = useCallback(
-    debounce(async (noteId: string) => {
+    debounce(async () => {
+      if (!saveFunction) return;
       let currentContent = editor.getEditorState().toJSON();
       
       // Don't save if content hasn't changed since last save
@@ -178,7 +101,7 @@ export default function ActionsPlugin({
       }
       
       setIsSaving(true);
-      const result = await saveEditorContentToDb(editor, noteId, noteTitle);
+      const result = await saveFunction(currentContent);
       
       if (result.success) {
         lastSavedContentRef.current = currentContent;
@@ -189,30 +112,8 @@ export default function ActionsPlugin({
       
       setIsSaving(false);
     }, 2000), // 2 second debounce
-    [editor, noteTitle]
+    [editor]
   );
-
-  // Load note from database if ID is present
-  useEffect(() => {
-    if (!noteId) return;
-
-    // Show loading indicator immediately
-    setIsSaving(true); // Reuse saving state or create a new loading state
-
-    // Parse the editor state outside the update callback
-    const editorState = editor.parseEditorState(note.content);
-
-    // Apply changes in a single update
-    editor.update(() => {
-      const root = $getRoot();
-      root.clear();
-      editor.setEditorState(editorState);
-      lastSavedContentRef.current = editorState.toJSON();
-    });
-
-    setNoteTitle(note.title);
-    showFlashMessage('Note loaded');
-  }, [noteId, editor]);
 
   useEffect(() => {
     docFromHash(window.location.hash).then((doc) => {
@@ -222,37 +123,11 @@ export default function ActionsPlugin({
       }
     });
   }, [editor]);
-  
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerEditableListener((editable) => {
-        setIsEditable(editable);
-      }),
-      editor.registerCommand<boolean>(
-        CONNECTED_COMMAND,
-        (payload) => {
-          const isConnected = payload;
-          setConnected(isConnected);
-          return false;
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
-    );
-  }, [editor]);
 
   // Register update listener to detect changes and trigger auto-save
   useEffect(() => {
     return editor.registerUpdateListener(
-      ({dirtyElements, prevEditorState, tags}) => {
-        // If we are in read only mode, validate editor state
-        if (
-          !isEditable &&
-          dirtyElements.size > 0 &&
-          !tags.has(HISTORIC_TAG) &&
-          !tags.has(COLLABORATION_TAG)
-        ) {
-          validateEditorState(editor);
-        }
+      ({dirtyElements}) => {
         
         editor.getEditorState().read(() => {
           const root = $getRoot();
@@ -272,52 +147,22 @@ export default function ActionsPlugin({
         
         // Trigger auto-save if content has changed and is not empty and noteId is present
         if (dirtyElements.size > 0 && !isEditorEmpty && noteId) {
-          debouncedSave(noteId);
+          debouncedSave();
         }
       },
     );
-  }, [editor, isEditable, isEditorEmpty, debouncedSave, noteId]);
+  }, [editor, isEditable, isEditorEmpty, debouncedSave]);
 
-  const handleMarkdownToggle = useCallback(() => {
-    editor.update(() => {
-      const root = $getRoot();
-      const firstChild = root.getFirstChild();
-      if ($isCodeNode(firstChild) && firstChild.getLanguage() === 'markdown') {
-        $convertFromMarkdownString(
-          firstChild.getTextContent(),
-          PLAYGROUND_TRANSFORMERS,
-          undefined, // node
-          shouldPreserveNewLinesInMarkdown,
-        );
-      } else {
-        const markdown = $convertToMarkdownString(
-          PLAYGROUND_TRANSFORMERS,
-          undefined, //node
-          shouldPreserveNewLinesInMarkdown,
-        );
-        const codeNode = $createCodeNode('markdown');
-        codeNode.append($createTextNode(markdown));
-        root.clear().append(codeNode);
-        if (markdown.length === 0) {
-          codeNode.select();
-        }
-      }
-    });
-  }, [editor, shouldPreserveNewLinesInMarkdown]);
-
-  // Force save handler for the save button
   const handleForceSave = async () => {
-    if (!noteId) {
-      showFlashMessage('Cannot save note without ID');
-      return;
-    }
+    if (!saveFunction) return
     
     setIsSaving(true);
-    const result = await saveEditorContentToDb(editor, noteId, noteTitle);
+    const currentContent = editor.getEditorState().toJSON();
+    const result = await saveFunction(currentContent);
     
     if (result.success) {
       editor.getEditorState().read(() => {
-        lastSavedContentRef.current = editor.getEditorState().toJSON();
+        lastSavedContentRef.current = currentContent;
       });
       showFlashMessage('Note saved successfully');
     } else {
@@ -358,7 +203,7 @@ export default function ActionsPlugin({
         className="action-button export"
         onClick={() =>
           exportFile(editor, {
-            fileName: `${noteTitle} ${new Date().toISOString()}`,
+            fileName: `${noteId} ${new Date().toISOString()}`,
             source: 'Conspecto',
           })
         }

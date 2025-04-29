@@ -4,7 +4,7 @@
   resize: none;
   cursor: text;
   font-size: 24px;
-  caret-color: rgb(5, 5, 5);
+  caret-color: var(--editor-caret-color);
   display: block;
   position: relative;
   outline: 0;
@@ -15,7 +15,7 @@
 }
 .StickyNode__placeholder {
   font-size: 24px;
-  color: #999;
+  color: var(--editor-placeholder);
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;

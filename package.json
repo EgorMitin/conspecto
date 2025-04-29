@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
+    "@gsap/react": "^2.1.2",
     "@lexical/clipboard": "0.30.0",
     "@lexical/code": "0.30.0",
     "@lexical/file": "0.30.0",
@@ -30,6 +31,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "estree": "link:prettier/plugins/estree",
+    "gsap": "^3.12.7",
     "katex": "^0.16.22",
     "lexical": "^0.30.0",
     "lodash-es": "^4.17.21",

@@ -1,6 +1,7 @@
 'use client';
 
 import type {JSX} from 'react';
+import type {SerializedEditorState, SerializedLexicalNode} from 'lexical';
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {CharacterLimitPlugin} from '@lexical/react/LexicalCharacterLimitPlugin';
@@ -74,7 +75,11 @@ const skipCollaborationInit =
   // @ts-expect-error
   window.parent != null && window.parent.frames.right === window;
 
-export default function Editor(): JSX.Element {
+export default function Editor({
+  save
+}:{
+  save?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{success: boolean; id?: string; message?: string}>,
+}): JSX.Element {
   const {historyState} = useSharedHistoryContext();
   const {
     settings: {
@@ -168,9 +173,7 @@ export default function Editor(): JSX.Element {
         <KeywordsPlugin />
         <SpeechToTextPlugin />
         <AutoLinkPlugin />
-        <CommentPlugin
-          providerFactory={isCollab ? createWebsocketProvider : undefined}
-        />
+        <CommentPlugin />
         {isRichText ? (
           <>
             {isCollab ? (
@@ -265,6 +268,7 @@ export default function Editor(): JSX.Element {
         <ActionsPlugin
           isRichText={isRichText}
           shouldPreserveNewLinesInMarkdown={shouldPreserveNewLinesInMarkdown}
+          saveFunction={save}
         />
       </div>
       {showTreeView && <TreeViewPlugin />}
