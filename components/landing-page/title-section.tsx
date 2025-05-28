@@ -15,8 +15,8 @@ const TitleSection: React.FC<TItleSectionProps> = ({
     <React.Fragment>
       <section
         className='flex flex-col gap-4 justify-center items-start md:items-center'>
-          <article className='rounded-full p-[1px] text-sm dark:bg-gradient-to-r dark:from-orange-400 dark:to-yellow-200'>
-            <div className='rounded-full px-3 py-1 dark:bg-black'>
+          <article className='rounded-full p-[1px] text-sm bg-gradient-to-r from-orange-400 to-yellow-200 shadow-md'>
+            <div className='rounded-full px-3 py-1 bg-white dark:bg-black'>
               {pill}
             </div>
           </article>

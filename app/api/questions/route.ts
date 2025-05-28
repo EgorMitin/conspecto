@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import databaseService from '@/services/DatabaseService';
+import databaseService from '@/services/DatabaseService/DatabaseService';
 import { logger } from '@/utils/logger';
-import { initializeDatabase } from '@/config/dbInit';
 import type { Question } from '@/types/Question';
 
-// Initialize database on first request
-let isInitialized = false;
-
-/**
- * Ensure the database is initialized
- */
-async function ensureDbInitialized() {
-  if (!isInitialized) {
-    await initializeDatabase();
-    isInitialized = true;
-  }
-}
 
 /**
  * POST /api/questions
@@ -23,9 +10,6 @@ async function ensureDbInitialized() {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Initialize database if not already done
-    await ensureDbInitialized();
-    
     // Parse request body
     const body = await request.json();
     

@@ -1,20 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import databaseService, { EditorContent } from '@/services/DatabaseService';
+import databaseService from '@/services/DatabaseService/DatabaseService';
 import { logger } from '@/utils/logger';
-import { initializeDatabase } from '@/config/dbInit';
+import type { Note } from '@/types/Note';
 
-// Initialize database on first request
-let isInitialized = false;
-
-/**
- * Ensure the database is initialized
- */
-async function ensureDbInitialized() {
-  if (!isInitialized) {
-    await initializeDatabase();
-    isInitialized = true;
-  }
-}
 
 /**
  * POST /api/notes/save
@@ -22,9 +10,6 @@ async function ensureDbInitialized() {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Initialize database if not already done
-    await ensureDbInitialized();
-    
     // Parse request body
     const body = await request.json();
     
@@ -37,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Create note object from request
-    const note: EditorContent = {
+    const note: Note = {
       id: body.id, // Will be undefined for new notes
       title: body.title,
       content: body.content,
@@ -78,9 +63,6 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    // Initialize database if not already done
-    await ensureDbInitialized();
-    
     // Get note ID from query parameters
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

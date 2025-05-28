@@ -19,7 +19,7 @@ export const DEFAULT_SETTINGS = {
   selectionAlwaysOnDisplay: false,
   shouldAllowHighlightingWithBrackets: false,
   shouldPreserveNewLinesInMarkdown: false,
-  shouldUseLexicalContextMenu: true,
+  shouldUseLexicalContextMenu: false,
   showNestedEditorTreeView: false,
   showTableOfContents: false,
   showTreeView: false,

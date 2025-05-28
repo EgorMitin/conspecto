@@ -13,8 +13,8 @@ export type Question = {
   repetition: number;
   interval: number;
   easeFactor: number;
-  nextReview: string;
-  lastReview: string;
+  nextReview: Date;
+  lastReview: Date;
   history: Array<QuestionHistoryItem>;
 };
 

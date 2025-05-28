@@ -1,0 +1,1 @@
+// other implementation would increase maintainability, readability, and scalability. But it's only todo for now

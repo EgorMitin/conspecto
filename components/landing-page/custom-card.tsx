@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { cn } from '@/lib/utils';
+import clsx from 'clsx';
 
 type CardProps = React.ComponentProps<typeof Card>;
 type CustomCardProps = CardProps & {
@@ -18,7 +18,7 @@ const CustomCard: React.FC<CustomCardProps> = ({
 }) => {
   return (
     <Card
-      className={cn('w-[380px]', className)}
+      className={clsx('w-[380px]', className)}
       {...props}
     >
       <CardHeader>{cardHeader}</CardHeader>

@@ -1,9 +1,16 @@
+'use client';
+
+import Header from '@/components/landing-page/Header'
+import { useUser } from '@/lib/context/UserContext'
 import React from 'react'
 
-const LandingLayout = ({ children }: { children: React.ReactNode }) => {
+export default function LandingLayout ({ children }: { children: React.ReactNode }) {
+  const user = useUser()
+
   return (
-    <main className='bg-background'>{children}</main>
+    <main className='bg-background'>
+      <Header user={user} />
+      {children}
+    </main>
   )
 }
-
-export default LandingLayout

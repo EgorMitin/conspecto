@@ -17,7 +17,7 @@ const Landing = () => {
 
   return (
     <div ref={containerRef}>
-    <section
+      <section
         className='overflow-hidden pt-10 sm:flex sm:flex-col gap-4 md:items-center md:justify-center'
       >
         <TitleSection
@@ -25,26 +25,27 @@ const Landing = () => {
           title='Conspecto – Notes Reimagined: Capture, Question, Master'
         />
         <div
-          className="bg-white
+          className="
           p-[2px]
           mt-6
-          rounded-sm
+          rounded-xl
           bg-gradient-to-r
           from-primary
-          to-primary
+          to-blue-600
           sm:w-[300px]
         "
         >
           <Button
             variant="secondary"
-            className=" w-full
-            rounded-[4px]
-            p-7
-            text-xl
+            className="
+            w-full
+            rounded-[10px]
+            p-6
+            text-md
             bg-background
           "
           >
-            Make Notes That Fight Back
+            Start Making Notes That Fight Back
           </Button>
         </div>
         <div
@@ -57,7 +58,7 @@ const Landing = () => {
         "
         >
           <ScrollHighlightEditor page={containerRef} />
-          {/* <div
+          <div
             className="bottom-0
             top-[70%]
             bg-gradient-to-t
@@ -67,7 +68,7 @@ const Landing = () => {
             absolute
             z--10
           "
-          ></div> */}
+          ></div>
         </div>
       </section>
       <section

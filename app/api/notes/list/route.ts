@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import databaseService from '@/services/DatabaseService';
+import databaseService from '@/services/DatabaseService/DatabaseService';
 import { logger } from '@/utils/logger';
-import { initializeDatabase } from '@/config/dbInit';
-
-// Initialize database on first request
-let isInitialized = false;
-
-/**
- * Ensure the database is initialized
- */
-async function ensureDbInitialized() {
-  if (!isInitialized) {
-    await initializeDatabase();
-    isInitialized = true;
-  }
-}
 
 /**
  * GET /api/notes/list?userId=<user_id>
@@ -22,9 +8,6 @@ async function ensureDbInitialized() {
  */
 export async function GET(request: NextRequest) {
   try {
-    // Initialize database if not already done
-    await ensureDbInitialized();
-    
     // Get user ID from query parameters
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');

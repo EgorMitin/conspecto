@@ -200,5 +200,5 @@ class Logger {
 export const logger = new Logger({
   logLevel: 'debug',
   logTo: ['console', 'file'],
-  filePath: './custom/path/logs.txt'
+  filePath: './logs/dev.txt'
 });

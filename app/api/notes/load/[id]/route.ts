@@ -1,34 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import databaseService from '@/services/DatabaseService';
+import databaseService from '@/services/DatabaseService/DatabaseService';
 import { logger } from '@/utils/logger';
-import { initializeDatabase } from '@/config/dbInit';
 
-// Initialize database on first request
-let isInitialized = false;
-
-/**
- * Ensure the database is initialized
- */
-async function ensureDbInitialized() {
-  if (!isInitialized) {
-    await initializeDatabase();
-    isInitialized = true;
-  }
-}
 
 /**
  * GET /api/notes/load/:id
  * Loads a note by ID from the database
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET({ params }: { params: Promise<{ id: string }> }) {
   try {
-    // Initialize database if not already done
-    await ensureDbInitialized();
-    
-    // Ensure params is awaited first
     const { id } = await params;
     
     if (!id) {
