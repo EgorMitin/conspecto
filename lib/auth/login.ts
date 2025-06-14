@@ -4,7 +4,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 
 import { FormLoginSchema } from "@/types/Auth";
-import DatabaseService from "@/services/DatabaseService/DatabaseService";
+import DatabaseService from "@/services/DatabaseService";
 import { logger } from "@/utils/logger";
 import { createUserSession } from "@/services/SessionService/SessionService";
 import { verifyPassword } from "./passowrdHasher";

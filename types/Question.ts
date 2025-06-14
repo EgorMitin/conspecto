@@ -1,12 +1,14 @@
 export type QuestionHistoryItem = {
   date: number;
-  quality: number;
+  quality: 1 | 2 | 3 | 4;
 };
 
 export type Question = {
   id: string;
-  noteId?: string;
+  noteId: string;
   userId: string;
+  noteTitle?: string;
+  folderName?: string;
   question: string;
   answer: string;
   timeStamp: number;
@@ -15,7 +17,7 @@ export type Question = {
   easeFactor: number;
   nextReview: Date;
   lastReview: Date;
-  history: Array<QuestionHistoryItem>;
+  history: QuestionHistoryItem[];
 };
 
 export type Questions = Array<Question>;

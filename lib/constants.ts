@@ -13,8 +13,8 @@ export const PRICING_CARDS = [
   },
   {
     planType: 'Pro Plan',
-    price: '12.99',
-    description: 'Billed annually. $17 billed monthly',
+    price: '8.88',
+    description: 'Billed annually. $8.88 billed monthly',
     highlightFeature: 'Everything in free +',
     freatures: [
       'Unlimited blocks for teams',

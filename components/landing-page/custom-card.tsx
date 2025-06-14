@@ -9,29 +9,17 @@ type CustomCardProps = CardProps & {
   cardFooter?: React.ReactNode;
 };
 
-const CustomCard: React.FC<CustomCardProps> = ({
-  className,
-  cardHeader,
-  cardContent,
-  cardFooter,
-  ...props
-}) => {
+export default function CustomCard({ className, cardHeader, cardContent, cardFooter, ...props }: CustomCardProps) {
   return (
     <Card
       className={clsx('w-[380px]', className)}
       {...props}
     >
       <CardHeader>{cardHeader}</CardHeader>
-      <CardContent
-        className="grid
-        gap-4
-      "
-      >
+      <CardContent className="grid gap-4">
         {cardContent}
       </CardContent>
       <CardFooter>{cardFooter}</CardFooter>
     </Card>
   );
-};
-
-export default CustomCard;
+}

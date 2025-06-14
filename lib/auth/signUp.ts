@@ -3,10 +3,9 @@
 import { z } from "zod";
 
 import { FormSchema } from "@/types/Auth";
-import databaseService from "@/services/DatabaseService/DatabaseService";
+import databaseService from "@/services/DatabaseService";
 import { generateSalt, hashPassword, generateTokenAndExpirationDate } from "./passowrdHasher";
 import { logger } from "@/utils/logger";
-import { createUserSession } from "@/services/SessionService/SessionService";
 import EmailService from "@/services/EmailService/EmailService";
 
 

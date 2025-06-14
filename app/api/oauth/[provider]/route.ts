@@ -1,7 +1,7 @@
 "use server";
 
 import { OAuthClient } from "@/lib/auth/oauth/base";
-import DatabaseService from "@/services/DatabaseService/DatabaseService";
+import DatabaseService from "@/services/DatabaseService";
 import { createUserSession } from "@/services/SessionService/SessionService";
 import { User } from "@/types/User";
 import { logger } from "@/utils/logger";

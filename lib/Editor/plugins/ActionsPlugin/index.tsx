@@ -1,5 +1,5 @@
-import type {LexicalEditor, SerializedLexicalNode} from 'lexical';
-import type {JSX} from 'react';
+import type { LexicalEditor, SerializedLexicalNode } from 'lexical';
+import type { JSX } from 'react';
 
 import {
   editorStateFromSerializedDocument,
@@ -8,27 +8,24 @@ import {
   SerializedDocument,
   serializedDocumentFromEditorState,
 } from '@lexical/file';
-import {useCollaborationContext} from '@lexical/react/LexicalCollaborationContext';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $getRoot,
   $isParagraphNode,
   CLEAR_EDITOR_COMMAND,
   CLEAR_HISTORY_COMMAND,
 } from 'lexical';
-import {useCallback, useEffect, useState, useRef} from 'react';
-import {useParams} from 'next/navigation';
+import { useCallback, useEffect, useState, useRef } from 'react';
 
-import {INITIAL_SETTINGS} from '../../appSettings';
-import useFlashMessage from '../../hooks/useFlashMessage';
+import { INITIAL_SETTINGS } from '../../appSettings';
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
-import {docFromHash, docToHash} from '../../utils/docSerialization';
+import { docFromHash, docToHash } from '../../utils/docSerialization';
 import {
   SPEECH_TO_TEXT_COMMAND,
   SUPPORT_SPEECH_RECOGNITION,
 } from '../SpeechToTextPlugin';
-import { getUser } from '../QuestionPlugin';
 import type { SerializedEditorState } from 'lexical';
 
 import {
@@ -40,15 +37,14 @@ import {
   FiTrash2,
   FiLoader
 } from 'react-icons/fi';
-
-import type {Note} from '@/types/Note';
-import { SerializedLinkNode } from '@lexical/link';
+import { useAppState } from '@/lib/providers/app-state-provider';
+import { toast } from 'sonner';
 
 
 // Debounce function to prevent too many API calls
 function debounce(func: Function, wait: number) {
   let timeout: NodeJS.Timeout | null = null;
-  return function(...args: any[]) {
+  return function (...args: any[]) {
     const later = () => {
       timeout = null;
       func(...args);
@@ -73,46 +69,45 @@ export default function ActionsPlugin({
 }: {
   isRichText: boolean;
   shouldPreserveNewLinesInMarkdown: boolean;
-  saveFunction?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{success: boolean; id?: string; message?: string}>;
+  saveFunction?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{ success: boolean; id?: string; message?: string }>;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const [isSpeechToText, setIsSpeechToText] = useState(false);
-  const [connected, setConnected] = useState(false);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [modal, showModal] = useModal();
-  const showFlashMessage = useFlashMessage();
-  const {isCollabActive} = useCollaborationContext();
+  const { isCollabActive } = useCollaborationContext();
 
-  const params = useParams();
-  const noteId = params.id as string; // Get ID from route params
+  const { noteId } = useAppState()
   const lastSavedContentRef = useRef<SerializedEditorState<SerializedLexicalNode> | null>(null);
-  
+
   // Create a debounced save function to avoid too many saves
   const debouncedSave = useCallback(
     debounce(async () => {
       if (!saveFunction) return;
       let currentContent = editor.getEditorState().toJSON();
-      
+
       // Don't save if content hasn't changed since last save
       if (currentContent === lastSavedContentRef.current) {
         return;
       }
-      
+
       setIsSaving(true);
-      const result = await saveFunction(currentContent);
-      
-      if (result.success) {
-        lastSavedContentRef.current = currentContent;
-        showFlashMessage('Note saved');
-      } else {
-        showFlashMessage(result.message || 'Failed to save note');
+      try {
+        const result = await saveFunction(currentContent);
+        if (result.success) {
+          lastSavedContentRef.current = currentContent;
+        } else {
+          toast.error(result.message || 'Failed to save note');
+        }
+        setIsSaving(false);
+      } catch (error) {
+        console.log(error)
+        setIsSaving(false)
       }
-      
-      setIsSaving(false);
     }, 2000), // 2 second debounce
-    [editor]
+    [editor, saveFunction]
   );
 
   useEffect(() => {
@@ -127,8 +122,8 @@ export default function ActionsPlugin({
   // Register update listener to detect changes and trigger auto-save
   useEffect(() => {
     return editor.registerUpdateListener(
-      ({dirtyElements}) => {
-        
+      ({ dirtyElements }) => {
+
         editor.getEditorState().read(() => {
           const root = $getRoot();
           const children = root.getChildren();
@@ -144,31 +139,31 @@ export default function ActionsPlugin({
             }
           }
         });
-        
+
         // Trigger auto-save if content has changed and is not empty and noteId is present
         if (dirtyElements.size > 0 && !isEditorEmpty && noteId) {
           debouncedSave();
         }
       },
     );
-  }, [editor, isEditable, isEditorEmpty, debouncedSave]);
+  }, [editor, isEditable, isEditorEmpty, debouncedSave, noteId]);
 
   const handleForceSave = async () => {
     if (!saveFunction) return
-    
+
     setIsSaving(true);
     const currentContent = editor.getEditorState().toJSON();
     const result = await saveFunction(currentContent);
-    
+
     if (result.success) {
       editor.getEditorState().read(() => {
         lastSavedContentRef.current = currentContent;
       });
-      showFlashMessage('Note saved successfully');
+      toast.success('Note saved successfully');
     } else {
-      showFlashMessage(result.message || 'Failed to save note');
+      toast.error(result.message || 'Failed to save note');
     }
-    
+
     setIsSaving(false);
   };
 
@@ -185,9 +180,8 @@ export default function ActionsPlugin({
             (isSpeechToText ? 'active' : '')
           }
           title="Speech To Text"
-          aria-label={`${
-            isSpeechToText ? 'Enable' : 'Disable'
-          } speech to text`}>
+          aria-label={`${isSpeechToText ? 'Enable' : 'Disable'
+            } speech to text`}>
           <FiMic />
         </button>
       )}
@@ -211,7 +205,7 @@ export default function ActionsPlugin({
         aria-label="Export editor state to JSON">
         <FiDownload />
       </button>
-      
+
       {/* Save button */}
       <button
         className={`action-button save ${isSaving ? 'active' : ''}`}
@@ -219,9 +213,9 @@ export default function ActionsPlugin({
         disabled={isEditorEmpty || isSaving || !noteId}
         title="Save"
         aria-label="Save note to database">
-      {isSaving ? <FiLoader className="icon-spin" /> : <FiSave />}
+        {isSaving ? <FiLoader className="icon-spin" /> : <FiSave />}
       </button>
-      
+
       <button
         className="action-button share"
         disabled={isCollabActive || INITIAL_SETTINGS.isCollab}
@@ -231,13 +225,13 @@ export default function ActionsPlugin({
               source: 'Conspecto',
             }),
           ).then(
-            () => showFlashMessage('URL copied to clipboard'),
-            () => showFlashMessage('URL could not be copied to clipboard'),
+            () => toast.info('URL copied to clipboard'),
+            () => toast.error('URL could not be copied to clipboard'),
           )
         }
         title="Share"
         aria-label="Share link to current editor state">
-      <FiShare2 />
+        <FiShare2 />
       </button>
       <button
         className="action-button clear"
@@ -249,7 +243,7 @@ export default function ActionsPlugin({
         }}
         title="Clear"
         aria-label="Clear editor contents">
-      <FiTrash2 />
+        <FiTrash2 />
       </button>
       {modal}
     </div>

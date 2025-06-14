@@ -4,41 +4,9 @@ import {useEffect, useState} from 'react';
 import {useParams} from 'next/navigation';
 
 import type {Question, QuestionHistoryItem, Questions} from '@/types/Question';
-
-function createUID(): string {
-  return Math.random()
-    .toString(36)
-    .replace(/[^a-z]+/g, '')
-    .substring(0, 5);
-}
-
-export function createQuestion(
-  userId: string,
-  question: string,
-  answer: string,
-  id?: string,
-  timeStamp?: number,
-  repetition?: number,
-  interval?: number,
-  easeFactor?: number,
-  nextReview?: string,
-  lastReview?: string,
-  history?: QuestionHistoryItem[],
-): Question {
-  return {
-    userId,
-    question,
-    answer,
-    id: id ?? createUID(),
-    timeStamp: timeStamp ?? performance.timeOrigin + performance.now(),
-    repetition: repetition ?? 0,
-    interval: interval ?? 0,
-    easeFactor: easeFactor ?? 2.5,
-    nextReview: nextReview ?? new Date().toISOString(),
-    lastReview: lastReview ?? new Date().toISOString(),
-    history: history ?? [],
-  };
-}
+import { get } from 'http';
+import { createQuestion, deleteQuestion, getQuestionsByNoteId, updateQuestion } from '@/lib/server_actions/questions';
+import { useAppState } from '@/lib/providers/app-state-provider';
 
 function triggerOnChange(questionStore: QuestionStore): void {
   const listeners = questionStore._changeListeners;
@@ -107,43 +75,15 @@ export class QuestionStore {
     
     this._isLoadingFromServer = true;
     try {
-      const response = await fetch(`/api/questions?noteId=${this._noteId}`);
+      const data = await getQuestionsByNoteId(this._noteId);
       
-      if (!response.ok) {
-        throw new Error(`Failed to load questions: ${response.statusText}`);
+      if (data.error !== null) {
+        throw new Error(`Failed to load questions: ${data.error}`);
       }
-      
-      const data = await response.json();
-      
-      if (data.success && Array.isArray(data.questions)) {
-        const questionsById = new Map<string, any>();
-        const questionsMap = new Map<string, Question>();
-        const result: Questions = [];
-        
-        // First pass: collect all questons
-        data.questions.forEach((question: any) => {
-          const newQuestion = createQuestion(
-            question.userId,
-            question.question,
-            question.answer,
-            question.id,
-            question.timeStamp,
-            question.repetition,
-            question.interval,
-            question.easeFactor,
-            question.nextReview,
-            question.lastReview,
-            question.history,
-          );
-          questionsMap.set(question.id, newQuestion);
-          result.push(newQuestion);
-          
-          questionsById.set(question.id, question);
-        });
+      const {data: questions} = data;
 
-        this._questions = result;
-        triggerOnChange(this);
-      }
+      this._questions = questions;
+      triggerOnChange(this);
     } catch (error) {
       console.error('Error loading questions from server:', error);
       // Fall back to local storage if server fails
@@ -177,65 +117,47 @@ export class QuestionStore {
       console.warn('Cannot save question: noteId is missing');
       return;
     }
-    
     try {
-      // For debug
-      console.log('Saving question to server:', {
-        id: question.id,
-        question: question,
-        noteId: this._noteId,
-      });
+      const response = await createQuestion(question)
       
-      // Ensure timestamp is an integer (fix for PostgreSQL BIGINT type)
-      let timeStamp: number;
-      timeStamp = Math.round(question.timeStamp);
-      
-      // Prepare the question data for the server
-      const questionData = {
-        id: question.id,
-        noteId: this._noteId,
-        question: question.question,
-        userId: question.userId,
-        answer: question.answer,
-        timeStamp: timeStamp,
-        repetition: question.repetition,
-        interval: question.interval,
-        easeFactor: question.easeFactor,
-        nextReview: question.nextReview,
-        lastReview: question.lastReview,
-        history: question.history,
-      };
-      
-      // Send to server
-      const response = await fetch('/api/questions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(questionData),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to save question: ${response.statusText}${errorData.error ? ' - ' + errorData.error : ''}`);
+      if (response.error !== null) {
+        throw new Error(`Failed to save question: ${response.error}`);
       }
     } catch (error) {
       console.error('Error saving question to server:', error);
     }
   }
+
+  /**
+   * Update question on the server
+   */
+    private async _updateQuestionOnServer(
+      question: Question,
+    ): Promise<void> {
+      if (!this._noteId) {
+        console.warn('Cannot update question: noteId is missing');
+        return;
+      }
+      try {
+        const response = await updateQuestion(question)
+
+        if (response.error !== null) {
+          throw new Error(`Failed to update question: ${response.error}`);
+        }
+      } catch (error) {
+        console.error('Error updating question on the server:', error);
+      }
+    }
   
   /**
    * Delete a question from the server
    */
   private async _deleteQuestionFromServer(questionId: string): Promise<void> {
     try {
-      const response = await fetch(`/api/questions?id=${questionId}`, {
-        method: 'DELETE',
-      });
+      const response = await deleteQuestion(questionId)
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to delete question: ${response.statusText}${errorData.error ? ' - ' + errorData.error : ''}`);
+      if (!response.success) {
+        throw new Error(`Failed to delete question: ${response.message}`);
       }
     } catch (error) {
       console.error('Error deleting question from server:', error);
@@ -264,7 +186,7 @@ export class QuestionStore {
     this._saveQuestions();
     
     // Save to server
-    this._saveQuestionToServer(question);
+    this._updateQuestionOnServer(question);
   }
 
   addQuestion(
@@ -307,13 +229,13 @@ export function useQuestionStore(questionStore: QuestionStore): Questions {
   const [questions, setQuestions] = useState<Questions>(
     questionStore.getQuestions(),
   );
-  const params = useParams();
+  const { noteId, state } = useAppState()
 
   useEffect(() => {
-    if (params?.id) {
-      questionStore.setNoteId(params.id as string);
+    if (noteId) {
+      questionStore.setNoteId(noteId);
     }
-  }, [params, questionStore]);
+  }, [state, questionStore]);
 
   useEffect(() => {
     return questionStore.registerOnChange(() => {

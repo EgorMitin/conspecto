@@ -548,14 +548,96 @@
   background: rgba(255, 212, 0, 0.3);
   border-bottom: 2px solid rgba(255, 212, 0, 0.7);
 }
-.PlaygroundEditorTheme__mark.selected {
+.selected {
   background: rgba(255, 212, 0, 0.5);
   border-bottom: 2px solid rgba(255, 212, 0, 1);
 }
-.PlaygroundEditorTheme__markOverlap.selected {
+.selected {
   background: rgba(255, 212, 0, 0.7);
   border-bottom: 2px solid rgba(255, 212, 0, 0.7);
 }
+.review,
+.review {
+  color: transparent !important;
+  background: linear-gradient(
+      120deg,
+      rgba(255, 215, 0, 0.0) 0%,
+      rgba(255, 215, 0, 0.5) 35%,
+      rgba(255, 255, 200, 1) 50%,
+      rgba(255, 215, 0, 0.5) 65%,
+      rgba(255, 215, 0, 0.0) 100%
+    );
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  animation: invisibility-cloak-shimmer 1.2s linear infinite;
+  border-bottom: none !important;
+  text-shadow: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  pointer-events: none;
+  transition: color 0.2s, background 0.2s;
+  opacity: 1 !important;
+}
+
+@keyframes invisibility-cloak-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+.showingAnswer,
+.showingAnswer {
+  background: none !important;
+  position: relative;
+  z-index: 1;
+}
+.showingAnswer::after,
+.showingAnswer::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 2;
+  border: 1px solid transparent;
+  background: linear-gradient(
+      120deg,
+      rgba(0, 255, 0, 0.0) 0%,
+      rgba(0, 255, 0, 0.5) 35%,
+      rgba(200, 255, 200, 1) 50%,
+      rgba(0, 255, 0, 0.5) 65%,
+      rgba(0, 255, 0, 0.0) 100%
+    );
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  animation: invisibility-cloak-shimmer-green-answer 1.2s linear infinite;
+  /* Use mask to show only border effect */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+  box-sizing: border-box;
+}
+
+@keyframes invisibility-cloak-shimmer-green-answer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
 .PlaygroundEditorTheme__embedBlock {
   user-select: none;
 }

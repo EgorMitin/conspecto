@@ -89,14 +89,22 @@ i.add-comment {
 
 .CommentPlugin_CommentInputBox_Button {
   flex: 1;
-  padding: 6px 10px;
   font-size: 0.80rem;
   height: 30px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.CommentPlugin_CommentInputBox_Button svg {
+  vertical-align: middle;
 }
 
 .CommentPlugin_CommentInputBox_Button.primary {
   background-color: rgb(66, 135, 245);
+  padding: 6px 10px;
   font-weight: bold;
   color: #fff;
   flex: 3;
@@ -143,7 +151,7 @@ i.add-comment {
 
 .CommentPlugin_ShowCommentsButton {
   position: fixed;
-  z-index: 2;
+  z-index: 10;
   top: 10px;
   right: 10px;
   background-color: #ddd;
@@ -412,29 +420,10 @@ i.send {
   opacity: 0;
 }
 
-.CommentPlugin_CommentsPanel_DeletedComment,
-.CommentPlugin_CommentsPanel_List_Comment:hover
-  .CommentPlugin_CommentsPanel_List_DeleteButton,
-.CommentPlugin_CommentsPanel_List_Thread_QuoteBox:hover
-  .CommentPlugin_CommentsPanel_List_DeleteButton {
-  opacity: 0.5;
-}
-
-.CommentPlugin_CommentsPanel_List_DeleteButton:hover {
-  background-color: transparent;
-  opacity: 1;
-  filter: invert(45%) sepia(98%) saturate(2299%) hue-rotate(201deg)
-    brightness(100%) contrast(92%);
-}
-
-.CommentPlugin_CommentsPanel_List_DeleteButton i.delete {
+.CommentPlugin_CommentInputBox_Button i.delete {
   background-size: contain;
-  position: absolute;
-  left: 5px;
-  top: 5px;
   height: 15px;
   width: 15px;
-  vertical-align: -10px;
   background-image: url(../../images/icons/trash3.svg);
   transition: opacity 0.2s linear;
 }

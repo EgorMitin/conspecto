@@ -1,6 +1,6 @@
 "use server";
 
-import DatabaseService from "@/services/DatabaseService/DatabaseService";
+import DatabaseService from "@/services/DatabaseService";
 import { getSessionIdFromCookies } from "@/services/SessionService/SessionService";
 import { redirect } from "next/navigation";
 

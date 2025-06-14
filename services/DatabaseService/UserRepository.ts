@@ -1,0 +1,259 @@
+import { BaseRepository } from './BaseRepository';
+import type { User, UserData } from '@/types/User';
+import type { Subscription } from '@/types/Subscription';
+import type { CreateUserInput, UpdateUserInput } from './types';
+import { logger } from '@/utils/logger';
+
+export class UserRepository extends BaseRepository {
+  /**
+   * Create a new user
+   */
+  public async createUser(userData: CreateUserInput): Promise<User> {
+    return this.executeInTransaction(async (client) => {
+      const now = new Date();
+      const { rows } = await client.query(
+        `INSERT INTO users (email, username, hashed_password, salt, profile_photo_url, preferences, user_tags, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+          RETURNING id, email, username, profile_photo_url as "profilePhotoUrl",
+              preferences, user_tags as "userTags",
+              created_at as "createdAt", updated_at as "updatedAt"`,
+        [
+          userData.email,
+          userData.username,
+          userData.hashedPassword,
+          userData.salt,
+          userData.profilePhotoUrl,
+          userData.preferences || {},
+          userData.userTags,
+          now,
+          now
+        ]
+      );
+      return rows[0];
+    });
+  }
+
+  /**
+   * Get active subscription for a user
+   */
+  public async getUserActiveSubscription(userId: string): Promise<Subscription | null> {
+    const { rows } = await this.executeQuery(
+      `SELECT id, user_id as "userId", status, metadata, price, quantity,
+              cancel_at_period_end as "cancelAtPeriodEnd", created,
+              current_period_start as "currentPeriodStart",
+              current_period_end as "currentPeriodEnd",
+              ended_at as "endedAt", cancel_at as "cancelAt",
+              canceled_at as "canceledAt", trial_start as "trialStart",
+              trial_end as "trialEnd"
+      FROM subscriptions
+      WHERE user_id = $1 AND status = 'active'
+      ORDER BY created DESC
+      LIMIT 1`,
+      [userId]
+    );
+
+    return rows.length > 0 ? rows[0] : null;
+  }
+
+  /**
+   * Get a user by ID
+   */
+  public async getUserById(id: string): Promise<User | null> {
+    const { rows } = await this.executeQuery(
+      `SELECT id, email, username, profile_photo_url as "profilePhotoUrl",
+              preferences, user_tags as "userTags",
+              created_at as "createdAt", updated_at as "updatedAt"
+      FROM users
+      WHERE id = $1`,
+      [id]
+    );
+
+    if (rows.length === 0) return null;
+
+    const subscription = await this.getUserActiveSubscription(id);
+    return { ...rows[0], subscriptionPlan: subscription };
+  }
+
+  /**
+   * Get a user by email
+   * Include hashed_password and salt for authentication purposes server-side
+   */
+  public async getUserByEmail(email: string): Promise<(UserData & { hashedPassword: string, salt: string }) | null> {
+    const { rows } = await this.executeQuery(
+      `SELECT id, email, username, hashed_password as "hashedPassword", salt,
+              profile_photo_url as "profilePhotoUrl",
+              preferences, user_tags as "userTags", is_verified as "isVerified",
+              created_at as "createdAt", updated_at as "updatedAt"
+      FROM users
+      WHERE email = $1`,
+      [email]
+    );
+    if (rows.length === 0) return null;
+
+    const subscription = await this.getUserActiveSubscription(rows[0].id);
+    return { ...rows[0], subscriptionPlan: subscription };
+  }
+
+  /**
+   * Update a user
+   * Password updates are handled separately with salt and hashing.
+   * Payment method updates are also handled separately.
+   */
+  public async updateUser(id: string, updates: UpdateUserInput): Promise<User | null> {
+    const { setClause, values, nextParamIndex } = this.buildUpdateSetClause(
+      updates,
+      1
+    );
+
+    if (!setClause) {
+      return this.getUserById(id);
+    }
+
+    const finalSetClause = `${setClause}, updated_at = $${nextParamIndex}`;
+    const finalValues = [...values, new Date(), id];
+
+    return this.executeInTransaction(async (client) => {
+      const queryText = `
+        UPDATE users
+        SET ${finalSetClause}
+        WHERE id = $${nextParamIndex + 1}
+        RETURNING id, email, username, profile_photo_url as "profilePhotoUrl",
+                  preferences, user_tags as "userTags",
+                  created_at as "createdAt", updated_at as "updatedAt"`;
+
+      const { rows } = await client.query(queryText, finalValues);
+      if (rows.length === 0) return null;
+
+      const subscription = await this.getUserActiveSubscription(id);
+      return { ...rows[0], subscriptionPlan: subscription };
+    });
+  }
+
+  /**
+   * Updates a user's hashed password and salt.
+   * This method expects the new password to be already hashed and a new salt to be provided.
+   */
+  public async updateUserAuthCredentials(userId: string, newHashedPassword: string, newSalt: string): Promise<boolean> {
+    return this.executeInTransaction(async (client) => {
+      const now = new Date();
+      const result = await client.query(
+        `UPDATE users
+         SET hashed_password = $1, salt = $2, updated_at = $3
+         WHERE id = $4`,
+        [newHashedPassword, newSalt, now, userId]
+      );
+      return result.rowCount !== null && result.rowCount > 0;
+    });
+  }
+
+  /**
+   * Updates a user's payment method and billing address.
+   */
+  public async updateUserPaymentData(
+    userId: string,
+    newPaymentMethod: Record<string, any>,
+    newBillingAddress: Record<string, any>
+  ): Promise<boolean> {
+    return this.executeInTransaction(async (client) => {
+      const now = new Date();
+      const result = await client.query(
+        `UPDATE users
+          SET payment_method = $1, billing_address = $2, updated_at = $3
+          WHERE id = $4`,
+        [JSON.stringify(newPaymentMethod), JSON.stringify(newBillingAddress), now, userId]
+      );
+      return result.rowCount !== null && result.rowCount > 0;
+    });
+  }
+
+  /**
+   * Get a user's payment data by id
+   * Include billing address and payment method for payment purposes server-side
+   */
+  public async getUserPaymentDataById(id: string): Promise<(UserData & { billingAddress: Record<string, any>, paymentMethod: Record<string, any> }) | null> {
+    const { rows } = await this.executeQuery(
+      `SELECT id, email, username, billing_address as "billingAddress", payment_method as "paymentMethod",
+              profile_photo_url as "profilePhotoUrl",
+              preferences, user_tags as "userTags", is_verified as "isVerified",
+              created_at as "createdAt", updated_at as "updatedAt"
+      FROM users
+      WHERE id = $1`,
+      [id]
+    );
+    if (rows.length === 0) return null;
+
+    const subscription = await this.getUserActiveSubscription(id);
+    return { ...rows[0], subscriptionPlan: subscription };
+  }
+
+  /**
+   * Delete a user by ID
+   */
+  public async deleteUser(id: string): Promise<boolean> {
+    return this.executeInTransaction(async (client) => {
+      const result = await client.query(
+        `DELETE FROM users WHERE id = $1`,
+        [id]
+      );
+      return result.rowCount !== null && result.rowCount > 0;
+    });
+  }
+
+  /**
+   * Create OAuth account for user
+   */
+  public async createUserOAuthAccount(userId: string, provider: string, providerAccountId: string): Promise<void> {
+    return this.executeInTransaction(async (client) => {
+      const existingQuery = `
+        SELECT user_id as "userId", provider, provider_account_id as "providerAccountId",
+              created_at as "createdAt", updated_at as "updatedAt"
+        FROM user_oauth_accounts
+        WHERE user_id = $1 AND provider = $2 AND provider_account_id = $3
+      `;
+
+      const { rows: existingAccounts } = await client.query(existingQuery, [userId, provider, providerAccountId]);
+
+      if (existingAccounts.length > 0) {
+        return;
+      }
+
+      const now = new Date();
+      await client.query(
+        `INSERT INTO user_oauth_accounts (user_id, provider, provider_account_id, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [userId, provider, providerAccountId, now, now]
+      );
+    });
+  }
+
+  /**
+   * Create verification token for user
+   */
+  public async createVerificationToken(userId: string, token: string, expiresAt: Date): Promise<boolean> {
+    return this.executeInTransaction(async (client) => {
+      await client.query(
+        `UPDATE users
+        SET verification_token = $1, token_expires_at = $2
+        WHERE id = $3`,
+        [token, expiresAt, userId]
+      );
+      return true;
+    });
+  }
+
+  /**
+   * Verify a user with token
+   */
+  public async verifyUser(token: string): Promise<string | null> {
+    return this.executeInTransaction(async (client) => {
+      const { rows } = await client.query(
+        `UPDATE users
+        SET is_verified = TRUE, verification_token = NULL, token_expires_at = NULL
+        WHERE verification_token = $1 AND token_expires_at > NOW()
+        RETURNING id`,
+        [token]
+      );
+      return rows.length > 0 ? rows[0].id : null;
+    });
+  }
+}

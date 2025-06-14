@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import DatabaseService from '@/services/DatabaseService/DatabaseService';
+import DatabaseService from '@/services/DatabaseService';
 import { logger } from '@/utils/logger';
 import { createUserSession } from '@/services/SessionService/SessionService';
 

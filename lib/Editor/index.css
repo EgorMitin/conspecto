@@ -5,13 +5,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Assuming body background/foreground is handled by globals.css or layout */
 }
 
 .editor-shell {
   margin: 20px auto;
   border-radius: 2px;
-  max-width: 70%;
+  max-width: 100%;
   color: var(--editor-foreground);
   position: relative;
   line-height: 1.7;
@@ -26,8 +25,16 @@ body {
   border-bottom-right-radius: 10px;
 }
 
+.ReviewEditor .editor-shell .editor-container {
+  border-radius: 10px;
+}
+
+.ReviewEditor .editor-shell {
+  border-radius: 10px;
+}
+
 .editor-shell .editor-container.tree-view {
-  border-radius: 0;
+  border-radius: 0px;
 }
 
 .editor-shell .editor-container.plain-text {

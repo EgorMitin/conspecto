@@ -6,21 +6,17 @@ interface TItleSectionProps {
   pill: string;
 }
 
-const TitleSection: React.FC<TItleSectionProps> = ({
-  title,
-  subheading,
-  pill
-}) => {
+export default function TitleSection({ title, subheading, pill }: TItleSectionProps) {
   return (
     <React.Fragment>
       <section
         className='flex flex-col gap-4 justify-center items-start md:items-center'>
-          <article className='rounded-full p-[1px] text-sm bg-gradient-to-r from-orange-400 to-yellow-200 shadow-md'>
-            <div className='rounded-full px-3 py-1 bg-white dark:bg-black'>
-              {pill}
-            </div>
-          </article>
-          {subheading ?
+        <article className='rounded-full p-[1px] text-sm bg-gradient-to-r from-orange-400 to-yellow-200 shadow-md'>
+          <div className='rounded-full px-3 py-1 bg-white dark:bg-black'>
+            {pill}
+          </div>
+        </article>
+        {subheading ?
           (
             <>
               <h2 className='text-left text-3xl sm:text-5xl sm:max-w-[750px] md:text-center font-semibold'>
@@ -35,9 +31,7 @@ const TitleSection: React.FC<TItleSectionProps> = ({
               {title}
             </h1>
           )}
-        </section>
+      </section>
     </React.Fragment>
   );
 }
-
-export default TitleSection

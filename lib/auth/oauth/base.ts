@@ -122,6 +122,7 @@ export class OAuthClient<T> {
       const user: User = {
         id: data.id || data.sub || '',
         email: data.email || '',
+        isVerified: true, // !!data.email_verified, (?)
         username: data.name || data.displayName || data.username || '' || `${data.given_name || ''} ${data.family_name || ''}`.trim(),
         profilePhotoUrl: data.picture || data.profile || data.avatar_url || '',
       };

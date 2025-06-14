@@ -5,7 +5,7 @@ import type {
   NodeKey,
   RangeSelection,
 } from 'lexical';
-import type {JSX} from 'react';
+import type { JSX } from 'react';
 
 import './index.css';
 
@@ -17,18 +17,18 @@ import {
   $wrapSelectionInMarkNode,
   MarkNode,
 } from '@lexical/mark';
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
-import {ClearEditorPlugin} from '@lexical/react/LexicalClearEditorPlugin';
-import {LexicalComposer} from '@lexical/react/LexicalComposer';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {EditorRefPlugin} from '@lexical/react/LexicalEditorRefPlugin';
-import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
-import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
-import {OnChangePlugin} from '@lexical/react/LexicalOnChangePlugin';
-import {PlainTextPlugin} from '@lexical/react/LexicalPlainTextPlugin';
-import {createDOMRange, createRectsFromDOMRange} from '@lexical/selection';
-import {$isRootTextContentEmpty, $rootTextContent} from '@lexical/text';
-import {mergeRegister, registerNestedElementResolver} from '@lexical/utils';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
+import { createDOMRange, createRectsFromDOMRange } from '@lexical/selection';
+import { $isRootTextContentEmpty, $rootTextContent } from '@lexical/text';
+import { mergeRegister, registerNestedElementResolver } from '@lexical/utils';
 import {
   $getNodeByKey,
   $getRoot,
@@ -37,12 +37,11 @@ import {
   $getSelection,
   $isRangeSelection,
   $isTextNode,
-  CLEAR_EDITOR_COMMAND,
-  COLLABORATION_TAG,
   COMMAND_PRIORITY_EDITOR,
   createCommand,
   getDOMSelection,
   KEY_ESCAPE_COMMAND,
+  CLICK_COMMAND,
 } from 'lexical';
 import {
   useCallback,
@@ -53,11 +52,10 @@ import {
   useState,
 } from 'react';
 import * as React from 'react';
-import {createPortal} from 'react-dom';
+import { createPortal } from 'react-dom';
 
 import {
   QuestionStore,
-  createQuestion,
   useQuestionStore,
 } from '../../QuestionStorage';
 import useModal from '../../hooks/useModal';
@@ -65,6 +63,10 @@ import CommentEditorTheme from '../../themes/CommentEditorTheme';
 import Button from '../../ui/Button';
 import ContentEditable from '../../ui/ContentEditable';
 import { Question, Questions } from '@/types/Question';
+import { useAppState } from '@/lib/providers/app-state-provider';
+import { useUser } from '@/lib/context/UserContext';
+import { LucideMailQuestion, LucideShieldQuestion, Trash2 } from 'lucide-react';
+import { useReviewStore } from '@/lib/stores/review-store';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand(
   'INSERT_INLINE_COMMAND',
@@ -74,8 +76,23 @@ export const SUBMIT_QUESTION_COMMAND: LexicalCommand<KeyboardEvent> = createComm
   'SUBMIT_QUESTION_COMMAND',
 );
 
-export function getUser(): string {
-  return "anonymous";
+function createQuestion(userId: string, questionText: string, answerText: string, noteId: string): Question {
+  const now = new Date();
+
+  return {
+    id: `q-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+    noteId,
+    userId,
+    question: questionText,
+    answer: answerText,
+    timeStamp: Date.now(),
+    repetition: 0,
+    interval: 0,
+    easeFactor: 2.5,
+    nextReview: now,
+    lastReview: now,
+    history: []
+  };
 }
 
 
@@ -96,8 +113,8 @@ function AddQuestionBox({
     const anchorElement = editor.getElementByKey(anchorKey);
 
     if (boxElem !== null && rootElement !== null && anchorElement !== null) {
-      const {right} = rootElement.getBoundingClientRect();
-      const {top} = anchorElement.getBoundingClientRect();
+      const { right } = rootElement.getBoundingClientRect();
+      const { top } = anchorElement.getBoundingClientRect();
       boxElem.style.left = `${right - 20}px`;
       boxElem.style.top = `${top - 30}px`;
     }
@@ -184,7 +201,7 @@ function SubmitHandlerPlugin({
         rootElement.removeEventListener('keydown', handleKeyDown);
       };
     }
-    
+
     // Fallback to window if no root element
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -206,14 +223,13 @@ function InitialContentPlugin({
     if (initialContent) {
       editor.update(() => {
         const root = $getRoot();
-        // Create a paragraph node first (element node)
         const paragraphNode = $createParagraphNode();
-        // Then create and append the text node to the paragraph
         const textNode = $createTextNode(initialContent);
         paragraphNode.append(textNode);
-        // Clear the root and append the paragraph
         root.clear();
         root.append(paragraphNode);
+
+        textNode.select(initialContent.length, initialContent.length);
       });
     }
   }, [editor, initialContent]);
@@ -233,7 +249,7 @@ function PlainTextEditor({
 }: {
   autoFocus?: boolean;
   className?: string;
-  editorRef?: {current: null | LexicalEditor};
+  editorRef?: { current: null | LexicalEditor };
   onChange: (editorState: EditorState, editor: LexicalEditor) => void;
   onEscape: (e: KeyboardEvent) => boolean;
   placeholder?: string;
@@ -309,7 +325,10 @@ function QuestionInputBox({
     [],
   );
   const selectionRef = useRef<RangeSelection | null>(null);
-  const userId = getUser();
+  const user = useUser();
+  if (!user) return;
+  const userId = user.id;
+  const { noteId } = useAppState()
 
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -328,7 +347,7 @@ function QuestionInputBox({
         );
         const boxElem = boxRef.current;
         if (range !== null && boxElem !== null) {
-          const {left, bottom, width} = range.getBoundingClientRect();
+          const { left, bottom, width } = range.getBoundingClientRect();
           const selectionRects = createRectsFromDOMRange(editor, range);
           let correctedLeft =
             selectionRects.length === 1 ? left + width / 2 - 125 : left - 125;
@@ -336,13 +355,12 @@ function QuestionInputBox({
             correctedLeft = 10;
           }
           boxElem.style.left = `${correctedLeft}px`;
-          boxElem.style.top = `${
-            bottom +
+          boxElem.style.top = `${bottom +
             20 +
             (window.pageYOffset || document.documentElement.scrollTop)
-          }px`;
+            }px`;
           const selectionRectsLength = selectionRects.length;
-          const {container} = selectionState;
+          const { container } = selectionState;
           const elements: Array<HTMLSpanElement> = selectionState.elements;
           const elementsLength = elements.length;
 
@@ -355,14 +373,11 @@ function QuestionInputBox({
               container.appendChild(elem);
             }
             const color = '255, 212, 0';
-            const style = `position:absolute;top:${
-              selectionRect.top +
+            const style = `position:absolute;top:${selectionRect.top +
               (window.pageYOffset || document.documentElement.scrollTop)
-            }px;left:${selectionRect.left}px;height:${
-              selectionRect.height
-            }px;width:${
-              selectionRect.width
-            }px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
+              }px;left:${selectionRect.left}px;height:${selectionRect.height
+              }px;width:${selectionRect.width
+              }px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
             elem.style.cssText = style;
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
@@ -410,8 +425,10 @@ function QuestionInputBox({
       if (answer.length > 100) {
         answer = answer.slice(0, 99) + '…';
       }
+      if (!noteId) return;
+
       submitAddQuestion(
-        createQuestion(userId, question, answer),
+        createQuestion(userId, question, answer, noteId),
         selectionRef.current,
       );
       selectionRef.current = null;
@@ -445,6 +462,173 @@ function QuestionInputBox({
   );
 }
 
+function QuestionEditBox({
+  editor,
+  cancelEditQuestion,
+  submitEditQuestion,
+  deleteQuestion,
+  activeIDs,
+  markNodeMap,
+  questions,
+}: {
+  editor: LexicalEditor;
+  cancelEditQuestion: () => void;
+  submitEditQuestion: (
+    question: Question,
+  ) => void;
+  deleteQuestion: (
+    question: Question,
+  ) => void;
+  activeIDs: Array<string>;
+  markNodeMap: Map<string, Set<NodeKey>>;
+  questions: Questions;
+}) {
+  const [newQuestion, setNewQuestion] = useState(questions.find(q => activeIDs.includes(q.id))?.question || '');
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [modal, showModal] = useModal();
+  const boxRef = useRef<HTMLDivElement>(null);
+  const selectionState = useMemo(
+    () => ({
+      container: document.createElement('div'),
+      elements: [],
+    }),
+    [],
+  );
+  const selectionRef = useRef<RangeSelection | null>(null);
+  const user = useUser();
+  if (!user) return;
+  const question = questions.find(q => activeIDs.includes(q.id))
+
+  const updateLocation = useCallback(() => {
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+
+      if ($isRangeSelection(selection)) {
+        selectionRef.current = selection.clone();
+        const anchor = selection.anchor;
+        const focus = selection.focus;
+        const range = createDOMRange(
+          editor,
+          anchor.getNode(),
+          anchor.offset,
+          focus.getNode(),
+          focus.offset,
+        );
+        const boxElem = boxRef.current;
+        if (range !== null && boxElem !== null) {
+          const { left, bottom, width } = range.getBoundingClientRect();
+          const selectionRects = createRectsFromDOMRange(editor, range);
+          let correctedLeft =
+            selectionRects.length === 1 ? left + width / 2 - 125 : left - 125;
+          if (correctedLeft < 10) {
+            correctedLeft = 10;
+          }
+          boxElem.style.left = `${correctedLeft}px`;
+          boxElem.style.top = `${bottom +
+            20 +
+            (window.pageYOffset || document.documentElement.scrollTop)
+            }px`;
+          const selectionRectsLength = selectionRects.length;
+          const { container } = selectionState;
+          const elements: Array<HTMLSpanElement> = selectionState.elements;
+          const elementsLength = elements.length;
+
+          for (let i = 0; i < selectionRectsLength; i++) {
+            const selectionRect = selectionRects[i];
+            let elem: HTMLSpanElement = elements[i];
+            if (elem === undefined) {
+              elem = document.createElement('span');
+              elements[i] = elem;
+              container.appendChild(elem);
+            }
+            const color = '255, 212, 0';
+            const style = `position:absolute;top:${selectionRect.top +
+              (window.pageYOffset || document.documentElement.scrollTop)
+              }px;left:${selectionRect.left}px;height:${selectionRect.height
+              }px;width:${selectionRect.width
+              }px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
+            elem.style.cssText = style;
+          }
+          for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
+            const elem = elements[i];
+            container.removeChild(elem);
+            elements.pop();
+          }
+        }
+      }
+    });
+  }, [editor, selectionState]);
+
+  useLayoutEffect(() => {
+    updateLocation();
+    const container = selectionState.container;
+    const body = document.body;
+    if (body !== null) {
+      body.appendChild(container);
+      return () => {
+        body.removeChild(container);
+      };
+    }
+  }, [selectionState.container, updateLocation]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateLocation);
+
+    return () => {
+      window.removeEventListener('resize', updateLocation);
+    };
+  }, [updateLocation]);
+
+  const onEscape = (event: KeyboardEvent): boolean => {
+    event.preventDefault();
+    cancelEditQuestion();
+    return true;
+  };
+
+  const updateQuestion = () => {
+    if (canSubmit && question) {
+      question.question = newQuestion;
+      submitEditQuestion(question);
+      selectionRef.current = null;
+    }
+  };
+
+  const submitDeleteQuestion = () => {
+    if (question) {
+      deleteQuestion(question);
+      selectionRef.current = null;
+      cancelEditQuestion();
+    }
+  }
+
+  const onChange = useOnChange(setNewQuestion, setCanSubmit);
+
+  return (
+    <div className="CommentPlugin_CommentInputBox" ref={boxRef}>
+      <PlainTextEditor
+        className="CommentPlugin_CommentInputBox_Editor"
+        onEscape={onEscape}
+        onChange={onChange}
+        initialContent={newQuestion}
+        onSubmit={canSubmit ? updateQuestion : undefined}
+      />
+      <div className="CommentPlugin_CommentInputBox_Buttons">
+        <Button
+          onClick={submitDeleteQuestion}
+          className="CommentPlugin_CommentInputBox_Button">
+          <Trash2 size={16} />
+        </Button>
+        <Button
+          onClick={updateQuestion}
+          disabled={!canSubmit}
+          className="CommentPlugin_CommentInputBox_Button primary">
+          Update <span className="shortcut-hint">(⌘+⏎)</span>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function QuestionsComposer({
   submitUpdateQuestion,
   question,
@@ -459,7 +643,6 @@ function QuestionsComposer({
   const [newQuestion, setnewQuestion] = useState(question.question);
   const [canSubmit, setCanSubmit] = useState(newQuestion !== question.question);
   const editorRef = useRef<LexicalEditor>(null);
-  const userId = getUser();
 
   const onChange = useOnChange(setnewQuestion, setCanSubmit);
 
@@ -541,7 +724,7 @@ function QuestionsPanelList({
   deleteQuestion: (
     question: Question,
   ) => void;
-  listRef: {current: null | HTMLUListElement};
+  listRef: { current: null | HTMLUListElement };
   markNodeMap: Map<string, Set<NodeKey>>;
   submitUpdateQuestion: (
     question: Question,
@@ -609,9 +792,8 @@ function QuestionsPanelList({
           <li
             key={id}
             onClick={handleClick}
-            className={`CommentPlugin_CommentsPanel_List_Thread ${
-              markNodeMap.has(id) ? 'interactive' : ''
-            } ${activeIDs.indexOf(id) === -1 ? '' : 'active'}`}>
+            className={`CommentPlugin_CommentsPanel_List_Thread ${markNodeMap.has(id) ? 'interactive' : ''
+              } ${activeIDs.indexOf(id) === -1 ? '' : 'active'}`}>
             <div className="CommentPlugin_CommentsPanel_List_Thread_QuoteBox">
               <blockquote className="CommentPlugin_CommentsPanel_List_Thread_Quote">
                 {'> '}
@@ -695,7 +877,8 @@ export default function QuestionPlugin(): JSX.Element {
   const [activeAnchorKey, setActiveAnchorKey] = useState<NodeKey | null>();
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showQuestionInput, setShowQuestionInput] = useState(false);
-  const [showQuestions, setShowQuestions] = useState(false);
+  const [showEditQuestion, setShowEditQuestion] = useState(false);
+  const { currentSession } = useReviewStore();
 
   const cancelAddQuestion = useCallback(() => {
     editor.update(() => {
@@ -705,6 +888,16 @@ export default function QuestionPlugin(): JSX.Element {
       }
     });
     setShowQuestionInput(false);
+  }, [editor]);
+
+  const cancelEditQuestion = useCallback(() => {
+    editor.update(() => {
+      const selection = $getSelection();
+      if (selection !== null) {
+        selection.dirty = true;
+      }
+    });
+    setShowEditQuestion(false);
   }, [editor]);
 
   const deleteQuestion = useCallback(
@@ -744,20 +937,46 @@ export default function QuestionPlugin(): JSX.Element {
           const isBackward = selection.isBackward();
           const id = question.id;
 
-          // Wrap content in a MarkNode
           $wrapSelectionInMarkNode(selection, isBackward, id);
+
+          let markNode: null | MarkNode = null;
+          let nodeAfterSelection = selection.focus.getNode();
+
+          if ($isTextNode(nodeAfterSelection)) {
+            let parent = nodeAfterSelection.getParent();
+            while (parent && !$isMarkNode(parent)) {
+              parent = parent.getParent();
+            }
+            if (parent && $isMarkNode(parent)) {
+              markNode = parent;
+            } else {
+              // Try to get the next sibling if we're at the end of a text node
+              const next = nodeAfterSelection.getNextSibling();
+              if (next && $isMarkNode(next)) {
+                markNode = next;
+              }
+            }
+          } else if ($isMarkNode(nodeAfterSelection)) {
+            markNode = nodeAfterSelection;
           }
-        });
+
+          // Place the cursor after the mark node
+          if (markNode) {
+            markNode.selectNext();
+          }
+        }
+      });
       setShowQuestionInput(false);
     },
     [questionStore, editor],
   );
 
-  const submitUpdateQuestion = useCallback(
+  const submitEditQuestion = useCallback(
     (
       question: Question,
     ) => {
       questionStore.updateQuestion(question);
+      setShowEditQuestion(false);
     },
     [editor, questionStore],
   );
@@ -765,16 +984,81 @@ export default function QuestionPlugin(): JSX.Element {
 
   useEffect(() => {
     const changedElems: Array<HTMLElement> = [];
-    for (let i = 0; i < activeIDs.length; i++) {
-      const id = activeIDs[i];
+    if (!currentSession) return;
+
+    for (let i = 0; i < currentSession.questions.length; i++) {
+      const currentId = currentSession.questions[i].id;
+      console.log(currentId, currentSession.questionsToAnswer);
+      if (currentSession.questionsToAnswer.has(currentId)) {
+        const keys = markNodeMap.get(currentId);
+        if (keys !== undefined) {
+          for (const key of keys) {
+            const elem = editor.getElementByKey(key);
+            if (elem !== null) {
+              elem.classList.add('PlaygroundEditorTheme__mark');
+              changedElems.push(elem);
+            }
+          }
+        }
+      } else {
+        const keys = markNodeMap.get(currentId);
+        if (keys !== undefined) {
+          for (const key of keys) {
+            const elem = editor.getElementByKey(key);
+            if (elem !== null) {
+              elem.classList.remove('PlaygroundEditorTheme__mark');
+              changedElems.push(elem);
+            }
+          }
+        }
+      }
+    }
+
+    const id = currentSession?.currentQuestionId;
+    if (id && !currentSession.isShowingAnswer) {
       const keys = markNodeMap.get(id);
       if (keys !== undefined) {
         for (const key of keys) {
           const elem = editor.getElementByKey(key);
           if (elem !== null) {
-            elem.classList.add('selected');
+            elem.classList.add('review');
             changedElems.push(elem);
-            setShowQuestions(true);
+          }
+        }
+      }
+    } else if (id && currentSession?.isShowingAnswer) {
+      for (const key of markNodeMap.get(id) || []) {
+        const elem = editor.getElementByKey(key);
+        if (elem !== null) {
+          elem.classList.remove('review');
+          elem.classList.add('showingAnswer');
+          elem.classList.remove('PlaygroundEditorTheme__mark');
+          changedElems.push(elem);
+        }
+      }
+    }
+    return () => {
+      for (let i = 0; i < changedElems.length; i++) {
+        const changedElem = changedElems[i];
+        changedElem.classList.remove('review');
+        changedElem.classList.remove('showingAnswer');
+      }
+    };
+  }, [editor, markNodeMap, currentSession?.currentQuestionId, currentSession?.isShowingAnswer]);
+
+  useEffect(() => {
+    const changedElems: Array<HTMLElement> = [];
+    if (!currentSession) {
+      for (let i = 0; i < activeIDs.length; i++) {
+        const id = activeIDs[i];
+        const keys = markNodeMap.get(id);
+        if (keys !== undefined) {
+          for (const key of keys) {
+            const elem = editor.getElementByKey(key);
+            if (elem !== null) {
+              elem.classList.add('selected');
+              changedElems.push(elem);
+            }
           }
         }
       }
@@ -844,9 +1128,9 @@ export default function QuestionPlugin(): JSX.Element {
             }
           });
         },
-        {skipInitialization: false},
+        { skipInitialization: false },
       ),
-      editor.registerUpdateListener(({editorState, tags}) => {
+      editor.registerUpdateListener(({ editorState, tags }) => {
         editorState.read(() => {
           const selection = $getSelection();
           let hasActiveIds = false;
@@ -878,8 +1162,9 @@ export default function QuestionPlugin(): JSX.Element {
           if (!hasAnchorKey) {
             setActiveAnchorKey(null);
           }
-          if (!tags.has(COLLABORATION_TAG) && $isRangeSelection(selection)) {
+          if ($isRangeSelection(selection)) {
             setShowQuestionInput(false);
+            setShowEditQuestion(false);
           }
         });
       }),
@@ -891,6 +1176,30 @@ export default function QuestionPlugin(): JSX.Element {
             domSelection.removeAllRanges();
           }
           setShowQuestionInput(true);
+          return true;
+        },
+        COMMAND_PRIORITY_EDITOR,
+      ),
+      editor.registerCommand(
+        CLICK_COMMAND,
+        (event: MouseEvent) => {
+          const target = event.target as HTMLElement;
+
+          let current: HTMLElement | null = target;
+          let isQuestionNode = false;
+
+          while (current && current !== editor.getRootElement()) {
+            if (current.classList.contains('PlaygroundEditorTheme__mark')) {
+              isQuestionNode = true;
+              break;
+            }
+            current = current.parentElement;
+          }
+
+          if (isQuestionNode) {
+            setShowEditQuestion(true);
+          }
+
           return true;
         },
         COMMAND_PRIORITY_EDITOR,
@@ -913,7 +1222,8 @@ export default function QuestionPlugin(): JSX.Element {
           />,
           document.body,
         )}
-      {activeAnchorKey !== null &&
+      {editor.isEditable() &&
+        activeAnchorKey !== null &&
         activeAnchorKey !== undefined &&
         !showQuestionInput &&
         createPortal(
@@ -924,25 +1234,28 @@ export default function QuestionPlugin(): JSX.Element {
           />,
           document.body,
         )}
-      {createPortal(
+      {/* {editor.isEditable() &&
+        createPortal(
         <Button
-          className={`CommentPlugin_ShowCommentsButton ${
+          className={`CommentPlugin_ShowCommentsButton shadow-md hover:shadow-lg ${
             showQuestions ? 'active' : ''
           }`}
           onClick={() => setShowQuestions(!showQuestions)}
           title={showQuestions ? 'Hide Questions' : 'Show Questions'}>
-          <i className="comments" />
+          <i className="format add-comment" />
         </Button>,
         document.body,
-      )}
-      {showQuestions &&
+      )} */}
+      {editor.isEditable() && showEditQuestion &&
         createPortal(
-          <QuestionsPanel
-            questions={questions}
-            submitUpdateQuestion={submitUpdateQuestion}
+          <QuestionEditBox
+            editor={editor}
+            cancelEditQuestion={cancelEditQuestion}
+            submitEditQuestion={submitEditQuestion}
             deleteQuestion={deleteQuestion}
             activeIDs={activeIDs}
             markNodeMap={markNodeMap}
+            questions={questions}
           />,
           document.body,
         )}

@@ -3,6 +3,10 @@ import "@/app/globals.css";
 import { ThemeProvider } from "@/lib/providers/next-theme-provider";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { UserProvider } from "@/lib/context/UserContext";
+import AppStateProvider from "@/lib/providers/app-state-provider";
+
+import { Toaster } from "sonner";
+
 
 export const metadata: Metadata = {
   title: "Conspecto",
@@ -25,7 +29,10 @@ export default async function RootLayout({
             defaultTheme="system"
             enableSystem
           >
-            {children}
+            <AppStateProvider>
+              {children}
+            </AppStateProvider>
+            <Toaster richColors  />
           </ThemeProvider>
         </UserProvider>
       </body>

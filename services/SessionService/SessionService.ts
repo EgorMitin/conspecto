@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import crypto from "crypto";
 import { logger } from "@/utils/logger";
-import databaseService from "@/services/DatabaseService/DatabaseService";
+import databaseService from "@/services/DatabaseService";
 import { COOKIE_SESSION_KEY, SESSION_EXPIRATION_SECONDS } from "@/config/sessions";
 
 

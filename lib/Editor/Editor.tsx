@@ -141,7 +141,7 @@ export default function Editor({
 
   return (
     <>
-      {isRichText && (
+      {editor.isEditable() && isRichText && (
         <ToolbarPlugin
           editor={editor}
           activeEditor={activeEditor}
@@ -265,11 +265,11 @@ export default function Editor({
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
         {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
         {shouldAllowHighlightingWithBrackets && <SpecialTextPlugin />}
-        <ActionsPlugin
+        {editor.isEditable() && <ActionsPlugin
           isRichText={isRichText}
           shouldPreserveNewLinesInMarkdown={shouldPreserveNewLinesInMarkdown}
           saveFunction={save}
-        />
+        />}
       </div>
       {showTreeView && <TreeViewPlugin />}
     </>

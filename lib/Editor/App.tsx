@@ -11,7 +11,6 @@ import {
   TextNode,
 } from 'lexical';
 
-import {FlashMessageContext} from './context/FlashMessageContext';
 import {SettingsContext} from './context/SettingsContext';
 import {SharedHistoryContext} from './context/SharedHistoryContext';
 import {ToolbarContext} from './context/ToolbarContext';
@@ -21,15 +20,12 @@ import {TableContext} from './plugins/TablePlugin';
 import {parseAllowedFontSize} from './plugins/ToolbarPlugin/fontSize';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 import {parseAllowedColor} from './ui/ColorPicker';
-import { useTheme } from 'next-themes';
 
 import type { EditorSettings } from '@/types/Editor';
 
 import './index.css';
 
 function getExtraStyles(element: HTMLElement): string {
-  // Parse styles from pasted input, but only if they match exactly the
-  // sort of styles that would be produced by exportDOM
   let extraStyles = '';
   const fontSize = parseAllowedFontSize(element.style.fontSize);
   const backgroundColor = parseAllowedColor(element.style.backgroundColor);
@@ -49,8 +45,6 @@ function getExtraStyles(element: HTMLElement): string {
 function buildImportMap(): DOMConversionMap {
   const importMap: DOMConversionMap = {};
 
-  // Wrap all TextNode importers with a function that also imports
-  // the custom styles implemented by the playground
   for (const [tag, fn] of Object.entries(TextNode.importDOM() || {})) {
     importMap[tag] = (importNode) => {
       const importer = fn(importNode);
@@ -115,7 +109,7 @@ function App({
       <SharedHistoryContext>
         <TableContext>
           <ToolbarContext>
-            <div className="editor-shell">
+            <div className="editor-shell shadow-md">
               <Editor save={save} />
             </div>
           </ToolbarContext>
@@ -128,18 +122,14 @@ function App({
 export default function EditorApp({
   save,
   content = '',
-  settings = {}
 }:{
   save?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{success: boolean; id?: string; message?: string}>,
   content?: string,
-  settings?: EditorSettings
 }): JSX.Element {
 
   return (
     <SettingsContext>
-      <FlashMessageContext>
-          <App save={save} initialContent={content} />
-      </FlashMessageContext>
+      <App save={save} initialContent={content} />
     </SettingsContext>
   );
 }

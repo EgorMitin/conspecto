@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import DatabaseService from "@/services/DatabaseService/DatabaseService";
+import DatabaseService from "@/services/DatabaseService";
 import { getSessionIdFromCookies } from "@/services/SessionService/SessionService";
 import { logger } from "@/utils/logger";
 
