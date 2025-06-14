@@ -58,7 +58,9 @@ class Logger {
       ...options
     }
 
-    this.checkLogDirectory();
+    if (this.defaultOptions.logTo === 'file') {
+      this.checkLogDirectory();
+    }
   }
 
   private checkLogDirectory() {
@@ -80,14 +82,14 @@ class Logger {
 
   private formatMessage(level: LogLevel, message: string, options: LoggerOptions): string {
     const parts = [];
-    
+
     if (options.timestamp) {
       parts.push(`[${this.getTimestamp()}]`);
     }
-    
+
     parts.push(`[${level.toUpperCase()}]`);
     parts.push(message);
-    
+
     return parts.join(' ');
   }
 
@@ -159,7 +161,7 @@ class Logger {
       ...this.defaultOptions,
       logLevel: (process.env.LOG_LEVEL as LogLevel) || this.defaultOptions.logLevel
     };
-    
+
     if (this.shouldLog('debug', options.logLevel!)) {
       await this.log('debug', message, options, ...args);
     }
@@ -170,7 +172,7 @@ class Logger {
       ...this.defaultOptions,
       logLevel: (process.env.LOG_LEVEL as LogLevel) || this.defaultOptions.logLevel
     };
-    
+
     if (this.shouldLog('info', options.logLevel!)) {
       await this.log('info', message, options, ...args);
     }
@@ -181,7 +183,7 @@ class Logger {
       ...this.defaultOptions,
       logLevel: (process.env.LOG_LEVEL as LogLevel) || this.defaultOptions.logLevel
     };
-    
+
     if (this.shouldLog('warn', options.logLevel!)) {
       await this.log('warn', message, options, ...args);
     }
@@ -192,7 +194,7 @@ class Logger {
       ...this.defaultOptions,
       logLevel: (process.env.LOG_LEVEL as LogLevel) || this.defaultOptions.logLevel
     };
-    
+
     await this.log('error', message, options, ...args);
   }
 }
