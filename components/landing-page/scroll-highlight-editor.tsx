@@ -80,7 +80,6 @@ function ScrollHighlightEditor ({page}: {page: React.RefObject<HTMLDivElement> |
           start: "center center",
           end: "+=4000",
           scrub: true,
-          markers: true,
         }
       });
       console.log("Video duration: ", video.duration);
