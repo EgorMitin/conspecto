@@ -1,6 +1,6 @@
 'use client';
 
-let isDevPlaygroundValue = false;
+const isDevPlaygroundValue = false;
 
 export const isDevPlayground: boolean = isDevPlaygroundValue;
 

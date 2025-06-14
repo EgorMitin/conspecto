@@ -86,7 +86,7 @@ export default function ActionsPlugin({
   const debouncedSave = useCallback(
     debounce(async () => {
       if (!saveFunction) return;
-      let currentContent = editor.getEditorState().toJSON();
+      const currentContent = editor.getEditorState().toJSON();
 
       // Don't save if content hasn't changed since last save
       if (currentContent === lastSavedContentRef.current) {

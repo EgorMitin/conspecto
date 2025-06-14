@@ -82,7 +82,7 @@ export default function SettingsForm () {
       success: 'Profile picture uploaded successfully',
       error: 'Failed to upload profile picture',
     })
-    let result = await resultPromise;
+    const result = await resultPromise;
     if (result.success) {
       await updateUser(user.id, { profilePhotoUrl: result.url });
     }

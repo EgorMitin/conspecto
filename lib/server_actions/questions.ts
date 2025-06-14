@@ -76,14 +76,14 @@ export async function getQuestionsByNoteId(noteId: string): Promise<{ data: Ques
 export async function updateQuestionsInDB(answeredQuestions: AnsweredQuestion[], questions: Question[]): Promise<{ success: boolean; message: string }> {
   try {
     let success = true;
-    for (let answeredQuestion of answeredQuestions) {
+    for (const answeredQuestion of answeredQuestions) {
       const question = questions.find(q => q.id === answeredQuestion.questionId);
       if (!question) {
         console.warn(`Question with ID ${answeredQuestion.questionId} not found`);
         continue;
       }
-      let updatedQuestion = sm2Algorithm(question, answeredQuestion.feedback, answeredQuestion.timeSpent);
-      let result = await DatabaseService.updateQuestion(answeredQuestion.questionId, updatedQuestion);
+      const updatedQuestion = sm2Algorithm(question, answeredQuestion.feedback, answeredQuestion.timeSpent);
+      const result = await DatabaseService.updateQuestion(answeredQuestion.questionId, updatedQuestion);
       if (!result) {
         console.error(`Failed to update question with ID ${answeredQuestion.questionId}`);
         success = false;

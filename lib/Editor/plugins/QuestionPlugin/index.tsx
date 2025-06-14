@@ -788,7 +788,7 @@ function QuestionsPanelList({
         };
 
         return (
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+           
           <li
             key={id}
             onClick={handleClick}
@@ -940,7 +940,7 @@ export default function QuestionPlugin(): JSX.Element {
           $wrapSelectionInMarkNode(selection, isBackward, id);
 
           let markNode: null | MarkNode = null;
-          let nodeAfterSelection = selection.focus.getNode();
+          const nodeAfterSelection = selection.focus.getNode();
 
           if ($isTextNode(nodeAfterSelection)) {
             let parent = nodeAfterSelection.getParent();

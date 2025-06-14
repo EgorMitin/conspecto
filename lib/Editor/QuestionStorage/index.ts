@@ -205,7 +205,7 @@ export class QuestionStore {
     question: Question,
   ) {
     const questions = this._questions;
-    let questionIndex: number | null = questions.indexOf(question);
+    const questionIndex: number | null = questions.indexOf(question);
     questions.splice(questionIndex, 1);
 
     // Delete from server

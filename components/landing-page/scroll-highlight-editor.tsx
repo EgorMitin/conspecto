@@ -23,7 +23,7 @@ function once(
   fn: EventHandlerFunction,
   opts?: AddEventListenerOptions | boolean
 ): EventHandlerFunction {
-  var onceFn = function(this: any, e: Event): void {
+  const onceFn = function(this: any, e: Event): void {
     el.removeEventListener(event, onceFn);
     fn.apply(this, [e]);
   };
@@ -41,8 +41,8 @@ function ScrollHighlightEditor ({page}: {page: React.RefObject<HTMLDivElement> |
 
   useEffect(() => {
     if (videoRef.current) {
-      let video = videoRef.current;
-      let src = video.currentSrc || video.src;
+      const video = videoRef.current;
+      const src = video.currentSrc || video.src;
 
       once(document.documentElement, "touchstart", function (e) {
         video.play();
@@ -53,9 +53,9 @@ function ScrollHighlightEditor ({page}: {page: React.RefObject<HTMLDivElement> |
           fetch(src)
             .then((response) => response.blob())
             .then((response) => {
-              var blobURL = URL.createObjectURL(response);
+              const blobURL = URL.createObjectURL(response);
 
-              var t = video.currentTime;
+              const t = video.currentTime;
               once(document.documentElement, "touchstart", function (e) {
                 video.play();
                 video.pause();
@@ -71,8 +71,8 @@ function ScrollHighlightEditor ({page}: {page: React.RefObject<HTMLDivElement> |
 
   useGSAP(() => {
     if (videoRef.current) {
-      let video = videoRef.current;
-      let tl = gsap.timeline({
+      const video = videoRef.current;
+      const tl = gsap.timeline({
         defaults: { duration: 1 },
         scrollTrigger: {
           trigger: videoRef.current,

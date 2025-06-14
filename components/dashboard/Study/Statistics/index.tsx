@@ -28,7 +28,7 @@ export interface SmallStatisticsData {
 }
 
 export default function NoteStatistics({ statisticsData }: { statisticsData: SmallStatisticsData }) {
-  let { questions, aiReview } = statisticsData;
+  const { questions, aiReview } = statisticsData;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

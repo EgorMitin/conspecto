@@ -17,7 +17,7 @@ export default function TrashRestore() {
       state.folders.filter((folder) => folder.inTrash) || [];
     setFolders(stateFolders);
 
-    let stateNotes: Note[] = [];
+    const stateNotes: Note[] = [];
     state.folders.forEach((folder) => {
         folder.notes.forEach((note) => {
           if (note.status === 'archived') {

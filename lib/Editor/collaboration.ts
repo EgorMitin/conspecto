@@ -6,7 +6,7 @@ import {Doc} from 'yjs';
 
 // Default values for server-side rendering
 let WEBSOCKET_ENDPOINT = 'ws://localhost:1234';
-let WEBSOCKET_SLUG = 'playground';
+const WEBSOCKET_SLUG = 'playground';
 let WEBSOCKET_ID = '0';
 
 // Only run this code in the browser
