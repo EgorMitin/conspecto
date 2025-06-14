@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useReviewStore } from "@/lib/stores/review-store";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/lib/providers/app-state-provider";
-import { getNextAiReviewDateText } from "@/utils/statistics";
+import { formatNextReviewDate } from "@/utils/global";
 
 interface TodaySectionProps {
   questionsDueToday: number;
@@ -107,7 +107,7 @@ export default function TodaySection({
               {nextAiReviewDate ? (
                 <>
                   <p className="text-sm text-muted-foreground">
-                    {getNextAiReviewDateText(nextAiReviewDate)}
+                    {formatNextReviewDate(nextAiReviewDate)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     Scheduled for deeper concept understanding
