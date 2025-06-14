@@ -9,7 +9,7 @@ import { formatNextReviewDate } from "@/utils/global";
 interface StudyProgressProps {
   questions: number;
   reviewed: number;
-  nextReview: string;
+  nextReview: Date;
 }
 
 export function StudyProgress({ questions, reviewed, nextReview }: StudyProgressProps) {

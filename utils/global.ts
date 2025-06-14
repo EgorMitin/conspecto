@@ -73,10 +73,10 @@ export function getURL() {
   return url;
 };
 
-export function formatNextReviewDate(reviewDate: Date | string | undefined): string {
+export function formatNextReviewDate(reviewDate: Date): string {
   if (!reviewDate) return "Not scheduled";
 
-  const date = new Date(reviewDate);
+  const date = reviewDate;
   const today = startOfToday();
 
   if (isToday(date) || isBefore(date, today)) {

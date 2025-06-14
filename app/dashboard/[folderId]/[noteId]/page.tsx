@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { getFoldersAndNotesFromDBAction } from "../../actions";
 import { getQuestinosAndAiReviews, getStatistics } from "./study/actions";
-import { getNextAiReviewDateText } from "@/utils/statistics";
 import Editor from "./Editor";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Breadcrumbs from "@/components/dashboard/NotePage/Breadcrumbs";
@@ -34,7 +33,6 @@ export default async function NotePage({ params }: { params: Promise<{ folderId:
   const folderName = currentFolder.name;
 
   const lastUpdated = formatDistanceToNow(note.updatedAt, { addSuffix: true });
-  const nextReview = getNextAiReviewDateText(note.nextReview);
 
   const { questions, aiReviews } = await getQuestinosAndAiReviews(noteId);
   const statisticsData = await getStatistics(questions, aiReviews);
@@ -58,7 +56,7 @@ export default async function NotePage({ params }: { params: Promise<{ folderId:
               <StudyProgress
                 questions={statisticsData.questions.howManyQuestions}
                 reviewed={statisticsData.questions.howManyReviewed}
-                nextReview={nextReview}
+                nextReview={note.nextReview}
               />
             )}
           </div>
