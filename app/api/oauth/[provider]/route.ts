@@ -1,6 +1,6 @@
 "use server";
 
-import { OAuthClient } from "@/lib/auth/oauth/base";
+import { OAuthClient, OAuthUserData } from "@/lib/auth/oauth/base";
 import DatabaseService from "@/services/DatabaseService";
 import { createUserSession } from "@/services/SessionService/SessionService";
 import { User } from "@/types/User";
@@ -26,7 +26,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ prov
         "Failed to initiate OAuth login. Please try again.")}`, request.url));
     }
     const client = new OAuthClient();
-    const data = client.getOAuthData(provider, state, code);
+    const data = await client.getOAuthData(provider, state, code);
 
     if (!data) {
       logger.error("Failed to retrieve OAuth data");
@@ -35,7 +35,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ prov
     }
 
     try {
-      const oAuthUser = client.convertToUser(data);
+      const oAuthUser = client.convertToUser(data as OAuthUserData);
       console.log("OAuth user data:", oAuthUser);
       const user = await connectUserToAccount(oAuthUser, provider);
       await createUserSession(user.id);
@@ -62,6 +62,7 @@ async function connectUserToAccount(oAuthUser: User, provider: string): Promise<
       username: oAuthUser.username,
       profilePhotoUrl: oAuthUser.profilePhotoUrl,
       isVerified: true,
+      subscriptionPlan: null,
     });
   } else if (!user.profilePhotoUrl) {
     const updatedUser = await DatabaseService.updateUser(user.id, {profilePhotoUrl: oAuthUser.profilePhotoUrl});

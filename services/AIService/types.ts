@@ -16,7 +16,6 @@ export interface QuestionGenerationParams {
   questionTypes?: AiReviewQuestionType[];
   context?: {
     userId?: string;
-    noteId?: string;
     previousSessions?: string[];
   };
 }

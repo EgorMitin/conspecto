@@ -15,7 +15,6 @@ export async function POST(request: Request) {
       uuid: user?.id || '',
     });
     const session = await stripe.checkout.sessions.create({
-      //@ts-ignore
       payment_method_types: ['card'],
       billing_address_collection: 'required',
       customer,
@@ -27,12 +26,12 @@ export async function POST(request: Request) {
       ],
       mode: 'subscription',
       allow_promotion_codes: true,
-      subscription_data: { trial_from_plan: true, metadata },
+      subscription_data: { metadata },
       success_url: `${getURL()}/dashboard`,
       cancel_url: `${getURL()}/dashboard`,
     });
     return NextResponse.json({ sessionId: session.id });
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
     return new NextResponse('Internal Error', { status: 500 });
   }

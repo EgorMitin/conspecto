@@ -15,9 +15,9 @@ export const MIN_ALLOWED_FONT_SIZE = 8;
 export const MAX_ALLOWED_FONT_SIZE = 72;
 export const DEFAULT_FONT_SIZE = 15;
 
-const rootTypeToRootName = {
-  root: 'Root',
-  table: 'Table',
+type RootTypeToRootName = {
+  root: 'Root';
+  table: 'Table';
 };
 
 export const blockTypeToBlockName = {
@@ -36,7 +36,7 @@ export const blockTypeToBlockName = {
 };
 
 //disable eslint sorting rule for quick reference to toolbar state
-/* eslint-disable sort-keys-fix/sort-keys-fix */
+/* eslint-disable sort-keys */
 const INITIAL_TOOLBAR_STATE = {
   bgColor: '#fff',
   blockType: 'paragraph' as keyof typeof blockTypeToBlockName,
@@ -64,7 +64,7 @@ const INITIAL_TOOLBAR_STATE = {
   isLowercase: false,
   isUppercase: false,
   isCapitalize: false,
-  rootType: 'root' as keyof typeof rootTypeToRootName,
+  rootType: 'root' as keyof RootTypeToRootName,
 };
 
 type ToolbarState = typeof INITIAL_TOOLBAR_STATE;

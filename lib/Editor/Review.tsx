@@ -4,8 +4,6 @@ import type {JSX} from 'react';
 
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {
-  SerializedEditorState,
-  SerializedLexicalNode,
   $isTextNode,
   DOMConversionMap,
   TextNode,

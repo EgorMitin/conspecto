@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/dialog';
 
 import { postData, formatPrice } from '@/utils/global';
-import { Button } from '@/components/ui/button';
 import Loader from '@/components/Loader';
 import { ProductWithPrice, Price } from '@/types/Subscription';
 import { toast } from 'sonner';
@@ -55,7 +54,7 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
       console.log('Getting Checkout for stripe');
       const stripe = await getStripe();
       stripe?.redirectToCheckout({ sessionId });
-    } catch (error: unknown) {
+    } catch {
       toast.error('Oppse! Something went wrong.');
     } finally {
       setIsLoading(false);
@@ -76,10 +75,10 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              You're all set!
+              You&apos;re all set!
             </h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              You're already on a Pro plan and have access to all premium features.
+              You&apos;re already on a Pro plan and have access to all premium features.
             </p>
           </div>
         </DialogContent>

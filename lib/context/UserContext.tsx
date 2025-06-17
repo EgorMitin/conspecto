@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import type { User } from '@/types/User';
 
 interface UserContextType {
@@ -9,9 +9,19 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children, initialUser }: { children: ReactNode; initialUser: User | null }) => {
+export function UserProvider({ children, userPromise }: { children: ReactNode; userPromise: Promise<User | null> }) {
+  const [user, setUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await userPromise;
+      setUser(user);
+    }
+    fetchUser();
+  }, [userPromise]);
+
   return (
-    <UserContext.Provider value={{ user: initialUser }}>
+    <UserContext.Provider value={{ user: user }}>
       {children}
     </UserContext.Provider>
   );

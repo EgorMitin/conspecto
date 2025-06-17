@@ -13,3 +13,13 @@ export async function updateUser(userId: string, updates: Partial<User>) {
     return { success: false, message: "Failed to update user" };
   }
 }
+
+export async function getAppStateByUserId(userId: string) {
+  try {
+    const appState = await DatabaseService.getAppStateByUserId(userId);
+    return appState;
+  } catch (error) {
+    console.error("Error fetching app state:", error);
+    return [];
+  }
+}

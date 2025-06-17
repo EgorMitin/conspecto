@@ -8,7 +8,7 @@ export async function updateNote(noteId: string, updates: Partial<Note>) {
   try {
     const updatedNote = await DatabaseService.updateNote(noteId, updates);
     return { data: updatedNote, error: null };
-  } catch (error) {
+  } catch {
     return { data: null, error: 'Failed to update note' };
   }
 }
@@ -17,7 +17,7 @@ export async function createNote(noteData: Omit<Note, 'id' | "updatedAt" | "crea
   try {
     const newNote = await DatabaseService.createNote(noteData);
     return { data: newNote, error: null };
-  } catch (error) {
+  } catch {
     return { data: null, error: 'Failed to create note' };
   }
 }
@@ -29,7 +29,7 @@ export async function getNotesByFolderId(folderId: string): Promise<{ data: Note
       throw new Error('Failed to fetch notes');
     };
     return { data: notes, error: null };
-  } catch (error) {
+  } catch {
     return { data: null, error: 'Failed to fetch notes' };
   }
 }
@@ -41,7 +41,7 @@ export async function getNoteById(noteId: string): Promise<{ data: Note; error: 
       throw new Error('Note not found');
     }
     return { data: note, error: null };
-  } catch (error) {
+  } catch {
     return { data: null, error: 'Failed to fetch note' };
   }
 }
@@ -58,7 +58,7 @@ export async function updateNoteReview(noteId: string, score: 1 | 2 | 3 | 4, tim
       throw new Error('Failed to update note review');
     }
     return { data: updatedNote, error: null };
-  } catch (error) {
+  } catch {
     return { data: null, error: 'Failed to update note review' };
   }
 }

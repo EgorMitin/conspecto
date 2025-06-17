@@ -4,12 +4,13 @@ import { initializeAIService } from '@/services/AIService';
 import { AiReviewDifficulty, AiReviewMode, AiReviewQuestionType } from '@/types/AiReviewSession';
 import { logger } from '@/utils/logger';
 
+
 /**
  * Server action to generate questions for an AI review session
  */
 export async function generateQuestionsForSession(
   sessionId: string,
-  noteId: string,
+  sourceId: string,
   difficulty: AiReviewDifficulty,
   questionCount: number,
   mode: AiReviewMode,
@@ -17,18 +18,18 @@ export async function generateQuestionsForSession(
 ) {
   try {
     const aiService = initializeAIService();
+
+    const noteContent = await aiService.getNoteContent(sessionId, sourceId);
     
     const result = await aiService.generateQuestionsForSession(
       sessionId,
-      noteId,
       {
+        noteContent,
         difficulty,
         questionCount,
         mode,
         questionTypes,
-        context: {
-          noteId,
-        }
+        context: {}
       }
     );
 
@@ -102,11 +103,11 @@ export async function evaluateAnswer(
 /**
  * Server action to generate content insights (summary and key takeaways)
  */
-export async function generateContentInsights(noteId: string) {
+export async function generateContentInsights(sourceId: string) {
   try {
     const aiService = initializeAIService();
     
-    const result = await aiService.generateContentInsights(noteId);
+    const result = await aiService.generateContentInsights(sourceId);
 
     if (!result.success) {
       return {
@@ -157,7 +158,7 @@ export async function getAIProviderInfo() {
 export async function batchGenerateQuestions(
   sessions: Array<{
     sessionId: string;
-    noteId: string;
+    sourceId: string;
     difficulty: AiReviewDifficulty;
     questionCount: number;
     mode: AiReviewMode;
@@ -177,7 +178,7 @@ export async function batchGenerateQuestions(
           questionTypes: session.questionTypes,
           noteContent: '', // Will be fetched by the service
           context: {
-            noteId: session.noteId,
+            sourceId: session.sourceId,
           }
         }
       }))

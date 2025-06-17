@@ -3,7 +3,6 @@ import {IS_APPLE} from '@lexical/utils';
 import {isModifierMatch} from '.'
 
 //disable eslint sorting rule for quick reference to shortcuts
-/* eslint-disable sort-keys-fix/sort-keys-fix */
 export const SHORTCUTS = Object.freeze({
   // (Ctrl|⌘) + (Alt|Option) + <key> shortcuts
   NORMAL: IS_APPLE ? '⌘+Opt+0' : 'Ctrl+Alt+0',
@@ -15,7 +14,7 @@ export const SHORTCUTS = Object.freeze({
   CHECK_LIST: IS_APPLE ? '⌘+Opt+6' : 'Ctrl+Alt+6',
   CODE_BLOCK: IS_APPLE ? '⌘+Opt+C' : 'Ctrl+Alt+C',
   QUOTE: IS_APPLE ? '⌘+Opt+Q' : 'Ctrl+Alt+Q',
-  ADD_COMMENT: IS_APPLE ? '⌘+Opt+M' : 'Ctrl+Alt+M',
+  ADD_QUESTION: IS_APPLE ? '⌘+Opt+M' : 'Ctrl+Alt+M',
 
   // (Ctrl|⌘) + Shift + <key> shortcuts
   INCREASE_FONT_SIZE: IS_APPLE ? '⌘+Shift+.' : 'Ctrl+Shift+.',

@@ -5,7 +5,7 @@ import { useReviewStore } from '@/lib/stores/review-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Clock, Eye, X, CheckCircle } from 'lucide-react';
+import { Clock, Eye, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useAppState } from '@/lib/providers/app-state-provider';
 import { useRouter } from 'next/navigation';
@@ -50,7 +50,7 @@ const FeedbackButton = ({
   );
 };
 
-export default function ReviewSession({ noteContent }: { noteContent: string }) {
+export default function ReviewSession({ noteContent, noteTitle }: { noteContent: string, noteTitle: string }) {
   const {
     currentSession,
     showAnswer,
@@ -122,7 +122,8 @@ export default function ReviewSession({ noteContent }: { noteContent: string }) 
   }
 
   const currentQuestion = currentSession.questions.find(q => q.id === currentSession.currentQuestionId) as Question;
-  const progress = (currentSession.answeredQuestions.filter(q => q.feedback >= 2).length / currentSession.questions.length) * 100;
+  const answeredQuestionsRation = (currentSession.questions.length - currentSession.questionsToAnswer.size) / currentSession.questions.length
+  const progress = answeredQuestionsRation * 100;
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -136,8 +137,8 @@ export default function ReviewSession({ noteContent }: { noteContent: string }) 
                   Review Session - {currentSession.mode === 'due' ? 'Due Questions' : 'All Questions'}
                 </CardTitle>
                 <Badge variant="outline">
-                  {currentSession.answeredQuestions.filter(q => q.feedback >= 2).length} / {currentSession.questions.length}
-                </Badge>
+                  {currentSession.questions.length - currentSession.questionsToAnswer.size} / {currentSession.questions.length}
+                </Badge> 
               </div>
               <Button
                 variant="ghost"
@@ -167,7 +168,7 @@ export default function ReviewSession({ noteContent }: { noteContent: string }) 
         <Card className='gap-0'>
           <CardHeader>
             <CardTitle className="text-base flex items-center justify-between">
-              <span>{currentQuestion.noteTitle}</span>
+              <span>{noteTitle}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -187,7 +188,7 @@ export default function ReviewSession({ noteContent }: { noteContent: string }) 
             {!currentSession.isShowingAnswer ? (
               <div className="text-center py-0 flex flex-col items-center justify-center">
                 <p className="text-muted-foreground mb-2">
-                  Think about your answer, then reveal it to check your understanding.
+                  {currentQuestion.question}
                 </p>
                 <Button onClick={showAnswer} size="sm" className="px-8 rounded-full shadow flex items-center">
                   <Eye className="h-4 w-4 mr-2" />

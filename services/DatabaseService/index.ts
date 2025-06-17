@@ -27,6 +27,7 @@ import type {
   UpdateSessionInput,
   CreateSessionInput
 } from './types';
+import { AppFolderType } from '@/lib/providers/app-state-provider';
 
 /**
  * Database Service - Singleton pattern implementation with Repository Pattern
@@ -448,6 +449,10 @@ export class DatabaseService {
 
   public async verifyUser(token: string): Promise<string | null> {
     return this.userRepository.verifyUser(token);
+  }
+
+  public async getAppStateByUserId(userId: string): Promise<AppFolderType[]> {
+    return this.userRepository.getAppStateByUserId(userId);
   }
 
   // ===== NOTE METHODS (delegated to NoteRepository) =====

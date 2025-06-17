@@ -1,10 +1,8 @@
 import type {LexicalEditor} from 'lexical';
 
 import {useEffect, useState} from 'react';
-import {useParams} from 'next/navigation';
 
-import type {Question, QuestionHistoryItem, Questions} from '@/types/Question';
-import { get } from 'http';
+import type {Question, Questions} from '@/types/Question';
 import { createQuestion, deleteQuestion, getQuestionsByNoteId, updateQuestion } from '@/lib/server_actions/questions';
 import { useAppState } from '@/lib/providers/app-state-provider';
 
@@ -154,6 +152,7 @@ export class QuestionStore {
    */
   private async _deleteQuestionFromServer(questionId: string): Promise<void> {
     try {
+      console.debug('Deleting question from server:', questionId);
       const response = await deleteQuestion(questionId)
       
       if (!response.success) {
@@ -222,6 +221,22 @@ export class QuestionStore {
     return () => {
       changeListeners.delete(onChange);
     };
+  }
+
+    deleteQuestionById(
+    questionId: string,
+  ) {
+    const questions = this._questions;
+    const question = questions.find(q => q.id === questionId)!;
+    const questionIndex: number | null = questions.indexOf(question);
+    questions.splice(questionIndex, 1);
+
+    // Delete from server
+    this._deleteQuestionFromServer(question.id);
+    
+    this._questions = questions;
+    triggerOnChange(this);
+    this._saveQuestions();
   }
 }
 

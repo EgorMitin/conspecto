@@ -1,5 +1,4 @@
-import { Note } from "@/types/Note";
-import { Question } from "@/types/Question";
+'use client';
 
 // --- Configuration for time-based penalty ---
 // If a correct answer (feedback 3 or 4) takes longer than this (in milliseconds),
@@ -60,7 +59,7 @@ export function sm2Algorithm<T extends ReviewableItem>(
 
   // 2. Adjust SM-2 quality (q) based on timeSpent for correct answers (initial q >= 3)
   let q = q_initial;
-  if (q_initial >= 3 && timeSpent > TIME_THRESHOLD_MS_FOR_PENALTY) {
+  if (q_initial >= 2 && timeSpent > TIME_THRESHOLD_MS_FOR_PENALTY) {
     const excessTime = timeSpent - TIME_THRESHOLD_MS_FOR_PENALTY;
     const penalty = Math.min(MAX_TIME_PENALTY, excessTime * TIME_PENALTY_FACTOR);
     q = Math.max(0, q_initial - penalty);
@@ -71,7 +70,7 @@ export function sm2Algorithm<T extends ReviewableItem>(
   let newEaseFactor = currentEaseFactor;
 
   // 3. Calculate new repetition, interval, and ease factor based on SM-2
-  if (q < 3) {
+  if (q < 2) {
     newRepetition = 0;
     newInterval = 0;
     newEaseFactor = Math.max(1.3, currentEaseFactor - 0.2);
@@ -93,7 +92,7 @@ export function sm2Algorithm<T extends ReviewableItem>(
     }
   }
 
-  if (q >= 3 && newInterval < 1) {
+  if (q >= 2 && newInterval < 1) {
     newInterval = 1;
   }
 

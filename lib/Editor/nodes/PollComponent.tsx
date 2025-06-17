@@ -4,7 +4,6 @@ import type {JSX} from 'react';
 
 import './PollNode.css';
 
-import {useCollaborationContext} from '@lexical/react/LexicalCollaborationContext';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {useLexicalNodeSelection} from '@lexical/react/useLexicalNodeSelection';
 import {mergeRegister} from '@lexical/utils';
@@ -23,11 +22,24 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import Button from '../ui/Button';
 import joinClasses from '../utils/joinClasses';
 import {$isPollNode, createPollOption} from './PollNode';
+import { useUser } from '@/lib/context/UserContext';
 
 function getTotalVotes(options: Options): number {
   return options.reduce((totalVotes, next) => {
     return totalVotes + next.votes.length;
   }, 0);
+}
+
+function hashUUIDToNumber(uuid?: string): number {
+  if (!uuid) {
+    return -1;
+  }
+  let hash = 0;
+  for (let i = 0; i < uuid.length; i++) {
+    hash = (hash << 5) - hash + uuid.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
 }
 
 function PollOptionComponent({
@@ -46,7 +58,8 @@ function PollOptionComponent({
     onSelect?: () => void,
   ) => void;
 }): JSX.Element {
-  const {clientID} = useCollaborationContext();
+  const user = useUser()
+  const clientID = hashUUIDToNumber(user?.id);
   const checkboxRef = useRef(null);
   const votesArray = option.votes;
   const checkedIndex = votesArray.indexOf(clientID);
@@ -65,7 +78,7 @@ function PollOptionComponent({
           ref={checkboxRef}
           className="PollNode__optionCheckbox"
           type="checkbox"
-          onChange={(e) => {
+          onChange={() => {
             withPollNode((node) => {
               node.toggleVote(option, clientID);
             });

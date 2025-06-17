@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,14 +24,15 @@ import { useAiReviewStore } from '@/lib/stores/ai-review-store';
 import QuestionTypeInfo from './QuestionTypeInfo';
 import EvaluationDisplay from './EvaluationDisplay';
 import { formatTime } from '../functions';
+import Confetti from 'react-dom-confetti';
+import AnimatedEvaluatingBorder from './AnimatedEvaluatingBorder';
 
 export default function AiReviewSession() {
   const router = useRouter();
-  const { folderId, noteId } = useAppState();
+  const { folderId, noteId, dispatch } = useAppState();
   const {
     currentSession,
     submitAnswer,
-    evaluateAnswer,
     skipQuestion,
     nextQuestion,
     previousQuestion,
@@ -46,14 +47,22 @@ export default function AiReviewSession() {
   const [sessionTime, setSessionTime] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const currentQuestion = getCurrentQuestion();
+  const currentQuestionId = currentQuestion?.id || '';
   const progress = getProgress();
+  const prevStatusRef = useRef(currentQuestion?.status);
 
+  const isLastQuestion = currentSession && currentQuestion &&
+    currentSession.currentQuestionIndex === (currentSession.generatedQuestions?.length || 0) - 1;
+  const allQuestionsAnswered = currentSession?.generatedQuestions?.every(
+    q => q.status === 'answered' || q.status === 'skipped' || q.status === 'evaluated'
+  ) || false;
 
   useEffect(() => {
     if (!currentSession) {
-      router.push(`/dashboard/${folderId}/${noteId}/study/ai-review`);
+      router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/ai-review`);
       return;
     }
 
@@ -68,33 +77,74 @@ export default function AiReviewSession() {
   }, [currentSession, getSessionElapsedTime, currentQuestion, addTimeSpentToCurrentQuestion, router, folderId, noteId]);
 
   useEffect(() => {
+    const currentQuestion = getCurrentQuestion();
     if (currentQuestion) {
       setCurrentAnswer(currentQuestion.answer || '');
     }
-  }, [currentQuestion?.id]);
+  }, [currentQuestionId]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Submit answer with Cmd/Ctrl + Enter
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        if (currentQuestion?.status === 'generated' && currentAnswer.trim() && !isEvaluating) {
+          handleSubmitAnswer();
+        }
+      }
+
+      // Navigate with arrow keys (only when not typing in textarea!)
+      if (event.target !== document.querySelector('textarea')) {
+        // Previous question with Left arrow or Cmd/Ctrl + Left
+        if (event.key === 'ArrowLeft' || ((event.metaKey || event.ctrlKey) && event.key === 'ArrowLeft')) {
+          event.preventDefault();
+          if (currentSession && currentSession.currentQuestionIndex > 0) {
+            handlePreviousQuestion();
+          }
+        }
+
+        // Next question with Right arrow or Cmd/Ctrl + Right
+        if (event.key === 'ArrowRight' || ((event.metaKey || event.ctrlKey) && event.key === 'ArrowRight')) {
+          event.preventDefault();
+          if (currentSession && !isLastQuestion) {
+            handleNextQuestion();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [currentQuestion, currentAnswer, isEvaluating, currentSession, isLastQuestion]);
+
+  useEffect(() => {
+    if (
+      currentQuestion &&
+      prevStatusRef.current === 'evaluating' &&
+      currentQuestion.status === 'evaluated' &&
+      currentQuestion.evaluation === 'correct'
+    ) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 1800);
+    }
+    prevStatusRef.current = currentQuestion?.status;
+  }, [currentQuestion?.status, currentQuestion?.evaluation]);
 
   const handleEndSession = () => {
-    router.push(`/dashboard/${folderId}/${noteId}/study/`);
+    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/`);
     endSession();
   };
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
     if (!currentQuestion || !currentAnswer.trim()) return;
-
-    submitAnswer(currentQuestion.id, currentAnswer.trim());
-  };
-
-  const handleEvaluateAnswer = async () => {
-    if (!currentQuestion) return;
-
     setIsEvaluating(true);
-    try {
-      await evaluateAnswer(currentQuestion.id);
-    } catch (error) {
-      console.error('Evaluation failed:', error);
-    } finally {
+
+    submitAnswer(currentQuestion.id, currentAnswer.trim()).then(() => {
       setIsEvaluating(false);
-    }
+    }).catch((error) => {
+      console.error('Error submitting answer:', error);
+      setIsEvaluating(false);
+    });
   };
 
   const handleSkipQuestion = () => {
@@ -115,18 +165,9 @@ export default function AiReviewSession() {
   };
 
   const handleCompleteSession = async () => {
-    await completeSession();
-    router.push(`/dashboard/${folderId}/${noteId}/study/ai-review/results`);
+    await completeSession(dispatch);
+    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/ai-review/results`);
   };
-
-  console.debug('Current Question:', currentQuestion);
-
-  const isLastQuestion = currentSession && currentQuestion &&
-    currentSession.currentQuestionIndex === (currentSession.generatedQuestions?.length || 0) - 1;
-
-  const allQuestionsAnswered = currentSession?.generatedQuestions?.every(
-    q => q.status === 'answered' || q.status === 'skipped' || q.status === 'evaluated'
-  ) || false;
 
   if (!currentSession || !currentQuestion) {
     return (
@@ -246,54 +287,53 @@ export default function AiReviewSession() {
 
             {/* Answer Input */}
             <div className="space-y-3">
-              <Textarea
-                value={currentAnswer}
-                onChange={(e) => setCurrentAnswer(e.target.value)}
-                placeholder="Type your answer here..."
-                className="min-h-[120px] resize-none"
-                disabled={currentQuestion.status === 'skipped'}
-              />
+              <div className="flex relative justify-center">
+                <div className="relative z-10 m-[2px] w-full bg-background rounded-md">
+                  <Textarea
+                    value={currentAnswer}
+                    onChange={(e) => setCurrentAnswer(e.target.value)}
+                    placeholder="Type your answer here..."
+                    className={`min-h-[120px] border-white resize-none transition-all duration-300 ${isEvaluating ? 'border-transparent' : ''
+                      }`}
+                    disabled={['skipped', 'evaluated', 'answered'].includes(currentQuestion.status)}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <Confetti active={showConfetti} />
+                  </div>
+                </div>
+                {isEvaluating && (<AnimatedEvaluatingBorder />)}
+              </div>
 
               <div className="flex items-center gap-3">
                 {currentQuestion.status === 'generated' && (
                   <>
                     <Button
                       onClick={handleSubmitAnswer}
-                      disabled={!currentAnswer.trim()}
+                      disabled={!currentAnswer.trim() || isEvaluating}
                       className="flex items-center gap-2"
                     >
-                      <Send className="h-4 w-4" />
-                      Submit Answer
+                      {isEvaluating ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4" />
+                          Evaluate Answer
+                        </>
+                      )}
                     </Button>
                     <Button
                       variant="outline"
                       onClick={handleSkipQuestion}
+                      disabled={!!isLastQuestion}
                       className="flex items-center gap-2"
                     >
                       <SkipForward className="h-4 w-4" />
                       Skip Question
                     </Button>
                   </>
-                )}
-
-                {currentQuestion.status === 'answered' && !currentQuestion.evaluation && (
-                  <Button
-                    onClick={handleEvaluateAnswer}
-                    disabled={isEvaluating}
-                    className="flex items-center gap-2"
-                  >
-                    {isEvaluating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Evaluating...
-                      </>
-                    ) : (
-                      <>
-                        <Brain className="h-4 w-4" />
-                        Evaluate Answer
-                      </>
-                    )}
-                  </Button>
                 )}
 
                 {currentQuestion.status === 'evaluating' && (
@@ -307,6 +347,19 @@ export default function AiReviewSession() {
 
             {/* Evaluation Result */}
             <EvaluationDisplay question={currentQuestion} />
+            {(!isLastQuestion && currentQuestion.status === 'evaluated' && currentQuestion.evaluation) && (
+              <div className="flex justify-end mt-2">
+                <Button
+                  onClick={handleNextQuestion}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                  disabled={isEvaluating}
+                >
+                  Next Question
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -318,7 +371,7 @@ export default function AiReviewSession() {
                 <div>
                   <h3 className="font-medium">Session Complete!</h3>
                   <p className="text-sm text-muted-foreground">
-                    You've answered all questions. Ready to see your results?
+                    You&apos;ve answered all questions. Ready to see your results?
                   </p>
                 </div>
                 <Button

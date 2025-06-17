@@ -14,19 +14,20 @@ export class AiReviewSessionRepository extends BaseRepository {
 
       const { rows } = await client.query(
         `INSERT INTO ai_review_sessions (
-          user_id, note_id, status, mode, difficulty, summary, key_takeaways,
+          user_id, source_id, source_type, status, mode, difficulty, summary, key_takeaways,
           generated_questions, result, model_version, error_message,
           requested_at, questions_generated_at, session_started_at, completed_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-        RETURNING id, user_id as "userId", note_id as "noteId", status, mode, difficulty,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+        RETURNING id, user_id as "userId", source_id as "sourceId", source_type as "sourceType", status, mode, difficulty,
                   summary, key_takeaways as "keyTakeaways", generated_questions as "generatedQuestions",
                   result, model_version as "modelVersion", error_message as "errorMessage",
                   requested_at as "requestedAt", questions_generated_at as "questionsGeneratedAt",
                   session_started_at as "sessionStartedAt", completed_at as "completedAt"`,
         [
           session.userId,
-          session.noteId,
+          session.sourceId,
+          session.sourceType,
           session.status,
           session.mode,
           session.difficulty,
@@ -52,7 +53,7 @@ export class AiReviewSessionRepository extends BaseRepository {
    */
   public async getAiReviewSessionById(id: string): Promise<AiReviewSession | null> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", note_id as "noteId", status, mode, difficulty,
+      `SELECT id, user_id as "userId", source_id as "sourceId", source_type as "sourceType", status, mode, difficulty,
               summary, key_takeaways as "keyTakeaways", generated_questions as "generatedQuestions",
               result, model_version as "modelVersion", error_message as "errorMessage",
               requested_at as "requestedAt", questions_generated_at as "questionsGeneratedAt",
@@ -70,7 +71,7 @@ export class AiReviewSessionRepository extends BaseRepository {
    */
   public async getAiReviewSessionsByUserId(userId: string): Promise<AiReviewSession[]> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", note_id as "noteId", status, mode, difficulty,
+      `SELECT id, user_id as "userId", source_id as "sourceId", source_type as "sourceType", status, mode, difficulty,
               summary, key_takeaways as "keyTakeaways", generated_questions as "generatedQuestions",
               result, model_version as "modelVersion", error_message as "errorMessage",
               requested_at as "requestedAt", questions_generated_at as "questionsGeneratedAt",
@@ -89,13 +90,13 @@ export class AiReviewSessionRepository extends BaseRepository {
    */
   public async getAiReviewSessionsByNoteId(noteId: string): Promise<AiReviewSession[]> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", note_id as "noteId", status, mode, difficulty,
+      `SELECT id, user_id as "userId", source_id as "sourceId", source_type as "sourceType", status, mode, difficulty,
               summary, key_takeaways as "keyTakeaways", generated_questions as "generatedQuestions",
               result, model_version as "modelVersion", error_message as "errorMessage",
               requested_at as "requestedAt", questions_generated_at as "questionsGeneratedAt",
               session_started_at as "sessionStartedAt", completed_at as "completedAt"
       FROM ai_review_sessions
-      WHERE note_id = $1
+      WHERE source_id = $1
       ORDER BY requested_at DESC`,
       [noteId]
     );
@@ -123,7 +124,7 @@ export class AiReviewSessionRepository extends BaseRepository {
       UPDATE ai_review_sessions
       SET ${setClause}
       WHERE id = $${nextParamIndex}
-      RETURNING id, user_id as "userId", note_id as "noteId", status, mode, difficulty,
+      RETURNING id, user_id as "userId", source_id as "sourceId", source_type as "sourceType", status, mode, difficulty,
                 summary, key_takeaways as "keyTakeaways", generated_questions as "generatedQuestions",
                 result, model_version as "modelVersion", error_message as "errorMessage",
                 requested_at as "requestedAt", questions_generated_at as "questionsGeneratedAt",

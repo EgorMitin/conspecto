@@ -1,4 +1,3 @@
-
 import {IS_CHROME} from '@lexical/utils';
 import {
   $createParagraphNode,
@@ -18,9 +17,7 @@ import {$isCollapsibleContentNode} from './CollapsibleContentNode';
 
 type SerializedCollapsibleTitleNode = SerializedElementNode;
 
-export function $convertSummaryElement(
-  domNode: HTMLElement,
-): DOMConversionOutput | null {
+export function $convertSummaryElement(): DOMConversionOutput | null {
   const node = $createCollapsibleTitleNode();
   return {
     node,
@@ -55,13 +52,13 @@ export class CollapsibleTitleNode extends ElementNode {
     return dom;
   }
 
-  updateDOM(prevNode: this, dom: HTMLElement): boolean {
+  updateDOM(): boolean {
     return false;
   }
 
   static importDOM(): DOMConversionMap | null {
     return {
-      summary: (domNode: HTMLElement) => {
+      summary: () => {
         return {
           conversion: $convertSummaryElement,
           priority: 1,

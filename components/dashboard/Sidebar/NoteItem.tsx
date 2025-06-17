@@ -9,7 +9,6 @@ import EmojiPicker from '@/components/emoji-picker';
 import { toast } from 'sonner';
 import TooltipComponent from '@/components/tooltip';
 import { Trash } from 'lucide-react';
-import { useUser } from '@/lib/context/UserContext';
 import { updateNote } from '@/lib/server_actions/notes';
 import Loader from '@/components/Loader';
 
@@ -18,22 +17,19 @@ interface NoteItemProps {
   id: string;
   iconId: string;
   children?: React.ReactNode;
-  disabled?: boolean;
 }
 
-export default function NoteItem ({
+export default function NoteItem({
   title,
   id,
   iconId,
   children,
-  disabled,
-  ...props
 }: NoteItemProps) {
-  const user = useUser();
   const { state, dispatch, folderId, noteId } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
   const [localTitle, setLocalTitle] = useState(title);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [newEmoji, setNewEmoji] = useState(iconId);
   const router = useRouter();
 
   const noteTitleFromState: string | undefined = useMemo(() => {
@@ -52,14 +48,14 @@ export default function NoteItem ({
 
   const navigatePage = () => {
     if (noteId === id) return;
-    
+
     setIsNavigating(true);
     console.log('Navigating to note:', id);
-    
+
     toast.info('Loading note...', { duration: 2000 });
-    
+
     router.push(`/dashboard/${folderId}/${id}`);
-    
+
     setTimeout(() => {
       setIsNavigating(false);
     }, 500);
@@ -85,15 +81,17 @@ export default function NoteItem ({
       });
     }
 
-    const { error } = await updateNote(id, { title: localTitle });
-    if (error) {
-      toast.error('Error! Could not update the title for this note.');
-    } else
-      toast.success('Note title updated successfully.');
+    const updatePromise = updateNote(id, { title: localTitle });
+    toast.promise(updatePromise, {
+      loading: 'Updating note title...',
+      success: 'Note title updated successfully.',
+      error: 'Error! Could not update the title for this note.',
+    });
   };
 
   const onChangeEmoji = async (selectedEmoji: string) => {
     if (!folderId) return;
+    setNewEmoji(selectedEmoji);
     dispatch({
       type: 'UPDATE_NOTE',
       payload: {
@@ -102,15 +100,15 @@ export default function NoteItem ({
         note: { iconId: selectedEmoji },
       },
     });
-    const { error } = await updateNote(id, { iconId: selectedEmoji });
-    if (error) {
-      toast.error('Error! Could not update the emoji for this folder');
-    } else {
-      toast.success('Update emoji for the folder');
-    }
+    const updatePromise = updateNote(id, { iconId: selectedEmoji });
+    toast.promise(updatePromise, {
+      loading: 'Updating emoji...',
+      success: 'Emoji updated successfully.',
+      error: 'Error! Could not update the emoji for this note.',
+    });
   };
 
-  const noteTitleChange = (e: any) => {
+  const noteTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalTitle(e.target.value);
   };
 
@@ -124,12 +122,13 @@ export default function NoteItem ({
         folderId,
       },
     });
-    const { error } = await updateNote(id, { status: 'archived' });
-    if (error) {
-      toast.error('Could not archive the note');
-    } else {
-      toast.info('Note archived successfully.');
-    }
+
+    const updatePromise = updateNote(id, { status: 'archived' });
+    toast.promise(updatePromise, {
+      loading: 'Archiving note...',
+      success: 'Note archived successfully.',
+      error: 'Could not archive the note.',
+    });
   };
 
   return (
@@ -157,7 +156,7 @@ export default function NoteItem ({
                   <Loader />
                 </div>
               ) : (
-                <EmojiPicker getValue={onChangeEmoji}>{iconId}</EmojiPicker>
+                <EmojiPicker getValue={onChangeEmoji}>{newEmoji}</EmojiPicker>
               )}
             </div>
             <input

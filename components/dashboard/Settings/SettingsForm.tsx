@@ -33,7 +33,7 @@ import { uploadFile } from '@/lib/firebase/storage';
 
 export default function SettingsForm () {
   const user = useUser();
-  const { open, setOpen } = useSubscriptionModal();
+  const { setOpen } = useSubscriptionModal();
   const router = useRouter();
   const { state, folderId, dispatch } = useAppState();
   const titleTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
@@ -46,7 +46,7 @@ export default function SettingsForm () {
   const redirectToCustomerPortal = async () => {
     setLoadingPortal(true);
     try {
-      const { url, error } = await postData({
+      const { url } = await postData({
         url: '/api/create-portal-link',
       });
       window.location.assign(url);

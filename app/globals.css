@@ -2,6 +2,35 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Landing page animations */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
 button {
   cursor: pointer;
 }
@@ -118,6 +147,7 @@ button {
   --editor-caret-color: var(--editor-foreground);
   --background: oklch(0.95 0 0);
   --foreground: oklch(0.145 0 0);
+  --editor-icon-filter: none;
 }
 
 .dark {
@@ -191,6 +221,7 @@ button {
   --editor-scrollbar-thumb: var(--editor-muted-foreground);
   --editor-placeholder: var(--editor-muted-foreground);
   --editor-caret-color: var(--editor-foreground);
+  --editor-icon-filter: invert(1) brightness(1.2) grayscale(0.2);
 }
 
 @layer base {

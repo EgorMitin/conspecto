@@ -1,7 +1,6 @@
 import { BaseRepository } from './BaseRepository';
 import type { Note } from '@/types/Note';
 import type { UpdateNoteInput } from './types';
-import { logger } from '@/utils/logger';
 
 export class NoteRepository extends BaseRepository {
   /**

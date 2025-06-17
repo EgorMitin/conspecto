@@ -1,8 +1,7 @@
-'use server';
-
-import type { SmallStatisticsData } from "@/components/dashboard/Study/Statistics";
-import DatabaseService from "@/services/DatabaseService";
+import { SmallStatisticsData } from "@/components/dashboard/Statistics";
+import { AppFolderType } from "@/lib/providers/app-state-provider";
 import { AiReviewSession } from "@/types/AiReviewSession";
+import { Note } from "@/types/Note";
 import { Question } from "@/types/Question";
 
 export interface TodayData {
@@ -13,27 +12,9 @@ export interface TodayData {
   lastSessionMaxScore: number;
 }
 
-export async function getQuestinosAndAiReviews(noteId: string): Promise<{ questions: Question[]; aiReviews: AiReviewSession[] }> {
+export function getTodayNoteData(questions: Question[], aiReviews: AiReviewSession[], note: Note): TodayData {
   try {
-    const questions = await DatabaseService.getQuestionsByNoteId(noteId);
-    const aiReviews = await DatabaseService.getAiReviewSessionsByNoteId(noteId);
-    return { questions, aiReviews };
-  } catch (error) {
-    console.error('Error fetching questions and AI reviews:', error);
-    return { questions: [], aiReviews: [] };
-  }
-}
-
-export async function getTodayData(questions: Question[], aiReviews: AiReviewSession[]): Promise<TodayData> {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const dayAfterTomorrow = new Date(today);
-    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+    const { today, tomorrow, dayAfterTomorrow } = prepareThreeDates();
 
     const questionsDueToday = questions?.filter(question => {
       const reviewDate = new Date(question.nextReview);
@@ -42,13 +23,13 @@ export async function getTodayData(questions: Question[], aiReviews: AiReviewSes
     }).length || 0;
 
     const questionsDueTomorrow = questions?.filter(question => {
-      const reviewDate = question.nextReview;
+      const reviewDate = new Date(question.nextReview);
       reviewDate.setHours(0, 0, 0, 0);
       return reviewDate >= tomorrow && reviewDate < dayAfterTomorrow;
     }).length || 0;
 
     let lastSessionScore: number | undefined;
-    let nextAiReviewDate: Date | undefined = new Date();
+    let nextAiReviewDate = note.nextReview;
 
     if (aiReviews && aiReviews.length > 0) {
       const sortedReviews = aiReviews.sort((a, b) => {
@@ -61,24 +42,6 @@ export async function getTodayData(questions: Question[], aiReviews: AiReviewSes
       if (lastReview.result && lastReview.result.totalQuestions > 0) {
         lastSessionScore = (lastReview.result.correctAnswers / lastReview.result.totalQuestions) * 10;
       }
-
-      const lastReviewDate = new Date(lastReview.completedAt || lastReview.requestedAt || new Date());
-      nextAiReviewDate = new Date(lastReviewDate);
-
-      let intervalDays = 0;
-
-      if (lastSessionScore !== undefined) {
-        if (lastSessionScore < 5) { // Quality 1 (Again): Score 0-4
-          intervalDays = 1;
-        } else if (lastSessionScore < 7) { // Quality 2 (Hard): Score 5-6
-          intervalDays = 3;
-        } else if (lastSessionScore < 9) { // Quality 3 (Good): Score 7-8
-          intervalDays = 7;
-        } else { // Quality 4 (Easy): Score 9-10
-          intervalDays = 14;
-        }
-      }
-      nextAiReviewDate.setDate(nextAiReviewDate.getDate() + intervalDays);
     }
 
     return {
@@ -99,7 +62,57 @@ export async function getTodayData(questions: Question[], aiReviews: AiReviewSes
   }
 }
 
-export async function getStatistics(questions: Question[], aiReviews: AiReviewSession[]): Promise<SmallStatisticsData> {
+export function getTodayFolderData(questions: Question[], aiReviews: AiReviewSession[], folder: AppFolderType): TodayData {
+  try {
+    const { today, tomorrow, dayAfterTomorrow } = prepareThreeDates();
+
+    const questionsDueToday = questions?.filter(question => {
+      const reviewDate = new Date(question.nextReview);
+      reviewDate.setHours(0, 0, 0, 0);
+      return reviewDate <= today;
+    }).length || 0;
+
+    const questionsDueTomorrow = questions?.filter(question => {
+      const reviewDate = new Date(question.nextReview);
+      reviewDate.setHours(0, 0, 0, 0);
+      return reviewDate >= tomorrow && reviewDate < dayAfterTomorrow;
+    }).length || 0;
+
+    let lastSessionScore: number | undefined;
+    let nextAiReviewDate = folder.nextReview;
+
+    if (aiReviews && aiReviews.length > 0) {
+      const sortedReviews = aiReviews.sort((a, b) => {
+        const dateA = a.completedAt || a.requestedAt || new Date(0);
+        const dateB = b.completedAt || b.requestedAt || new Date(0);
+        return new Date(dateB).getTime() - new Date(dateA).getTime();
+      });
+
+      const lastReview = sortedReviews[0];
+      if (lastReview.result && lastReview.result.totalQuestions > 0) {
+        lastSessionScore = (lastReview.result.correctAnswers / lastReview.result.totalQuestions) * 10;
+      }
+    }
+
+    return {
+      questionsDueToday,
+      questionsDueTomorrow,
+      nextAiReviewDate,
+      lastSessionScore,
+      lastSessionMaxScore: 10
+    };
+  } catch (error) {
+    console.error('Error fetching today data:', error);
+    return {
+      questionsDueToday: 0,
+      questionsDueTomorrow: 0,
+      nextAiReviewDate: new Date(),
+      lastSessionMaxScore: 10
+    };
+  }
+}
+
+export function getStatistics(questions: Question[], aiReviews: AiReviewSession[]): SmallStatisticsData {
   try {
     const questionStats = {
       howManyQuestions: questions?.length || 0,
@@ -140,6 +153,19 @@ export async function getStatistics(questions: Question[], aiReviews: AiReviewSe
 
 // Helper functions for calculations
 
+
+function prepareThreeDates() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const dayAfterTomorrow = new Date(today);
+  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+  return { today, tomorrow, dayAfterTomorrow };
+}
 
 function calculateQuestionHistory(questions: Question[]): { date: string; count: number; accuracy: number }[] {
   const questionHistoryMap = new Map<string, { count: number, correct: number }>();

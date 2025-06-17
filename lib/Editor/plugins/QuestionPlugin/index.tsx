@@ -58,14 +58,13 @@ import {
   QuestionStore,
   useQuestionStore,
 } from '../../QuestionStorage';
-import useModal from '../../hooks/useModal';
 import CommentEditorTheme from '../../themes/CommentEditorTheme';
 import Button from '../../ui/Button';
 import ContentEditable from '../../ui/ContentEditable';
 import { Question, Questions } from '@/types/Question';
 import { useAppState } from '@/lib/providers/app-state-provider';
 import { useUser } from '@/lib/context/UserContext';
-import { LucideMailQuestion, LucideShieldQuestion, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useReviewStore } from '@/lib/stores/review-store';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand(
@@ -173,7 +172,7 @@ function SubmitHandlerPlugin({
   useEffect(() => {
     return editor.registerCommand(
       SUBMIT_QUESTION_COMMAND,
-      (_event: KeyboardEvent) => {
+      () => {
         onSubmit();
         return true;
       },
@@ -316,6 +315,7 @@ function QuestionInputBox({
 }) {
   const [question, setQuestion] = useState('');
   const [canSubmit, setCanSubmit] = useState(false);
+  const { noteId } = useAppState()
   const boxRef = useRef<HTMLDivElement>(null);
   const selectionState = useMemo(
     () => ({
@@ -326,9 +326,6 @@ function QuestionInputBox({
   );
   const selectionRef = useRef<RangeSelection | null>(null);
   const user = useUser();
-  if (!user) return;
-  const userId = user.id;
-  const { noteId } = useAppState()
 
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -410,6 +407,11 @@ function QuestionInputBox({
     };
   }, [updateLocation]);
 
+  const onChange = useOnChange(setQuestion, setCanSubmit);
+
+  if (!user) return;
+  const userId = user.id;
+
   const onEscape = (event: KeyboardEvent): boolean => {
     event.preventDefault();
     cancelAddQuestion();
@@ -434,8 +436,6 @@ function QuestionInputBox({
       selectionRef.current = null;
     }
   };
-
-  const onChange = useOnChange(setQuestion, setCanSubmit);
 
   return (
     <div className="CommentPlugin_CommentInputBox" ref={boxRef}>
@@ -468,7 +468,6 @@ function QuestionEditBox({
   submitEditQuestion,
   deleteQuestion,
   activeIDs,
-  markNodeMap,
   questions,
 }: {
   editor: LexicalEditor;
@@ -485,7 +484,6 @@ function QuestionEditBox({
 }) {
   const [newQuestion, setNewQuestion] = useState(questions.find(q => activeIDs.includes(q.id))?.question || '');
   const [canSubmit, setCanSubmit] = useState(false);
-  const [modal, showModal] = useModal();
   const boxRef = useRef<HTMLDivElement>(null);
   const selectionState = useMemo(
     () => ({
@@ -496,7 +494,6 @@ function QuestionEditBox({
   );
   const selectionRef = useRef<RangeSelection | null>(null);
   const user = useUser();
-  if (!user) return;
   const question = questions.find(q => activeIDs.includes(q.id))
 
   const updateLocation = useCallback(() => {
@@ -585,6 +582,10 @@ function QuestionEditBox({
     return true;
   };
 
+  const onChange = useOnChange(setNewQuestion, setCanSubmit);
+
+  if (!user) return;
+
   const updateQuestion = () => {
     if (canSubmit && question) {
       question.question = newQuestion;
@@ -600,8 +601,6 @@ function QuestionEditBox({
       cancelEditQuestion();
     }
   }
-
-  const onChange = useOnChange(setNewQuestion, setCanSubmit);
 
   return (
     <div className="CommentPlugin_CommentInputBox" ref={boxRef}>
@@ -629,244 +628,6 @@ function QuestionEditBox({
   );
 }
 
-function QuestionsComposer({
-  submitUpdateQuestion,
-  question,
-  placeholder,
-}: {
-  submitUpdateQuestion: (
-    question: Question
-  ) => void;
-  question: Question;
-  placeholder: string;
-}) {
-  const [newQuestion, setnewQuestion] = useState(question.question);
-  const [canSubmit, setCanSubmit] = useState(newQuestion !== question.question);
-  const editorRef = useRef<LexicalEditor>(null);
-
-  const onChange = useOnChange(setnewQuestion, setCanSubmit);
-
-  const submitQuestion = () => {
-    if (canSubmit) {
-      question.question = newQuestion;
-      submitUpdateQuestion(question);
-    }
-  };
-
-  return (
-    <>
-      <PlainTextEditor
-        className="CommentPlugin_CommentsPanel_Editor"
-        autoFocus={false}
-        onEscape={() => {
-          return true;
-        }}
-        onChange={onChange}
-        editorRef={editorRef}
-        placeholder={placeholder}
-        onSubmit={canSubmit ? submitQuestion : undefined}
-        initialContent={question.question}
-      />
-      <Button
-        className="CommentPlugin_CommentsPanel_SendButton"
-        onClick={submitQuestion}
-        disabled={!canSubmit}
-        title="Submit (⌘+Enter)">
-        <i className="send" />
-      </Button>
-    </>
-  );
-}
-
-function ShowQuestionDialog({
-  question,
-  deleteQuestion,
-  onClose,
-}: {
-  question: Question;
-  deleteQuestion: (
-    question: Question,
-  ) => void;
-  onClose: () => void;
-}): JSX.Element {
-  return (
-    <>
-      Are you sure you want to delete this question?
-      <div className="Modal__content">
-        <Button
-          onClick={() => {
-            deleteQuestion(question);
-            onClose();
-          }}>
-          Delete
-        </Button>{' '}
-        <Button
-          onClick={() => {
-            onClose();
-          }}>
-          Cancel
-        </Button>
-      </div>
-    </>
-  );
-}
-
-function QuestionsPanelList({
-  activeIDs,
-  questions,
-  deleteQuestion,
-  listRef,
-  submitUpdateQuestion,
-  markNodeMap,
-}: {
-  activeIDs: Array<string>;
-  questions: Questions;
-  deleteQuestion: (
-    question: Question,
-  ) => void;
-  listRef: { current: null | HTMLUListElement };
-  markNodeMap: Map<string, Set<NodeKey>>;
-  submitUpdateQuestion: (
-    question: Question,
-  ) => void;
-}): JSX.Element {
-  const [editor] = useLexicalComposerContext();
-  const [counter, setCounter] = useState(0);
-  const [modal, showModal] = useModal();
-  const rtf = useMemo(
-    () =>
-      new Intl.RelativeTimeFormat('en', {
-        localeMatcher: 'best fit',
-        numeric: 'auto',
-        style: 'short',
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    // Used to keep the time stamp up to date
-    const id = setTimeout(() => {
-      setCounter(counter + 1);
-    }, 10000);
-
-    return () => {
-      clearTimeout(id);
-    };
-  }, [counter]);
-
-  return (
-    <ul className="CommentPlugin_CommentsPanel_List" ref={listRef}>
-      {questions.map((question) => {
-        const id = question.id;
-        const handleClick = () => {
-          const markNodeKeys = markNodeMap.get(id);
-          if (
-            markNodeKeys !== undefined &&
-            (activeIDs === null || activeIDs.indexOf(id) === -1)
-          ) {
-            const activeElement = document.activeElement;
-            // Move selection to the start of the mark, so that we
-            // update the UI with the selected thread.
-            editor.update(
-              () => {
-                const markNodeKey = Array.from(markNodeKeys)[0];
-                const markNode = $getNodeByKey<MarkNode>(markNodeKey);
-                if ($isMarkNode(markNode)) {
-                  markNode.selectStart();
-                }
-              },
-              {
-                onUpdate() {
-                  // Restore selection to the previous element
-                  if (activeElement !== null) {
-                    (activeElement as HTMLElement).focus();
-                  }
-                },
-              },
-            );
-          }
-        };
-
-        return (
-           
-          <li
-            key={id}
-            onClick={handleClick}
-            className={`CommentPlugin_CommentsPanel_List_Thread ${markNodeMap.has(id) ? 'interactive' : ''
-              } ${activeIDs.indexOf(id) === -1 ? '' : 'active'}`}>
-            <div className="CommentPlugin_CommentsPanel_List_Thread_QuoteBox">
-              <blockquote className="CommentPlugin_CommentsPanel_List_Thread_Quote">
-                {'> '}
-                <span>{question.answer}</span>
-              </blockquote>
-              <Button
-                onClick={() => {
-                  showModal('Delete Qustion', (onClose) => (
-                    <ShowQuestionDialog
-                      question={question}
-                      deleteQuestion={deleteQuestion}
-                      onClose={onClose}
-                    />
-                  ));
-                }}
-                className="CommentPlugin_CommentsPanel_List_DeleteButton">
-                <i className="delete" />
-              </Button>
-              {modal}
-            </div>
-            <div className="CommentPlugin_CommentsPanel_List_Thread_Editor">
-              <QuestionsComposer
-                submitUpdateQuestion={submitUpdateQuestion}
-                question={question}
-                placeholder="Write a new question..."
-              />
-            </div>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-function QuestionsPanel({
-  activeIDs,
-  deleteQuestion,
-  questions,
-  submitUpdateQuestion,
-  markNodeMap,
-}: {
-  activeIDs: Array<string>;
-  questions: Questions;
-  deleteQuestion: (
-    question: Question,
-  ) => void;
-  markNodeMap: Map<string, Set<NodeKey>>;
-  submitUpdateQuestion: (
-    question: Question,
-  ) => void;
-}): JSX.Element {
-  const listRef = useRef<HTMLUListElement>(null);
-  const isEmpty = questions.length === 0;
-
-  return (
-    <div className="CommentPlugin_CommentsPanel">
-      <h2 className="CommentPlugin_CommentsPanel_Heading">Questions</h2>
-      {isEmpty ? (
-        <div className="CommentPlugin_CommentsPanel_Empty">No Questions</div>
-      ) : (
-        <QuestionsPanelList
-          activeIDs={activeIDs}
-          questions={questions}
-          deleteQuestion={deleteQuestion}
-          listRef={listRef}
-          submitUpdateQuestion={submitUpdateQuestion}
-          markNodeMap={markNodeMap}
-        />
-      )}
-    </div>
-  );
-}
-
 export default function QuestionPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const questionStore = useMemo(() => new QuestionStore(editor), [editor]);
@@ -879,6 +640,7 @@ export default function QuestionPlugin(): JSX.Element {
   const [showQuestionInput, setShowQuestionInput] = useState(false);
   const [showEditQuestion, setShowEditQuestion] = useState(false);
   const { currentSession } = useReviewStore();
+  const { dispatch, folderId, noteId } = useAppState();
 
   const cancelAddQuestion = useCallback(() => {
     editor.update(() => {
@@ -903,6 +665,16 @@ export default function QuestionPlugin(): JSX.Element {
   const deleteQuestion = useCallback(
     (question: Question) => {
       questionStore.deleteQuestion(question);
+      if (!folderId) return;
+      dispatch({
+        type: "DELETE_QUESTION",
+        payload: {
+          questionId: question.id,
+          folderId,
+          noteId: question.noteId
+        }
+      })
+
       const id = question.id;
       const markNodeKeys = markNodeMap.get(id);
       if (markNodeKeys !== undefined) {
@@ -931,6 +703,15 @@ export default function QuestionPlugin(): JSX.Element {
       selection: RangeSelection | null,
     ) => {
       questionStore.addQuestion(question);
+      if (!folderId) return;
+      dispatch({
+        type: "ADD_QUESTION",
+        payload: {
+          question: question,
+          folderId,
+          noteId: question.noteId
+        }
+      })
 
       editor.update(() => {
         if ($isRangeSelection(selection)) {
@@ -976,6 +757,17 @@ export default function QuestionPlugin(): JSX.Element {
       question: Question,
     ) => {
       questionStore.updateQuestion(question);
+      if (!folderId) return;
+      dispatch({
+        type: "UPDATE_QUESTION",
+        payload: {
+          question: question,
+          folderId,
+          noteId: question.noteId,
+          questionId: question.id
+        }
+      })
+
       setShowEditQuestion(false);
     },
     [editor, questionStore],
@@ -985,10 +777,10 @@ export default function QuestionPlugin(): JSX.Element {
   useEffect(() => {
     const changedElems: Array<HTMLElement> = [];
     if (!currentSession) return;
+    console.log(questions)
 
-    for (let i = 0; i < currentSession.questions.length; i++) {
-      const currentId = currentSession.questions[i].id;
-      console.log(currentId, currentSession.questionsToAnswer);
+    for (let i = 0; i < questions.length; i++) {
+      const currentId = questions[i].id;
       if (currentSession.questionsToAnswer.has(currentId)) {
         const keys = markNodeMap.get(currentId);
         if (keys !== undefined) {
@@ -1007,6 +799,7 @@ export default function QuestionPlugin(): JSX.Element {
             const elem = editor.getElementByKey(key);
             if (elem !== null) {
               elem.classList.remove('PlaygroundEditorTheme__mark');
+              elem.style.setProperty('color', 'var(--color-primary');
               changedElems.push(elem);
             }
           }
@@ -1042,9 +835,11 @@ export default function QuestionPlugin(): JSX.Element {
         const changedElem = changedElems[i];
         changedElem.classList.remove('review');
         changedElem.classList.remove('showingAnswer');
+        changedElem.style.setProperty('color', 'var(--color-primary');
+        changedElem.classList.remove('PlaygroundEditorTheme__mark');
       }
     };
-  }, [editor, markNodeMap, currentSession?.currentQuestionId, currentSession?.isShowingAnswer]);
+  }, [editor, markNodeMap, questions, currentSession?.currentQuestionId, currentSession?.isShowingAnswer]);
 
   useEffect(() => {
     const changedElems: Array<HTMLElement> = [];
@@ -1112,6 +907,17 @@ export default function QuestionPlugin(): JSX.Element {
                   if (markNodeKeys !== undefined) {
                     markNodeKeys.delete(key);
                     if (markNodeKeys.size === 0) {
+                      const question = questionStore.getQuestions().find(q => q.id === id);
+                      questionStore.deleteQuestionById(id);
+                      if (!folderId || !question) return;
+                      dispatch({
+                        type: "DELETE_QUESTION",
+                        payload: {
+                          questionId: question.id,
+                          folderId,
+                          noteId: question.noteId
+                        }
+                      })
                       markNodeMap.delete(id);
                     }
                   }
@@ -1130,7 +936,7 @@ export default function QuestionPlugin(): JSX.Element {
         },
         { skipInitialization: false },
       ),
-      editor.registerUpdateListener(({ editorState, tags }) => {
+      editor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
           const selection = $getSelection();
           let hasActiveIds = false;
@@ -1234,18 +1040,6 @@ export default function QuestionPlugin(): JSX.Element {
           />,
           document.body,
         )}
-      {/* {editor.isEditable() &&
-        createPortal(
-        <Button
-          className={`CommentPlugin_ShowCommentsButton shadow-md hover:shadow-lg ${
-            showQuestions ? 'active' : ''
-          }`}
-          onClick={() => setShowQuestions(!showQuestions)}
-          title={showQuestions ? 'Hide Questions' : 'Show Questions'}>
-          <i className="format add-comment" />
-        </Button>,
-        document.body,
-      )} */}
       {editor.isEditable() && showEditQuestion &&
         createPortal(
           <QuestionEditBox

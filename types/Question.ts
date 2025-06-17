@@ -7,8 +7,6 @@ export type Question = {
   id: string;
   noteId: string;
   userId: string;
-  noteTitle?: string;
-  folderName?: string;
   question: string;
   answer: string;
   timeStamp: number;

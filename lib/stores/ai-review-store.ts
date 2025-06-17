@@ -1,8 +1,10 @@
 import { create } from 'zustand';
-import type { AiReviewSession, AiReviewQuestion, AiReviewMode, AiReviewDifficulty } from '@/types/AiReviewSession';
+import type { AiReviewSession, AiReviewQuestion, AiReviewMode, AiReviewDifficulty, AiReviewSourceType } from '@/types/AiReviewSession';
 import { createAiReviewSession, getAiReviewSession, updateAiReviewSession } from '../server_actions/ai-review';
 import { evaluateAnswer, generateQuestionsForSession } from '../server_actions/ai-service';
 import { updateNoteReview } from '../server_actions/notes';
+import { updateFolderReview } from '../server_actions/folders';
+import { Action } from '../providers/app-state-provider';
 
 export interface AiReviewSessionState extends AiReviewSession {
   currentQuestionIndex: number;
@@ -11,7 +13,8 @@ export interface AiReviewSessionState extends AiReviewSession {
 }
 
 export interface StartAiReviewParams {
-  noteId: string;
+  sourceId: string;
+  sourceType: AiReviewSourceType;
   userId: string;
   difficulty: AiReviewDifficulty;
   mode: AiReviewMode;
@@ -25,12 +28,12 @@ interface AiReviewStore {
 
   startAiReview: (params: StartAiReviewParams) => Promise<string>;
   loadSession: (sessionId: string) => Promise<void>;
-  submitAnswer: (questionId: string, answer: string) => void;
+  submitAnswer: (questionId: string, answer: string) => Promise<void>;
   evaluateAnswer: (questionId: string) => Promise<void>;
   skipQuestion: (questionId: string) => void;
   nextQuestion: () => void;
   previousQuestion: () => void;
-  completeSession: () => Promise<void>;
+  completeSession: (dispatch: (params: Action) => void) => Promise<void>;
   endSession: () => void;
 
   getSessionElapsedTime: () => number;
@@ -53,7 +56,8 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
     try {
       const sessionData: Omit<AiReviewSession, 'id'> = {
         userId: params.userId,
-        noteId: params.noteId,
+        sourceType: params.sourceType,
+        sourceId: params.sourceId,
         status: 'pending',
         mode: params.mode,
         difficulty: params.difficulty,
@@ -68,7 +72,7 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
 
       generateQuestionsForSession(
         createdSession.id,
-        params.noteId,
+        params.sourceId,
         params.difficulty,
         params.questionCount,
         params.mode,
@@ -149,7 +153,7 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
     }
   },
 
-  submitAnswer: (questionId: string, answer: string) => {
+  submitAnswer: async (questionId: string, answer: string) => {
     const state = get();
     if (!state.currentSession || !state.currentSession.generatedQuestions) return;
 
@@ -165,7 +169,7 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
         generatedQuestions: updatedQuestions,
       }
     });
-    get().evaluateAnswer(questionId);
+    return get().evaluateAnswer(questionId);
   },
 
   evaluateAnswer: async (questionId: string) => {
@@ -207,7 +211,10 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
             ...q,
             status: 'evaluated' as const,
             evaluation: evaluation.evaluation,
-            aiMessage: evaluation.message
+            aiMessage: evaluation.message,
+            score: evaluation.score,
+            suggestions: evaluation.suggestions,
+            correctAnswer: evaluation.correctAnswer,
           }
           : q
       );
@@ -285,7 +292,7 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
     }
   },
 
-  completeSession: async () => {
+  completeSession: async (dispatch: (params: Action) => void) => {
     const state = get();
     if (!state.currentSession || !state.currentSession.generatedQuestions) return;
 
@@ -334,9 +341,28 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
         completedAt: new Date(),
       });
 
-      const score = (correctAnswers/totalQuestions);
+      dispatch({
+        type: 'UPDATE_AI_REVIEW',
+        payload: {
+          aiReview: {
+            status: 'completed',
+            result,
+            generatedQuestions: questions,
+            completedAt: new Date(),
+          },
+          aiReviewId: state.currentSession.id,
+          sourceId: state.currentSession.sourceId,
+          sourceType: state.currentSession.sourceType,
+        }
+      });
+
+      const score = (correctAnswers / totalQuestions);
       const discreteScore = score === 0 ? 1 : score < 0.5 ? 2 : score < 0.8 ? 3 : 4;
-      await updateNoteReview(state.currentSession.noteId, discreteScore, state.getSessionElapsedTime());
+      if (state.currentSession.sourceType === 'note') {
+        await updateNoteReview(state.currentSession.sourceId, discreteScore, state.getSessionElapsedTime());
+      } else {
+        await updateFolderReview(state.currentSession.sourceId, discreteScore, state.getSessionElapsedTime());
+      }
 
       set({
         currentSession: {
@@ -377,7 +403,7 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
 
     const total = state.currentSession.generatedQuestions.length;
     const answered = state.currentSession.generatedQuestions.filter(
-      q => q.status === 'answered'
+      q => q.status === 'evaluated' || q.status === 'answered' || q.status === 'skipped'
     ).length;
 
     return {

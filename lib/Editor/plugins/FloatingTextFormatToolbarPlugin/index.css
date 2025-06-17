@@ -1,7 +1,7 @@
 
 .floating-text-format-popup {
   display: flex;
-  background: #fff;
+  background: var(--color-popover);
   padding: 4px;
   vertical-align: middle;
   position: absolute;
@@ -38,10 +38,11 @@
   background-size: contain;
   height: 18px;
   width: 18px;
-  margin-top: 2px;
+  margin-top: -2px;
   vertical-align: -0.25em;
   display: flex;
   opacity: 0.6;
+  filter: var(--editor-icon-filter); 
 }
 
 .floating-text-format-popup button.popup-item:disabled i.format {
@@ -49,7 +50,7 @@
 }
 
 .floating-text-format-popup button.popup-item.active {
-  background-color: rgba(223, 232, 250, 0.3);
+  background-color: var(--editor-button-active-background);
 }
 
 .floating-text-format-popup button.popup-item.active i {
@@ -57,7 +58,7 @@
 }
 
 .floating-text-format-popup .popup-item:hover:not([disabled]) {
-  background-color: #eee;
+  background-color: var(--editor-button-hover-background);
 }
 
 .floating-text-format-popup select.popup-item {

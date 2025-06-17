@@ -1,4 +1,3 @@
-
 import {IS_CHROME} from '@lexical/utils';
 import {
   DOMConversionMap,
@@ -16,9 +15,7 @@ import {domOnBeforeMatch, setDomHiddenUntilFound} from './CollapsibleUtils';
 
 type SerializedCollapsibleContentNode = SerializedElementNode;
 
-export function $convertCollapsibleContentElement(
-  domNode: HTMLElement,
-): DOMConversionOutput | null {
+export function $convertCollapsibleContentElement(): DOMConversionOutput | null {
   const node = $createCollapsibleContentNode();
   return {
     node,
@@ -66,7 +63,7 @@ export class CollapsibleContentNode extends ElementNode {
     return dom;
   }
 
-  updateDOM(prevNode: this, dom: HTMLElement): boolean {
+  updateDOM(): boolean {
     return false;
   }
 

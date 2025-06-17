@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormLoginSchema } from '@/types/Auth';
@@ -41,7 +41,7 @@ export default function LoginPage() {
     router.replace("/dashboard")
   }
 
-  const form = useForm<z.infer<typeof FormLoginSchema>, any, z.output<typeof FormLoginSchema>>({
+  const form = useForm<z.infer<typeof FormLoginSchema>, unknown, z.output<typeof FormLoginSchema>>({
     mode: 'onBlur',
     resolver: zodResolver(FormLoginSchema),
     defaultValues: { email: '', password: '' },
@@ -50,7 +50,7 @@ export default function LoginPage() {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = form.handleSubmit(
-    async (data) => {
+    async () => {
       const { email, password } = FormLoginSchema.parse(form.getValues());
       const error = await actionLoginUser({ email, password });
       if (error) {
@@ -77,11 +77,7 @@ export default function LoginPage() {
         >
           <Link
             href="/"
-            className="
-          w-full
-          flex
-          justify-left
-          items-center"
+            className="w-full flex justify-left items-center"
           >
             <Image
               src={Logo}
@@ -89,10 +85,7 @@ export default function LoginPage() {
               width={50}
               height={50}
             />
-            <span
-              className="font-semibold
-          dark:text-white text-4xl first-letter:ml-2"
-            >
+            <span className="font-semibold dark:text-white text-4xl first-letter:ml-2">
               Conspecto
             </span>
           </Link>

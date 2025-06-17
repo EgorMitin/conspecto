@@ -13,7 +13,6 @@ import {
   LexicalEditor,
   LexicalNode,
   NodeKey,
-  RangeSelection,
   SerializedElementNode,
   Spread,
 } from 'lexical';
@@ -57,7 +56,7 @@ export class CollapsibleContainerNode extends ElementNode {
     return true;
   }
 
-  collapseAtStart(selection: RangeSelection): boolean {
+  collapseAtStart(): boolean {
     // Unwrap the CollapsibleContainerNode by replacing it with the children
     // of its children (CollapsibleTitleNode, CollapsibleContentNode)
     const nodesToInsert: LexicalNode[] = [];
@@ -125,7 +124,7 @@ export class CollapsibleContainerNode extends ElementNode {
 
   static importDOM(): DOMConversionMap<HTMLDetailsElement> | null {
     return {
-      details: (domNode: HTMLDetailsElement) => {
+      details: () => {
         return {
           conversion: $convertDetailsElement,
           priority: 1,

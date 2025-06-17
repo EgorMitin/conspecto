@@ -12,14 +12,14 @@ export interface ProductWithPrice {
   prices?: Price[];
 }
 
-export type SubscriptionStatus = 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'trialing' | 'unpaid';
+export type SubscriptionStatus = 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'trialing' | 'unpaid' | 'paused' | 'ended';
 
 export interface Subscription {
   id: string;
   userId: string;
   status: SubscriptionStatus;
   metadata?: Record<string, any>;
-  price?: number;
+  priceId: number;
   quantity?: number;
   cancelAtPeriodEnd?: boolean;
   created: string;

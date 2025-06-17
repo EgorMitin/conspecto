@@ -3,7 +3,6 @@ import "@/app/globals.css";
 import { ThemeProvider } from "@/lib/providers/next-theme-provider";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { UserProvider } from "@/lib/context/UserContext";
-import AppStateProvider from "@/lib/providers/app-state-provider";
 
 import { Toaster } from "sonner";
 
@@ -13,26 +12,24 @@ export const metadata: Metadata = {
   description: "Made by Egor Mitin",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser();
+  const userPromise = getCurrentUser();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <UserProvider initialUser={user}>
+        <UserProvider userPromise={userPromise}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
           >
-            <AppStateProvider>
-              {children}
-            </AppStateProvider>
-            <Toaster richColors  />
+            {children}
+            <Toaster richColors />
           </ThemeProvider>
         </UserProvider>
       </body>

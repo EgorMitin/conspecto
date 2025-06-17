@@ -1,6 +1,5 @@
 import { BaseRepository } from './BaseRepository';
 import type { Folder } from '@/types/Folder';
-import { logger } from '@/utils/logger';
 
 export class FolderRepository extends BaseRepository {
   /**

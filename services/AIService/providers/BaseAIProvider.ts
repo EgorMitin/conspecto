@@ -130,7 +130,6 @@ ${questionTypePrompts}
     "question_type": "question_type_from_list",
     "question": "The actual question text with clear instructions",
     "options": ["option1", "option2", "option3", "option4"], // Only for multiple choice types
-    "correct_answer": "For non-multiple choice, the expected answer or key points",
     "status": "generated"
   }
 ]
@@ -170,7 +169,10 @@ ${questionTypePrompts}
   "message": "Detailed, constructive feedback message",
   "suggestions": ["specific suggestion 1", "specific suggestion 2"],
   "correctAnswer": "What the correct answer should include (if incorrect/partial)"
-}`;
+}
+  
+**Content to base questions on:**
+${params.context.noteContent}}`;
   }
 
   protected parseQuestionResponse(response: string, expectedTypes: any[]): AiReviewQuestion[] {

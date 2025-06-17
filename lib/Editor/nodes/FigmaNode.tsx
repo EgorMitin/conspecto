@@ -92,10 +92,7 @@ export class FigmaNode extends DecoratorBlockNode {
     return this.__id;
   }
 
-  getTextContent(
-    _includeInert?: boolean | undefined,
-    _includeDirectionless?: false | undefined,
-  ): string {
+  getTextContent(): string {
     return `https://www.figma.com/file/${this.__id}`;
   }
 

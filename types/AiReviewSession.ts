@@ -3,6 +3,7 @@ export type AiReviewDifficulty = 'easy' | 'medium' | 'hard';
 export type AiReviewStatus = 'pending' | 'ready_for_review' | 'in_progress' | 'evaluating_answers' | 'completed' | 'failed';
 export type AiReviewQuestionStatus = 'skipped' | 'answered' | 'evaluating' | 'generated' | 'evaluated';
 export type AiReviewQuestionEvaluation = 'correct' | 'incorrect' | "partial" | 'error';
+export type AiReviewSourceType = 'note' | 'folder' | 'user';
 export type AiReviewQuestionType =
   // Beginner (Low Difficulty)
   | 'fact_based'                // 1. Fact-based (What/When/Who)
@@ -32,6 +33,11 @@ export type AiReviewQuestionType =
   | 'prediction_hypothesis';    // 21. Prediction / Hypothesis
 
 
+export type ReviewHistoryItem = {
+  date: number;
+  quality: number;
+};
+
 export interface AiReviewQuestion {
   id: string;
   question_type: AiReviewQuestionType;
@@ -41,6 +47,8 @@ export interface AiReviewQuestion {
   status: AiReviewQuestionStatus;
   evaluation?: AiReviewQuestionEvaluation;
   score?: number;
+  suggestions?: string[];
+  correctAnswer?: string;
   aiMessage?: string;
   options?: string[]; // For multiple choice or matching questions
 }
@@ -48,7 +56,8 @@ export interface AiReviewQuestion {
 export interface AiReviewSession {
   id: string;
   userId: string;
-  noteId: string;
+  sourceId: string;
+  sourceType: AiReviewSourceType;
   status: AiReviewStatus;
   mode?: AiReviewMode;
   difficulty?: AiReviewDifficulty;

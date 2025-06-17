@@ -26,7 +26,7 @@ export interface ReviewSession {
   id: string;
   scope: 'user' | 'folder' | 'note';
   mode: 'due' | 'all';
-  questions: Question[];
+  questions: (Question & { noteTitle?: string })[];
   questionsToAnswer: Set<string>;
   currentQuestionId: string;
   startTime: Date;
@@ -35,7 +35,7 @@ export interface ReviewSession {
   isShowingAnswer: boolean;
 }
 
-type StartReviewSessionParams = {mode: 'due' | 'all', scope: 'user' | 'folder' | 'note', scopeId: string}
+type StartReviewSessionParams = { mode: 'due' | 'all', scope: 'user' | 'folder' | 'note', scopeId: string }
 
 interface ReviewStore {
   currentSession: ReviewSession | null;
@@ -59,7 +59,7 @@ const getQuestionsForReview = async (mode: 'due' | 'all', scope: 'user' | 'folde
     today.setHours(0, 0, 0, 0);
 
     const questionsDueToday = questions?.filter(question => {
-      const reviewDate = question.nextReview;
+      const reviewDate = new Date(question.nextReview);
       reviewDate.setHours(0, 0, 0, 0);
       return reviewDate <= today;
     });
@@ -75,7 +75,7 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
   startReviewSession: async (params: StartReviewSessionParams) => {
     const { mode, scope, scopeId } = params;
     const questions = await getQuestionsForReview(mode, scope, scopeId);
-    
+
     if (questions.length === 0) {
       return;
     }
@@ -120,16 +120,28 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
       timeSpent,
     };
 
-    const currentQuestion = state.currentSession.questions.find(q => q.id === answeredQuestion.questionId) as Question
+    const currentQuestion = state.currentSession.questions.find(q => q.id === answeredQuestion.questionId)!;
     const updatedQuestionPartial = sm2Algorithm(currentQuestion, answeredQuestion.feedback, answeredQuestion.timeSpent);
 
     // Ensure id is present and of type string for updateQuestionInDB
     const updatedQuestion = { ...updatedQuestionPartial, id: currentQuestion.id };
+    const { noteTitle, ...questionForDB } = updatedQuestion;
 
-    await updateQuestionInDB(updatedQuestion);
+    await updateQuestionInDB(questionForDB);
 
     const newQuestionsToAnswer = new Set(state.currentSession.questionsToAnswer);
-    if (feedback >= 2) {
+    let isNextReviewAfterToday = false;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const nextReviewStart = new Date(updatedQuestion.nextReview!); // sm-2 always returns nextReview
+    nextReviewStart.setHours(0, 0, 0, 0);
+
+    if (nextReviewStart > todayStart) {
+      isNextReviewAfterToday = true;
+    }
+
+    if (isNextReviewAfterToday) {
       newQuestionsToAnswer.delete(state.currentSession.currentQuestionId);
     }
 
@@ -156,11 +168,11 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
     const questionIdsArray = Array.from(state.currentSession.questionsToAnswer);
 
     const possibleNextIds = questionIdsArray.length > 1
-    ? questionIdsArray.filter(id => id !== currentId)
-    : questionIdsArray;
+      ? questionIdsArray.filter(id => id !== currentId)
+      : questionIdsArray;
 
-  const randomQuestionId = possibleNextIds[Math.floor(Math.random() * possibleNextIds.length)];
-    
+    const randomQuestionId = possibleNextIds[Math.floor(Math.random() * possibleNextIds.length)];
+
     set((s) => ({
       currentSession: s.currentSession ? {
         ...s.currentSession,

@@ -20,29 +20,17 @@ interface NotesDropdownListProps {
 }
 
 export default function NotesDropdownList({ user, notes, folderId }: NotesDropdownListProps) {
-  const { state, dispatch, noteId } = useAppState();
+  const { state, dispatch } = useAppState();
   const { setOpen } = useSubscriptionModal();
   const [notesInFolder, setNotesInFolder] = useState(notes);
   const { subscriptionPlan } = user;
-
-  useEffect(() => {
-    if (notes.length > 0) {
-      dispatch({
-        type: 'SET_NOTES',
-        payload: {
-          folderId,
-          notes: notes
-        },
-      });
-    }
-  }, [notes, folderId]);
 
   useEffect(() => {
     setNotesInFolder(
       state.folders.find((folder) => folder.id === folderId)
         ?.notes || []
     );
-  }, [state]);
+  }, [state, folderId]);
 
   const addNoteHandler = async () => {
     if (notesInFolder.length >= 3 && !subscriptionPlan) {
@@ -70,17 +58,18 @@ export default function NotesDropdownList({ user, notes, folderId }: NotesDropdo
     };
 
     const { data: note, error } = await createNote(newNote);
-    if (error) {
+    if (error !== null) {
       toast.error('Could not create a note');
       return;
     }
-    if (note) {
-      toast.info('New note created.');
-      dispatch({
-        type: 'ADD_NOTE',
-        payload: { note, folderId },
-      });
-    }
+
+    const appStateNote = { ...note, questions: [], aiReviews: [] };
+
+    toast.info('New note created.');
+    dispatch({
+      type: 'ADD_NOTE',
+      payload: { note: appStateNote, folderId },
+    });
   };
 
   return (

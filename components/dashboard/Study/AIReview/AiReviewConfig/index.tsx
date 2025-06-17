@@ -7,31 +7,30 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Settings, ArrowRight, Clock, Target, Zap, Underline, Info, Loader2 } from 'lucide-react';
+import { Brain, Settings, ArrowRight, Clock, Target, Zap, Info } from 'lucide-react';
 import { useAppState } from '@/lib/providers/app-state-provider';
 import { useAiReviewStore } from '@/lib/stores/ai-review-store';
 import { AiReviewDifficulty, AiReviewMode } from '@/types/AiReviewSession';
 import { useUser } from '@/lib/context/UserContext';
 import { calculateEstimatedTimeString, getRecommendedMode } from '../functions';
 import { DIFFICULTY_OPTIONS, MODE_OPTIONS, QUESTION_COUNT_OPTIONS } from '../constants';
-import { getNoteById } from '@/lib/server_actions/notes';
-import { Note } from '@/types/Note';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 export default function AiReviewConfig() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { noteId, folderId } = useAppState();
+  const { noteId, folderId, currentNote, dispatch, state } = useAppState();
   const user = useUser();
   const { startAiReview, isLoading, error: aiReviewError } = useAiReviewStore();
 
   const [difficulty, setDifficulty] = useState<AiReviewDifficulty>('medium');
   const [mode, setMode] = useState<AiReviewMode>('separate_questions');
   const [questionCount, setQuestionCount] = useState(10);
-  const [currentNote, setCurrentNote] = useState<Note | null | undefined>(undefined);
-  const [noteLoadingError, setNoteLoadingError] = useState<string | null>(null);
   const [urlError, setUrlError] = useState<string | null>(null);
+  const currentFolder = state.folders.find(f => f.id === folderId);
+  const sourceType = noteId ? 'note' : 'folder';
+  const source = sourceType === 'note' ? currentNote : currentFolder;
 
   useEffect(() => {
     const errorParam = searchParams.get('error');
@@ -44,74 +43,64 @@ export default function AiReviewConfig() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    async function fetchNote() {
-      if (!noteId) {
-        setCurrentNote(undefined);
-        return;
-      }
-      try {
-        setNoteLoadingError(null);
-        const { data: noteData, error: fetchError } = await getNoteById(noteId);
-        if (fetchError !== null) {
-          console.error('Failed to fetch note:', fetchError);
-          setNoteLoadingError('Failed to load note details.');
-          setCurrentNote(null);
-        } else {
-          setCurrentNote(noteData);
-        }
-      } catch (e) {
-        console.error('Exception while fetching note:', e);
-        setNoteLoadingError('An unexpected error occurred while loading note details.');
-        setCurrentNote(null);
-      }
-    }
-    fetchNote();
-  }, [noteId]);
+  if (!source) {
+    return ("LOADING...");
+  }
+
+  const recommendedMode = useMemo(() => {
+    if (source === undefined) return undefined;
+    if (source === null) return 'separate_questions';
+    return getRecommendedMode(source);
+  }, [source]);
 
   const handleStartReview = async () => {
-    if (!noteId || !user?.id) return;
+    if (!source || !user?.id) return;
 
     try {
       const sessionId = await startAiReview({
-        noteId,
+        sourceId: source.id,
+        sourceType: sourceType,
         userId: user.id,
         difficulty,
         mode,
         questionCount
       });
-      router.push(`/dashboard/${folderId}/${noteId}/study/ai-review/loading?sessionId=${sessionId}`);
+
+      dispatch({
+        type: 'ADD_AI_REVIEW',
+        payload: {
+          aiReview: {
+            id: sessionId,
+            userId: user.id,
+            sourceType,
+            sourceId: source.id,
+            status: 'pending',
+            mode,
+            difficulty,
+            summary: '',
+            keyTakeaways: [],
+            generatedQuestions: [],
+            result: {
+              totalQuestions: questionCount,
+              correctAnswers: 0,
+              skippedAnswers: 0,
+            },
+          },
+          sourceType,
+          sourceId: source.id,
+        }
+      })
+
+      router.push(`${window.location.href}/loading?sessionId=${sessionId}`);
     } catch (error) {
       console.error('Failed to start AI review:', error);
     }
   };
 
+
   const selectedDifficulty = DIFFICULTY_OPTIONS.find(d => d.value === difficulty);
   const estimatedTimeString = calculateEstimatedTimeString(difficulty, questionCount);
 
-  const recommendedMode = useMemo(() => {
-    if (currentNote === undefined) return undefined;
-    if (currentNote === null) return 'separate_questions';
-    return getRecommendedMode(currentNote);
-  }, [currentNote]);
-
-  if (currentNote === undefined) {
-    return (
-      <div className="min-h-screen bg-background p-4 flex justify-center items-center">
-        <Loader2 className="h-5 w-5 text-amber-600 animate-spin" />
-        <p className="ml-2">Loading note details...</p>
-      </div>
-    );
-  }
-
-  if (noteLoadingError) {
-    return (
-      <div className="min-h-screen bg-background p-4 flex flex-col justify-center items-center">
-        <p className="text-red-600">{noteLoadingError}</p>
-        <Button onClick={() => router.back()} className="mt-4">Go Back</Button>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -121,8 +110,10 @@ export default function AiReviewConfig() {
           variant="outline"
           className="mb-2"
           onClick={() => {
-            if (folderId && noteId) {
-              router.push(`/dashboard/${folderId}/${noteId}/study`);
+            if (source) {
+              router.push(sourceType === 'note'
+                ? `/dashboard/${folderId}/${noteId}/study`
+                : `/dashboard/${folderId}/study`);
             } else {
               router.back();
             }

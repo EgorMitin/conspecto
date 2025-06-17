@@ -1,10 +1,6 @@
-import type { Question } from '@/types/Question';
 import type { Note } from '@/types/Note';
 import type { User, UserData } from '@/types/User';
 import type { AiReviewSession } from '@/types/AiReviewSession';
-import type { Folder } from '@/types/Folder';
-import { Session } from '@/types/Sessions';
-import { Customer, Subscription } from '@/types/Subscription';
 
 /**
  * Type for creating a new user

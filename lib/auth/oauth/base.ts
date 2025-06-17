@@ -6,7 +6,7 @@ import { logger } from "@/utils/logger";
 import { User } from "@/types/User";
 
 
-interface OAuthUserData {
+export interface OAuthUserData {
   id?: string;
   sub?: string;
   email?: string;
@@ -18,7 +18,7 @@ interface OAuthUserData {
   picture?: string;
   profile?: string;
   avatar_url?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 
@@ -119,10 +119,12 @@ export class OAuthClient<T> {
 
   public convertToUser(data: OAuthUserData): User {
     if (typeof data === 'object' && data !== null) {
+      console.log('Converting OAuth data to User:', data);
       const user: User = {
         id: data.id || data.sub || '',
         email: data.email || '',
         isVerified: true, // !!data.email_verified, (?)
+        subscriptionPlan: null,
         username: data.name || data.displayName || data.username || '' || `${data.given_name || ''} ${data.family_name || ''}`.trim(),
         profilePhotoUrl: data.picture || data.profile || data.avatar_url || '',
       };

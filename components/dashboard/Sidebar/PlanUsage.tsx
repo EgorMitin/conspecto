@@ -9,7 +9,6 @@ import { Progress } from '@/components/ui/progress';
 import { Subscription } from '@/types/Subscription';
 import Diamond from '@/public/icons/diamond.svg';
 import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
-import Button from '@/lib/Editor/ui/Button';
 
 interface PlanUsageProps {
   foldersLength: number;

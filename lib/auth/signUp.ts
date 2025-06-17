@@ -24,7 +24,7 @@ export async function actionSignUpUser({
   try {
     const salt = generateSalt();
     const hashedPassword = await hashPassword(password, salt);
-    const user = await databaseService.createUser({email, username: name, hashedPassword, salt, isVerified: false});
+    const user = await databaseService.createUser({email, username: name, hashedPassword, salt, isVerified: false, subscriptionPlan: null});
 
     if (user == null) {
       logger.error("Failed to return a user. User is a null", email);

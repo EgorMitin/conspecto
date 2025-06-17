@@ -32,7 +32,7 @@ export default function Signup () {
   const [submitError, setSubmitError] = useState('');
   const [confirmation, setConfirmation] = useState(false);
 
-  const form = useForm<z.infer<typeof SignUpFormSchema>, any, z.output<typeof SignUpFormSchema>>({
+  const form = useForm<z.infer<typeof SignUpFormSchema>, unknown, z.output<typeof SignUpFormSchema>>({
     mode: 'onBlur',
     resolver: zodResolver(SignUpFormSchema),
     defaultValues: { email: '', name: '', password: '', confirmPassword: '' },
@@ -40,7 +40,7 @@ export default function Signup () {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (data: z.infer<typeof SignUpFormSchema>) => {
+  const onSubmit = async () => {
     const { email, name, password } = SignUpFormSchema.parse(form.getValues());
 
     const error = await actionSignUpUser({ email, name, password });

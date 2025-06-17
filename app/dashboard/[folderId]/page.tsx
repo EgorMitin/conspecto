@@ -1,47 +1,54 @@
-'use server';
+'use client';
 
-import Sidebar from "@/components/dashboard/Sidebar";
-import { getCurrentUser } from "@/lib/auth/auth";
-import { redirect } from "next/navigation";
-import { getFoldersAndNotesFromDBAction } from "../actions";
 import FolderPageContent from "@/components/dashboard/FolderPageContent";
-import Breadcrumbs from "@/components/dashboard/NotePage/Breadcrumbs";
+import Breadcrumbs from "@/components/dashboard/Breadcrumbs";
+import { useUser } from "@/lib/context/UserContext";
+import { useAppState } from "@/lib/providers/app-state-provider";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-interface FolderPageParams {
-  params: Promise<{ folderId: string }>
-}
 
-export default async function FolderPage({ params }: FolderPageParams) {
-  const user = await getCurrentUser();
-  if (!user) {
-    console.log("No user found, redirecting to landing page")
-    redirect('/');
+export default function FolderPage() {
+  const user = useUser();
+  const router = useRouter();
+  const { state, folderId, isLoading } = useAppState();
+
+  useEffect(() => {
+    if (!user) {
+      toast.error("No user found, redirecting to landing page");
+      router.push('/');
+    }
+  }, [user, router]);
+
+  const currentFolder = state.folders.find(f => f.id === folderId);
+
+  useEffect(() => {
+    if (user && !currentFolder && !isLoading) {
+      toast.error("Folder not found");
+      router.push('/dashboard');
+    }
+  }, [user, currentFolder, router, isLoading, folderId]);
+
+  if (!user || !currentFolder) {
+    return ("LOADING...");
   }
 
-  const { folderId } = await params;
-  const { folders, notes } = await getFoldersAndNotesFromDBAction(user, folderId);
-  const folderName = folders.find(folder => folder.id === folderId)!.name;
+  const notes = currentFolder.notes;
+  const folderName = currentFolder.name;
 
   return (
-    <main className="flex h-screen w-full min-w-0">
-      <Sidebar
-        user={user}
-        folders={folders}
-        folderId={folderId}
-        notes={notes}
-      />
-      <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">
-        <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4 w-full">
-          <div className="flex flex-col gap-4 w-full px-2">
-            <Breadcrumbs folderName={folderName} folderId={folderId} page="folder" />
-          </div>
-        </header>
+    <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">
+      <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4 w-full">
+        <div className="flex flex-col gap-4 w-full px-2">
+          <Breadcrumbs folderName={folderName} folderId={folderId} page="folder" />
+        </div>
+      </header>
 
-        <FolderPageContent
-          notes={notes}
-          user={user}
-        />
-      </div>
-    </main>
+      <FolderPageContent
+        notes={notes}
+        user={user}
+      />
+    </div>
   );
 }

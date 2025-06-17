@@ -1,7 +1,4 @@
-export type NoteHistoryItem = {
-  date: number;
-  quality: number;
-};
+import { ReviewHistoryItem } from "./AiReviewSession";
 
 export interface Note {
   id: string;
@@ -21,7 +18,7 @@ export interface Note {
   easeFactor: number;
   nextReview: Date;
   lastReview: Date;
-  history: Array<NoteHistoryItem>;
+  history: Array<ReviewHistoryItem>;
   createdAt: Date;
   updatedAt: Date;
 }

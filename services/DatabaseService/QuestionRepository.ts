@@ -1,6 +1,5 @@
 import { BaseRepository } from './BaseRepository';
 import type { Question } from '@/types/Question';
-import { logger } from '@/utils/logger';
 
 export class QuestionRepository extends BaseRepository {
   /**

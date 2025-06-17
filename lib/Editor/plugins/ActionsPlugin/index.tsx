@@ -8,7 +8,6 @@ import {
   SerializedDocument,
   serializedDocumentFromEditorState,
 } from '@lexical/file';
-import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $getRoot,
@@ -18,7 +17,6 @@ import {
 } from 'lexical';
 import { useCallback, useEffect, useState, useRef } from 'react';
 
-import { INITIAL_SETTINGS } from '../../appSettings';
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
 import { docFromHash, docToHash } from '../../utils/docSerialization';
@@ -42,9 +40,9 @@ import { toast } from 'sonner';
 
 
 // Debounce function to prevent too many API calls
-function debounce(func: Function, wait: number) {
+function debounce(func: (...args: unknown[]) => void, wait: number) {
   let timeout: NodeJS.Timeout | null = null;
-  return function (...args: any[]) {
+  return function (...args: unknown[]) {
     const later = () => {
       timeout = null;
       func(...args);
@@ -63,21 +61,16 @@ async function shareDoc(doc: SerializedDocument): Promise<void> {
 }
 
 export default function ActionsPlugin({
-  isRichText,
-  shouldPreserveNewLinesInMarkdown,
   saveFunction,
 }: {
-  isRichText: boolean;
-  shouldPreserveNewLinesInMarkdown: boolean;
   saveFunction?: (content: SerializedEditorState<SerializedLexicalNode>) => Promise<{ success: boolean; id?: string; message?: string }>;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
-  const [isEditable, setIsEditable] = useState(() => editor.isEditable());
+  const [isEditable] = useState(() => editor.isEditable());
   const [isSpeechToText, setIsSpeechToText] = useState(false);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [modal, showModal] = useModal();
-  const { isCollabActive } = useCollaborationContext();
 
   const { noteId } = useAppState()
   const lastSavedContentRef = useRef<SerializedEditorState<SerializedLexicalNode> | null>(null);
@@ -218,7 +211,6 @@ export default function ActionsPlugin({
 
       <button
         className="action-button share"
-        disabled={isCollabActive || INITIAL_SETTINGS.isCollab}
         onClick={() =>
           shareDoc(
             serializedDocumentFromEditorState(editor.getEditorState(), {

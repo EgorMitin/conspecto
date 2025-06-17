@@ -1,3 +1,4 @@
+import { ReviewHistoryItem } from "./AiReviewSession";
 import { Note } from "./Note";
 
 export interface Folder {
@@ -9,6 +10,13 @@ export interface Folder {
   logo?: string | null;
   bannerUrl?: string;
   notes: Note[];
+  metadata?: Record<string, any>;
+  repetition: number;
+  interval: number;
+  easeFactor: number;
+  nextReview: Date;
+  lastReview: Date;
+  history: Array<ReviewHistoryItem>;
   createdAt?: Date;
-  updatedAt?: Date;
+  updatedAt: Date;
 }

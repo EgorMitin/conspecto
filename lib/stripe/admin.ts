@@ -6,7 +6,7 @@ import DatabaseService from '@/services/DatabaseService';
 import { logger } from '@/utils/logger';
 
 
-export async function createOrRetrieveCustomer ({ email, uuid }: {
+export async function createOrRetrieveCustomer({ email, uuid }: {
   email: string;
   uuid: string;
 }) {
@@ -15,12 +15,13 @@ export async function createOrRetrieveCustomer ({ email, uuid }: {
     if (!response) throw new Error();
     return response.stripeCustomerId;
   } catch (error) {
+    console.debug(`No customer found for ${uuid}, creating a new one.`, error);
     const customerData: { metadata: { supabaseUUID: string }; email?: string } =
-      {
-        metadata: {
-          supabaseUUID: uuid,
-        },
-      };
+    {
+      metadata: {
+        supabaseUUID: uuid,
+      },
+    };
     if (email) customerData.email = email;
     try {
       const customer = await stripe.customers.create(customerData);
@@ -34,23 +35,23 @@ export async function createOrRetrieveCustomer ({ email, uuid }: {
   }
 };
 
-export async function copyBillingDetailsToCustomer (
+export async function copyBillingDetailsToCustomer(
   uuid: string,
   payment_method: Stripe.PaymentMethod
 ) {
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
-  //@ts-ignore
+  // @ts-expect-error - Stripe SDK might expect a more specific address type.
   await stripe.customers.update(customer, { name, phone, address });
   try {
     await DatabaseService.updateUserPaymentData(uuid, { ...payment_method[payment_method.type] }, { ...address })
   } catch (error) {
-    throw new Error('Couldnot copy customer billing details');
+    console.error('Couldnot copy customer billing details', error);
   }
 };
 
-export async function manageSubscriptionStatusChange (
+export async function manageSubscriptionStatusChange(
   subscriptionId: string,
   customerId: string,
   createAction = false
@@ -68,11 +69,8 @@ export async function manageSubscriptionStatusChange (
       id: subscription.id,
       userId: uuid,
       metadata: subscription.metadata,
-      //@ts-ignore
       status: subscription.status,
       priceId: subscription.items.data[0].price.id,
-      //@ts-ignore
-      quantity: subscription.quantity,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       cancelAt: subscription.cancel_at
         ? toDateTime(subscription.cancel_at).toISOString()
@@ -81,9 +79,11 @@ export async function manageSubscriptionStatusChange (
         ? toDateTime(subscription.canceled_at).toISOString()
         : undefined,
       currentPeriodStart: toDateTime(
+        // @ts-expect-error - Stripe SDK property is in snake_case, while our type expects camelCase
         subscription.current_period_start
       ).toISOString(),
       currentPeriodEnd: toDateTime(
+        // @ts-expect-error - Stripe SDK property is in snake_case, while our type expects camelCase
         subscription.current_period_end
       ).toISOString(),
       endedAt: subscription.ended_at

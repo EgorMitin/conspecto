@@ -1,6 +1,5 @@
 import { BaseRepository } from './BaseRepository';
 import { Customer, Subscription } from '@/types/Subscription';
-import { logger } from '@/utils/logger';
 
 export class SubscriptionRepository extends BaseRepository {
   /**

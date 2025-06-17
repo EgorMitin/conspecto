@@ -4,7 +4,6 @@ import { useAppState } from '@/lib/providers/app-state-provider';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Button } from './ui/button';
-import { useUser } from '@/lib/context/UserContext';
 import { logOut } from '@/lib/auth/logOut';
 
 interface LogoutButtonProps {
@@ -12,7 +11,6 @@ interface LogoutButtonProps {
 }
 
 export default function LogoutButton ({ children }: LogoutButtonProps) {
-  const user = useUser();
   const { dispatch } = useAppState();
   const router = useRouter();
   const logout = async () => {

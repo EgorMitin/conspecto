@@ -7,7 +7,6 @@ import { OAuthClient } from "./oauth/base";
 export async function oAuthLogin(provider: OAuthProvider) {
   const client = new OAuthClient();
   const url = await client.createAuthUrl(provider);
-  console.log("Redirecting to OAuth URL:", url);
 
   redirect(url)
 }

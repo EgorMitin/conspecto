@@ -12,6 +12,7 @@ import { User } from '@/types/User';
 import { Folder } from '@/types/Folder';
 import { Note } from '@/types/Note';
 import { ResizableSidebar } from './ResizableSidebar';
+import { useAppState } from '@/lib/providers/app-state-provider';
 
 interface SidebarProps {
   user: User;
@@ -22,11 +23,11 @@ interface SidebarProps {
 }
 
 
-async function SidebarComponent({ user, folderId, folders, notes, className }: SidebarProps) {
+function SidebarComponent({ user, folderId, folders, notes, className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'hidden sm:flex sm:flex-col p-4 md:gap-4 !justify-between h-full',
+        'sm:flex sm:flex-col p-4 md:gap-4 !justify-between h-full',
         className
       )}
     >
@@ -56,7 +57,11 @@ async function SidebarComponent({ user, folderId, folders, notes, className }: S
   );
 };
 
-export default async function Sidebar({ user, folderId, folders, notes }: SidebarProps) {
+export default function Sidebar({ user }: { user: User }) {
+  const { state, folderId } = useAppState();
+  const { folders } = state;
+  const notes = folders.flatMap(folder => folder.notes);
+
   return (
     <ResizableSidebar >
       <SidebarComponent

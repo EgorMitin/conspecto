@@ -2,7 +2,7 @@ import { BaseRepository } from './BaseRepository';
 import type { User, UserData } from '@/types/User';
 import type { Subscription } from '@/types/Subscription';
 import type { CreateUserInput, UpdateUserInput } from './types';
-import { logger } from '@/utils/logger';
+import { AppFolderType } from '@/lib/providers/app-state-provider';
 
 export class UserRepository extends BaseRepository {
   /**
@@ -255,5 +255,143 @@ export class UserRepository extends BaseRepository {
       );
       return rows.length > 0 ? rows[0].id : null;
     });
+  }
+
+  /**
+   * Get the entire application state (folders, notes, questions, AI reviews) for a user.
+   * Fetches all data in a single query using PostgreSQL JSON aggregation.
+   */
+  public async getAppStateByUserId(userId: string): Promise<AppFolderType[]> {
+    const query = `
+      SELECT
+        f.id,
+        f.user_id AS "userId",
+        f.name,
+        f.icon_id AS "iconId",
+        f.in_trash AS "inTrash",
+        f.logo,
+        f.banner_url AS "bannerUrl",
+        f.created_at AS "createdAt",
+        f.updated_at AS "updatedAt",
+        COALESCE(
+          (
+            SELECT json_agg(
+              json_build_object(
+                'id', n.id,
+                'userId', n.user_id,
+                'folderId', n.folder_id,
+                'title', n.title,
+                'content', n.content,
+                'contentPlainText', n.content_plain_text,
+                'tags', n.tags,
+                'isPublic', n.is_public,
+                'iconId', n.icon_id,
+                'bannerUrl', n.banner_url,
+                'status', n.status,
+                'metadata', n.metadata,
+                'repetition', n.repetition,
+                'interval', n.interval,
+                'easeFactor', n.ease_factor,
+                'nextReview', n.next_review,
+                'lastReview', n.last_review,
+                'history', n.history,
+                'createdAt', n.created_at,
+                'updatedAt', n.updated_at,
+                'questions', COALESCE(
+                  (
+                    SELECT json_agg(
+                      json_build_object(
+                        'id', q.id,
+                        'noteId', q.note_id,
+                        'userId', q.user_id,
+                        'question', q.question,
+                        'answer', q.answer,
+                        'timeStamp', q.time_stamp,
+                        'repetition', q.repetition,
+                        'interval', q.interval,
+                        'easeFactor', q.ease_factor,
+                        'nextReview', q.next_review,
+                        'lastReview', q.last_review,
+                        'history', q.history
+                      ) ORDER BY q.time_stamp ASC
+                    )
+                    FROM questions q
+                    WHERE q.note_id = n.id
+                  ),
+                  '[]'::json
+                ),
+                'aiReviews', COALESCE(
+                  (
+                    SELECT json_agg(
+                      json_build_object(
+                        'id', ar.id,
+                        'userId', ar.user_id,
+                        'sourceId', ar.source_id,
+                        'sourceType', ar.source_type,
+                        'status', ar.status,
+                        'mode', ar.mode,
+                        'difficulty', ar.difficulty,
+                        'summary', ar.summary,
+                        'keyTakeaways', ar.key_takeaways,
+                        'generatedQuestions', ar.generated_questions,
+                        'result', ar.result,
+                        'modelVersion', ar.model_version,
+                        'errorMessage', ar.error_message,
+                        'requestedAt', ar.requested_at,
+                        'questionsGeneratedAt', ar.questions_generated_at,
+                        'sessionStartedAt', ar.session_started_at,
+                        'completedAt', ar.completed_at
+                      ) ORDER BY ar.requested_at ASC
+                    )
+                    FROM ai_review_sessions ar
+                    WHERE ar.source_id = n.id
+                  ),
+                  '[]'::json
+                )
+              ) ORDER BY n.updated_at DESC
+            )
+            FROM notes n
+            WHERE n.folder_id = f.id
+          ),
+          '[]'::json
+        ) AS notes,
+        COALESCE(
+          (
+            SELECT json_agg(
+              json_build_object(
+                'id', ar.id,
+                'userId', ar.user_id,
+                'sourceId', ar.source_id,
+                'sourceType', ar.source_type,
+                'status', ar.status,
+                'mode', ar.mode,
+                'difficulty', ar.difficulty,
+                'summary', ar.summary,
+                'keyTakeaways', ar.key_takeaways,
+                'generatedQuestions', ar.generated_questions,
+                'result', ar.result,
+                'modelVersion', ar.model_version,
+                'errorMessage', ar.error_message,
+                'requestedAt', ar.requested_at,
+                'questionsGeneratedAt', ar.questions_generated_at,
+                'sessionStartedAt', ar.session_started_at,
+                'completedAt', ar.completed_at
+              ) ORDER BY ar.requested_at ASC
+            )
+            FROM ai_review_sessions ar
+            WHERE ar.source_id = f.id
+          ),
+          '[]'::json
+        ) AS aiReviews
+      FROM
+        folders f
+      WHERE
+        f.user_id = $1
+      ORDER BY
+        f.created_at ASC;
+    `;
+
+    const { rows } = await this.executeQuery(query, [userId]);
+    return rows as AppFolderType[];
   }
 }

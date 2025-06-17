@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Archive, Calendar, Save } from 'lucide-react';
+import { Archive, Calendar, Save, ArrowLeft } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRouter, usePathname } from 'next/navigation';
 
 import { updateNote } from '@/lib/server_actions/notes';
 import { Note } from '@/types/Note';
@@ -11,17 +12,11 @@ import { useAppState } from '@/lib/providers/app-state-provider';
 import { toast } from 'sonner';
 import EmojiPicker from '@/components/emoji-picker';
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogAction, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { formatDistanceToNow } from 'date-fns';
 
 interface NoteHeaderProps {
   note: Note;
-  lastUpdated: string;
 }
-
-const statusOptions = [
-  { value: 'draft', label: 'Draft' },
-  { value: 'active', label: 'Active' },
-  { value: 'archived', label: 'Archived' }
-];
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -32,12 +27,15 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function NoteHeader({ note, lastUpdated }: NoteHeaderProps) {
+export default function NoteHeader({ note }: NoteHeaderProps) {
   const { dispatch, folderId } = useAppState();
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [localTitle, setLocalTitle] = useState(note.title);
   const [isConfirmingStatus, setIsConfirmingStatus] = useState(false);
   const [statusToConfirm, setStatusToConfirm] = useState<"draft" | "active" | "archived" | null>(null);
+  const lastUpdated = formatDistanceToNow(note.updatedAt, { addSuffix: true });
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalTitle(e.target.value);
@@ -202,6 +200,17 @@ export default function NoteHeader({ note, lastUpdated }: NoteHeaderProps) {
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
+          {pathname.includes('/study') && (
+            <Button
+              variant="outline"
+              size="default"
+              className="text-muted-foreground mr-3 hover:text-blue-600 hover:bg-blue-50"
+              onClick={() => router.push(`/dashboard/${folderId}/${note.id}`)}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Note
+            </Button>
+          )}
           {note.status === 'draft' && (
             <Button
               variant="ghost"

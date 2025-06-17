@@ -141,10 +141,7 @@ export class YouTubeNode extends DecoratorBlockNode {
     return this.__id;
   }
 
-  getTextContent(
-    _includeInert?: boolean | undefined,
-    _includeDirectionless?: false | undefined,
-  ): string {
+  getTextContent(): string {
     return `https://www.youtube.com/watch?v=${this.__id}`;
   }
 

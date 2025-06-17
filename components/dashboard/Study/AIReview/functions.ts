@@ -1,6 +1,7 @@
 import { AiReviewDifficulty, AiReviewMode } from "@/types/AiReviewSession";
 import { DIFFICULTY_TIME_FACTORS } from "./constants";
 import { Note } from "@/types/Note";
+import { Folder } from "@/types/Folder";
 
 export function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
@@ -26,7 +27,7 @@ export function calculateEstimatedTimeString(difficulty: AiReviewDifficulty, cou
   return `~${minTime}-${maxTime} min`;
 };
 
-export function getRecommendedMode(note: Note | undefined): AiReviewMode {
+export function getRecommendedMode(note: Folder | Note | undefined): AiReviewMode {
   if (!note || !note.history || note.history.length === 0) {
     return 'separate_questions';
   }

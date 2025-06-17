@@ -12,7 +12,8 @@ import {
   RefreshCw, 
   Save, 
   ArrowLeft, 
-  Loader2
+  Loader2,
+  Brain
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ import { generateAISummary, saveAISummary, type SummaryData } from "./actions";
 import AISummaryDisplay from "./AISummaryDisplay";
 import AISummaryStats from "./AISummaryStats";
 import AISummaryActions from "./AISummaryActions";
+import { useAppState } from '@/lib/providers/app-state-provider';
 
 interface AISummaryContentProps {
   noteId: string;
@@ -27,11 +29,13 @@ interface AISummaryContentProps {
 
 export default function AISummaryContent({ noteId }: AISummaryContentProps) {
   const router = useRouter();
+  const { folderId } = useAppState();
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [isStartingReview, setIsStartingReview] = useState(false);
 
   const handleGenerateSummary = async () => {
     setIsGenerating(true);
@@ -97,12 +101,28 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
     router.back();
   };
 
+  const handleStartAIReview = async () => {
+    setIsStartingReview(true);
+    try {
+      router.push(`/dashboard/${folderId}/${noteId}/study/ai-review/`);
+      toast.success("Starting AI Review Session", {
+        description: "Preparing your personalized review questions."
+      });
+    } catch (err) {
+      toast.error("Failed to start AI Review", {
+        description: "Please try again."
+      });
+    } finally {
+      setIsStartingReview(false);
+    }
+  };
+
   return (
     <div className="flex-1 overflow-auto">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         
         {/* Header Section */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -247,7 +267,7 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
           /* Summary Display */
           <div className="space-y-6 animate-in fade-in-50 duration-500">
             <AISummaryStats summaryData={summaryData} />
-            <AISummaryDisplay summaryData={summaryData} />
+            <AISummaryDisplay summaryData={summaryData} isStartingReview={isStartingReview} handleStartAIReview={handleStartAIReview} />
           </div>
         ) : null}
       </div>

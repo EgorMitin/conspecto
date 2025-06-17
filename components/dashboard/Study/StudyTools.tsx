@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Zap, BookOpen, Brain } from "lucide-react";
+import { FileText, Zap, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useReviewStore } from "@/lib/stores/review-store";
 
 interface QuickActionsProps {
-  noteId: string;
+  noteId?: string;
   folderId: string;
   totalQuestions: number;
 }
@@ -22,16 +22,12 @@ export default function StudyTools({
   const { startReviewSession } = useReviewStore();
 
   const handleReviewAll = async (): Promise<void> => {
-    await startReviewSession({ mode: 'all', scope: 'note', scopeId: noteId });
-    router.push(`${window.location.pathname}/review`);
+    await startReviewSession({ mode: 'all', scope: noteId ? 'note' : 'folder', scopeId: noteId || folderId });
+    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ""}study/review`);
   };
 
   const handleAiSummary = () => {
-    router.push(`/dashboard/${folderId}/${noteId}/study/ai-summary`);
-  };
-
-  const handleAiReview = () => {
-    router.push(`/dashboard/${folderId}/${noteId}/study/ai-review`);
+    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ""}study/ai-summary`);
   };
 
   return (
@@ -61,7 +57,7 @@ export default function StudyTools({
           <CardContent className="pt-0 space-y-3 flex-grow">
             <p className="text-sm text-muted-foreground">
               {totalQuestions > 0
-                ? `Practice with all ${totalQuestions} question${totalQuestions === 1 ? '' : 's'} from this note`
+                ? `Practice with all ${totalQuestions} question${totalQuestions === 1 ? '' : 's'} from this ${noteId ? "note" : "folder"}`
                 : "No questions available yet"
               }
             </p>

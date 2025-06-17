@@ -1475,7 +1475,7 @@ button.action-button:disabled {
 .toolbar {
   display: flex;
   margin-bottom: 1px;
-  background: var(--editor-background);
+  background: var(--color-sidebar);
   padding: 4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -1485,7 +1485,34 @@ button.action-button:disabled {
   position: sticky;
   top: 0;
   z-index: 2;
-  overflow-y: hidden; /* disable vertical scroll*/
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* Webkit scrollbar styling */
+.toolbar::-webkit-scrollbar {
+  height: 4px; /* Make scrollbar thinner */
+  background: transparent;
+}
+
+.toolbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2); /* Light, subtle scrollbar thumb */
+  border-radius: 2px;
+}
+
+.toolbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4); /* Slightly darker on hover */
+}
+
+/* Hide scrollbar completely but keep functionality */
+.toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.toolbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 button.toolbar-item {
@@ -1517,6 +1544,7 @@ button.toolbar-item i.format {
   vertical-align: -0.25em;
   display: flex;
   opacity: 0.6;
+  filter: var(--editor-icon-filter);
 }
 
 button.toolbar-item:disabled .icon,
@@ -1527,7 +1555,7 @@ button.toolbar-item:disabled .chevron-down {
 }
 
 button.toolbar-item.active {
-  background-color: rgba(223, 232, 250, 0.3);
+  background-color: var(--editor-button-active-background);
 }
 
 button.toolbar-item.active i {
@@ -1552,7 +1580,7 @@ button.toolbar-item.active i {
   line-height: 20px;
   vertical-align: middle;
   font-size: 14px;
-  color: var(--editor-muted-foreground);
+  color: var(--color-primary);
   text-overflow: ellipsis;
   overflow: hidden;
   height: 20px;
@@ -1568,6 +1596,11 @@ button.toolbar-item.active i {
   margin-right: 8px;
   line-height: 16px;
   background-size: contain;
+  filter: var(--editor-icon-filter);
+}
+
+.icon {
+  filter: var(--editor-icon-filter);
 }
 
 .toolbar i.chevron-down,
@@ -1577,6 +1610,7 @@ button.toolbar-item.active i {
   height: 16px;
   display: flex;
   user-select: none;
+  filter: var(--editor-icon-filter);
 }
 
 .toolbar i.chevron-down.inside {

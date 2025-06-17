@@ -1,7 +1,6 @@
 import type {
   DOMExportOutput,
   EditorConfig,
-  LexicalEditor,
   NodeKey,
   SerializedTextNode,
   Spread,
@@ -58,11 +57,11 @@ export class AutocompleteNode extends TextNode {
     this.__uuid = uuid;
   }
 
-  updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): boolean {
+  updateDOM(): boolean {
     return false;
   }
 
-  exportDOM(_: LexicalEditor): DOMExportOutput {
+  exportDOM(): DOMExportOutput {
     return {element: null};
   }
 

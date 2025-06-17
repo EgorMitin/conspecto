@@ -1,8 +1,8 @@
 .Button__root {
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 8px;
+  padding-right: 8px;
   border: 0px;
   background-color: #eee;
   border-radius: 5px;
@@ -24,4 +24,10 @@
 }
 .Button__disabled:hover {
   background-color: #eee;
+}
+
+.dark .Button__root {
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
 }

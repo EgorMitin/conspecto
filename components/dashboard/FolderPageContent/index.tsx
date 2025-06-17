@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Edit, BookOpen, Trash } from 'lucide-react';
+import { Plus, Edit, BookOpen, Trash, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppState } from '@/lib/providers/app-state-provider';
-import { useSubscriptionModal } from '@/lib/providers/subscription-modal-provider';
 import { Note } from '@/types/Note';
 import { User } from '@/types/User';
 import { createNote, updateNote } from '@/lib/server_actions/notes';
@@ -23,10 +22,8 @@ interface FolderPageContentProps {
 export default function FolderPageContent({ notes: initialNotes, user }: FolderPageContentProps) {
   const router = useRouter();
   const { state, dispatch, folderId } = useAppState();
-  const { setOpen } = useSubscriptionModal();
   const [notes, setNotes] = useState<Note[]>(initialNotes);
 
-  // Update notes when state changes
   useEffect(() => {
     if (folderId) {
       const folderNotes = state.folders.find(folder => folder.id === folderId)?.notes || [];
@@ -57,25 +54,25 @@ export default function FolderPageContent({ notes: initialNotes, user }: FolderP
     };
 
     const { data: note, error } = await createNote(newNote);
-    if (error) {
+    if (error !== null) {
       toast.error('Could not create a note');
       return;
     }
+
+    const appStateNote = {...note, questions: [], aiReviews: []};
 
     if (note) {
       toast.success('New note created');
       dispatch({
         type: 'ADD_NOTE',
-        payload: { note, folderId },
+        payload: { note: appStateNote, folderId, },
       });
 
-      // Navigate to the new note
       router.push(`/dashboard/${folderId}/${note.id}`);
     }
   };
 
   const handleEditNote = (noteId: string) => {
-    toast.info('Loading note...', { duration: 2000 });
     router.push(`/dashboard/${folderId}/${noteId}`);
   };
 
@@ -103,6 +100,10 @@ export default function FolderPageContent({ notes: initialNotes, user }: FolderP
     }
   };
 
+  const handleStudyFolder = () => {
+    router.push(`/dashboard/${folderId}/study`);
+  };
+
   const getContentPreview = (content: string) => {
     if (!content) return 'Empty note';
     return content.substring(0, 150) + '...';
@@ -112,10 +113,16 @@ export default function FolderPageContent({ notes: initialNotes, user }: FolderP
     <div className="p-6 h-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Your Notes</h1>
-        <Button onClick={handleCreateNote} className="flex items-center gap-2">
-          <Plus size={16} />
-          Create Note
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleStudyFolder} variant="outline" className="flex items-center gap-2">
+            <GraduationCap size={16} />
+            Study Folder
+          </Button>
+          <Button onClick={handleCreateNote} className="flex items-center gap-2">
+            <Plus size={16} />
+            Create Note
+          </Button>
+        </div>
       </div>
 
       {notes.length === 0 ? (
@@ -143,7 +150,7 @@ export default function FolderPageContent({ notes: initialNotes, user }: FolderP
                 </div>
                 <CardFooter className="flex justify-between pt-2">
                   <Badge variant="outline">
-                    {note.updatedAt.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    {new Date(note.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </Badge>
                   <div className="flex gap-2">
                     <Button

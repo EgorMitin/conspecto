@@ -8,7 +8,7 @@ import FolderCreator from '@/components/dashboard/FolderCreator';
 import { Folder } from '@/types/Folder';
 import { User } from '@/types/User';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+
 
 interface FoldersDropdownProps {
   user: User;
@@ -17,33 +17,19 @@ interface FoldersDropdownProps {
 }
 
 export default function FoldersDropdown ({ folders, defaultValue, user }: FoldersDropdownProps) {
-  const { dispatch, state, noteId } = useAppState();
+  const { state } = useAppState();
+  const router = useRouter();
   const [selectedOption, setSelectedOption] = useState(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!state.folders.length) {
-      dispatch({
-        type: 'SET_FOLDERS',
-        payload: {
-          folders: folders,
-        },
-      });
-    }
-  }, [folders]);
 
   const handleSelect = (option: Folder) => {
     setSelectedOption(option);
     setIsOpen(false);
+    router.push(`/dashboard/${option.id}`);
+    return;
   };
 
   const handleOnClick = () => {
-    if (noteId && defaultValue) {
-      toast.info("Loading the folder...", {duration: 1000});
-      router.push(`/dashboard/${defaultValue.id}`);
-      return;
-    }
     setIsOpen((prev) => !prev);
     return;
   };

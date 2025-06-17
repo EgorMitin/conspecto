@@ -22,7 +22,7 @@ export function StudyProgress({ questions, reviewed, nextReview }: StudyProgress
   return (
     <Card className="p-5 bg-muted/30">
       <div className="flex flex-col sm:flex-row justify-between gap-6">
-        <div className="flex flex-wrap gap-6 flex-1">
+        <div className="flex flex-wrap gap-4 flex-1">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-full">
               <RotateCcw className="w-4 h-4 text-blue-600" />

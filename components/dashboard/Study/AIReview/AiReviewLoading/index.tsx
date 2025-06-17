@@ -15,7 +15,7 @@ export default function AiReviewLoading() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
   const { folderId, noteId } = useAppState();
-  const { loadSession, currentSession, isLoading, error } = useAiReviewStore();
+  const { loadSession, currentSession, error } = useAiReviewStore();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -80,11 +80,11 @@ export default function AiReviewLoading() {
         {/* Header */}
         <Card>
           <CardHeader className="text-center">
-            <div className="mx-auto p-3 bg-purple-100 rounded-full w-fit mb-4">
-              <Brain className="h-8 w-8 text-purple-600" />
+            <div className="mx-auto p-3 bg-purple-100 dark:bg-purple-900 rounded-full w-fit mb-4">
+              <Brain className="h-8 w-8 text-purple-600 dark:text-purple-300" />
             </div>
             <CardTitle className="text-xl">Generating AI Review</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground dark:text-gray-400">
               Creating personalized questions based on your note content
             </p>
           </CardHeader>
@@ -94,9 +94,9 @@ export default function AiReviewLoading() {
             <div className="space-y-2">
               <Progress
                 value={progress}
-                className="h-3 transition-all duration-500 ease-out bg-gray-200 [&>div]:transition-all [&>div]:duration-700 [&>div]:ease-in-out"
+                className="h-3 transition-all duration-500 ease-out bg-gray-200 dark:bg-gray-700 [&>div]:transition-all [&>div]:duration-700 [&>div]:ease-in-out"
               />
-              <p className="text-sm text-center text-muted-foreground">
+              <p className="text-sm text-center text-muted-foreground dark:text-gray-400">
                 {Math.round(progress)}% complete
               </p>
             </div>
@@ -107,20 +107,20 @@ export default function AiReviewLoading() {
                 <div
                   key={index}
                   className={`flex items-center gap-3 p-3 rounded-lg transition-all ${index === currentStep
-                    ? 'bg-purple-50 border border-purple-200'
+                    ? 'bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800'
                     : index < currentStep
-                      ? 'bg-green-50 border border-green-200'
-                      : 'bg-gray-50 border border-gray-200'
+                      ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800'
+                      : 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
                     }`}
                 >
                   {index < currentStep ? (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   ) : index === currentStep ? (
-                    <Loader2 className="h-5 w-5 text-purple-600 animate-spin" />
+                    <Loader2 className="h-5 w-5 text-purple-600 dark:text-purple-300 animate-spin" />
                   ) : (
-                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300 dark:border-gray-600" />
                   )}
-                  <span className={`text-sm ${index <= currentStep ? 'text-foreground' : 'text-muted-foreground'
+                  <span className={`text-sm ${index <= currentStep ? 'text-foreground dark:text-gray-100' : 'text-muted-foreground dark:text-gray-400'
                     }`}>
                     {step}
                   </span>
@@ -130,11 +130,11 @@ export default function AiReviewLoading() {
 
             {/* Additional Info */}
             <div className="text-center space-y-2">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground dark:text-gray-400">
                 This usually takes 30-60 seconds
               </p>
-              <p className="text-xs text-muted-foreground">
-                Please don't close this page
+              <p className="text-xs text-muted-foreground dark:text-gray-400">
+                Please don&apos;t close this page
               </p>
             </div>
           </CardContent>

@@ -18,8 +18,9 @@ type SettingsContextShape = {
   settings: Record<SettingName, boolean>;
 };
 
+// @ts-expect-error - Initial values for setOption are not set, but this is a placeholder for the context.
 const Context: React.Context<SettingsContextShape> = createContext({
-  setOption: (name: SettingName, value: boolean) => {
+  setOption: () => {
     return;
   },
   settings: INITIAL_SETTINGS,

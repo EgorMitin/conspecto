@@ -5,27 +5,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  FileText, 
-  Lightbulb, 
-  Copy, 
+import {
+  Lightbulb,
+  Copy,
   Check,
   ChevronDown,
   ChevronUp,
   BookOpen,
-  Sparkles
+  Sparkles,
+  Loader2,
+  Brain
 } from "lucide-react";
 import type { SummaryData } from './actions';
+import ReactMarkdown from 'react-markdown';
+
 
 interface AISummaryDisplayProps {
   summaryData: SummaryData;
+  handleStartAIReview: () => void;
+  isStartingReview: boolean;
 }
 
-export default function AISummaryDisplay({ summaryData }: AISummaryDisplayProps) {
+export default function AISummaryDisplay({ summaryData, handleStartAIReview, isStartingReview }: AISummaryDisplayProps) {
   const [copiedSummary, setCopiedSummary] = useState(false);
   const [copiedTakeaways, setCopiedTakeaways] = useState(false);
   const [showOriginalNote, setShowOriginalNote] = useState(false);
-  
+
   const { summary, keyTakeaways, noteContent, noteTitle } = summaryData;
 
   const handleCopySummary = async () => {
@@ -40,7 +45,7 @@ export default function AISummaryDisplay({ summaryData }: AISummaryDisplayProps)
 
   const handleCopyTakeaways = async () => {
     try {
-      const takeawaysText = keyTakeaways.map((takeaway, index) => 
+      const takeawaysText = keyTakeaways.map((takeaway, index) =>
         `${index + 1}. ${takeaway}`
       ).join('\n');
       await navigator.clipboard.writeText(takeawaysText);
@@ -53,7 +58,7 @@ export default function AISummaryDisplay({ summaryData }: AISummaryDisplayProps)
 
   return (
     <div className="space-y-6">
-      
+
       {/* AI Summary Section */}
       <Card>
         <CardHeader>
@@ -82,13 +87,15 @@ export default function AISummaryDisplay({ summaryData }: AISummaryDisplayProps)
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
-            AI-generated summary of your note's main content and concepts
+            AI-generated summary of your note&apos;s main content and concepts
           </p>
         </CardHeader>
         <CardContent>
           <div className="prose prose-sm max-w-none dark:prose-invert">
-            <div className="text-base leading-relaxed whitespace-pre-wrap text-foreground/90 font-medium">
-              {summary}
+            <div className="text-base leading-relaxed text-foreground/90 font-medium">
+              <ReactMarkdown>
+                {summary}
+              </ReactMarkdown>
             </div>
           </div>
         </CardContent>
@@ -143,7 +150,24 @@ export default function AISummaryDisplay({ summaryData }: AISummaryDisplayProps)
         </CardContent>
       </Card>
 
-      {/* Original Note Section (Collapsible) */}
+      <div className='flex justify-center'>
+        <Button
+          variant="secondary"
+          size="lg"
+          onClick={handleStartAIReview}
+          disabled={isStartingReview}
+          className="flex items-center gap-2 px-10 py-3 text-lg shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out"
+        >
+          {isStartingReview ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Brain className="h-4 w-4" />
+          )}
+          Ready for AI-Review
+        </Button>
+      </div>
+
+      {/* Original Note Section */}
       <Card>
         <CardHeader>
           <Button
@@ -165,7 +189,7 @@ export default function AISummaryDisplay({ summaryData }: AISummaryDisplayProps)
             View the original note content that was used to generate this summary
           </p>
         </CardHeader>
-        
+
         {showOriginalNote && (
           <CardContent>
             <Separator className="mb-4" />

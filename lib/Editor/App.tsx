@@ -21,8 +21,6 @@ import {parseAllowedFontSize} from './plugins/ToolbarPlugin/fontSize';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
 import {parseAllowedColor} from './ui/ColorPicker';
 
-import type { EditorSettings } from '@/types/Editor';
-
 import './index.css';
 
 function getExtraStyles(element: HTMLElement): string {

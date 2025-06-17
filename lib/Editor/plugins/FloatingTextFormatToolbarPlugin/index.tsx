@@ -91,7 +91,7 @@ function TextFormatFloatingToolbar({
       }
     }
   }
-  function mouseUpListener(e: MouseEvent) {
+  function mouseUpListener() {
     if (popupCharStylesEditorRef?.current) {
       if (popupCharStylesEditorRef.current.style.pointerEvents !== 'auto') {
         popupCharStylesEditorRef.current.style.pointerEvents = 'auto';
@@ -188,6 +188,14 @@ function TextFormatFloatingToolbar({
     <>
       {editor.isEditable() && (
         <div ref={popupCharStylesEditorRef} className="floating-text-format-popup">
+          <button
+            type="button"
+            onClick={insertComment}
+            className={'popup-item spaced insert-comment'}
+            title="Insert a question"
+            aria-label="Insert question">
+            <i className="format add-comment" />
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -295,14 +303,6 @@ function TextFormatFloatingToolbar({
             title="Insert link"
             aria-label="Insert link">
             <i className="format link" />
-          </button>
-          <button
-            type="button"
-            onClick={insertComment}
-            className={'popup-item spaced insert-comment'}
-            title="Insert a question"
-            aria-label="Insert question">
-            <i className="format add-comment" />
           </button>
         </div>
       )}

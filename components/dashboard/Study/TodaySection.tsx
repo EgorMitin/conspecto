@@ -29,17 +29,18 @@ export default function TodaySection({
 }: TodaySectionProps) {
   const scorePercentage = lastSessionScore ? (lastSessionScore / lastSessionMaxScore) * 100 : 0;
   const { startReviewSession } = useReviewStore();
-  const { noteId } = useAppState();
-  if (!noteId) return <div className="p-6">No note selected</div>;
-  const router = useRouter()
+  const { noteId, folderId } = useAppState();
+  const router = useRouter();
 
   const handleQuestionReview = async (): Promise<void> => {
-    await startReviewSession({ mode: 'due', scope: 'note', scopeId: noteId });
-    router.push(`${window.location.pathname}/review`);
+    if (!folderId) return;
+    await startReviewSession({ mode: 'due', scope: noteId ? 'note' : 'folder', scopeId: noteId || folderId });
+    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ""}study/review`);
   };
 
-  const handleAiReview = async () => {
-    router.push(`${window.location.pathname}/ai-review`);
+  const handleAiReview = () => {
+    console.log(noteId)
+    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ""}study/ai-review`);
   }
 
   return (
@@ -56,7 +57,7 @@ export default function TodaySection({
             <CardTitle className="text-sm font-medium flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-blue-500" />
-                Today's Reviews
+                Today&apos;s Reviews
               </span>
               <Badge variant={questionsDueToday > 0 ? "default" : "secondary"}>
                 {questionsDueToday}

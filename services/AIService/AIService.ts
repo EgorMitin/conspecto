@@ -1,11 +1,11 @@
 import { logger } from '@/utils/logger';
 import DatabaseService from '../DatabaseService/DatabaseService';
-import { AiReviewSession, AiReviewQuestionEvaluation } from '@/types/AiReviewSession';
-import { 
-  AIProvider, 
-  QuestionGenerationParams, 
-  AnswerEvaluationParams, 
-  ServiceResult, 
+import { AiReviewSession, AiReviewQuestionEvaluation, AiReviewSourceType } from '@/types/AiReviewSession';
+import {
+  AIProvider,
+  QuestionGenerationParams,
+  AnswerEvaluationParams,
+  ServiceResult,
   AIServiceConfig,
   BatchQuestionGeneration,
   AIProviderName
@@ -68,28 +68,15 @@ export class AIService {
    */
   async generateQuestionsForSession(
     sessionId: string,
-    noteId: string,
-    params: Omit<QuestionGenerationParams, 'noteContent'>
+    params: QuestionGenerationParams
   ): Promise<ServiceResult<AiReviewSession>> {
     const startTime = Date.now();
-    
-    try {
-      const note = await DatabaseService.getNoteById(noteId);
-      if (!note) {
-        return {
-          success: false,
-          error: {
-            code: 'NOTE_NOT_FOUND',
-            message: 'Note not found',
-          }
-        };
-      }
 
+    try {
       const questions = await this.provider.generateQuestions({
         ...params,
-        noteContent: note.contentPlainText,
+        noteContent: params.noteContent,
         context: {
-          noteId,
           userId: params.context?.userId,
         }
       });
@@ -122,7 +109,7 @@ export class AIService {
 
     } catch (error) {
       logger.error('Question generation failed:', error);
-      
+
       await DatabaseService.updateAiReviewSession(sessionId, {
         status: 'failed',
         errorMessage: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -147,13 +134,31 @@ export class AIService {
   }
 
   /**
+   * Get note context for note or folder
+   */
+  async getNoteContent(sourceType: string, sourceId: string): Promise<string> {
+    if (sourceType === 'note') {
+      const note = await DatabaseService.getNoteById(sourceId);
+      if (!note) {
+        throw new Error('Note not found for context retrieval');
+      }
+      return note.contentPlainText;
+    }
+    const notes = await DatabaseService.getNotesByFolderId(sourceId);
+    if (!notes || notes.length === 0) {
+      throw new Error('No notes found for folder context retrieval');
+    }
+    return notes.map(note => note.contentPlainText).join('\n\n');
+  }
+
+  /**
    * Evaluate a single answer
    */
   async evaluateAnswer(
     sessionId: string,
     questionId: string,
     params: AnswerEvaluationParams
-  ): Promise<ServiceResult<{ evaluation: AiReviewQuestionEvaluation; message: string; score?: number }>> {
+  ): Promise<ServiceResult<{ evaluation: AiReviewQuestionEvaluation; message: string; score?: number, suggestions?: string[], correctAnswer?: string }>> {
     const startTime = Date.now();
 
     try {
@@ -181,17 +186,17 @@ export class AIService {
 
       let noteContent: string;
       if (params.context?.noteContent === undefined) {
-        const note = await DatabaseService.getNoteById(session.noteId);
-        if (!note) {
-        return {
-          success: false,
-          error: {
-            code: 'NOTE_NOT_FOUND',
-            message: 'Note not found in database',
-          }
-        };
-      }
-        noteContent = note.contentPlainText;
+        try {
+          noteContent = await this.getNoteContent(session.sourceType, session.sourceId);
+        } catch (error) {
+          return {
+            success: false,
+            error: {
+              code: 'NOTE_NOT_FOUND',
+              message: 'Note not found in database',
+            }
+          };
+        }
       } else {
         noteContent = params.context?.noteContent;
       }
@@ -205,16 +210,18 @@ export class AIService {
         }
       });
 
-      const updatedQuestions = session.generatedQuestions?.map(q => 
-        q.id === questionId 
+      const updatedQuestions = session.generatedQuestions?.map(q =>
+        q.id === questionId
           ? {
-              ...q,
-              status: 'evaluated' as const,
-              evaluation: evaluation.evaluation as AiReviewQuestionEvaluation,
-              score: evaluation.score,
-              aiMessage: evaluation.message,
-              answer: params.userAnswer,
-            }
+            ...q,
+            status: 'evaluated' as const,
+            evaluation: evaluation.evaluation as AiReviewQuestionEvaluation,
+            score: evaluation.score,
+            suggestions: evaluation.suggestions,
+            correctAnswer: evaluation.correctAnswer,
+            aiMessage: evaluation.message,
+            answer: params.userAnswer,
+          }
           : q
       ) || [];
 
@@ -228,6 +235,8 @@ export class AIService {
           evaluation: evaluation.evaluation as AiReviewQuestionEvaluation,
           message: evaluation.message,
           score: evaluation.score,
+          suggestions: evaluation.suggestions,
+          correctAnswer: evaluation.correctAnswer,
         },
         metadata: {
           executionTime: Date.now() - startTime,
@@ -238,7 +247,7 @@ export class AIService {
 
     } catch (error) {
       logger.error('Answer evaluation failed:', error);
-      
+
       return {
         success: false,
         error: {
@@ -259,25 +268,28 @@ export class AIService {
    * Generate content summary and key takeaways
    */
   async generateContentInsights(
-    noteId: string
+    sourceId: string,
+    sourceType: AiReviewSourceType,
   ): Promise<ServiceResult<{ summary: string; keyTakeaways: string[] }>> {
     const startTime = Date.now();
 
     try {
-      const note = await DatabaseService.getNoteById(noteId);
-      if (!note) {
+      let noteContent: string;
+      try {
+        noteContent = await this.getNoteContent(sourceType, sourceId);
+      } catch (error) {
         return {
           success: false,
           error: {
             code: 'NOTE_NOT_FOUND',
-            message: 'Note not found',
+            message: 'Note not found in database',
           }
         };
       }
 
       const [summary, keyTakeaways] = await Promise.all([
-        this.provider.summarizeContent?.(note.contentPlainText) || Promise.resolve(''),
-        this.provider.extractKeyTakeaways?.(note.contentPlainText) || Promise.resolve([]),
+        this.provider.summarizeContent?.(noteContent) || Promise.resolve(''),
+        this.provider.extractKeyTakeaways?.(noteContent) || Promise.resolve([]),
       ]);
 
       return {
@@ -292,7 +304,7 @@ export class AIService {
 
     } catch (error) {
       logger.error('Content insights generation failed:', error);
-      
+
       return {
         success: false,
         error: {
@@ -321,16 +333,15 @@ export class AIService {
     try {
       const concurrencyLimit = 3;
       const chunks = this.chunkArray(batch.sessions, concurrencyLimit);
-      
+
       for (const chunk of chunks) {
         const chunkPromises = chunk.map(async (session) => {
           try {
             const result = await this.generateQuestionsForSession(
               session.sessionId,
-              session.params.context?.noteId || '',
               session.params
             );
-            
+
             return {
               sessionId: session.sessionId,
               success: result.success,
@@ -361,7 +372,7 @@ export class AIService {
 
     } catch (error) {
       logger.error('Batch question generation failed:', error);
-      
+
       return {
         success: false,
         error: {

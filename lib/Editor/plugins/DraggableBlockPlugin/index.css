@@ -16,6 +16,7 @@
   height: 16px;
   opacity: 0.3;
   background-image: url(../../images/icons/draggable-block-menu.svg);
+  filter: sepia(1) hue-rotate(200deg) saturate(8);
 }
 
 .draggable-block-menu .icon-plus {
@@ -24,6 +25,7 @@
   cursor: pointer;
   background-color: transparent;
   background-image: url(../../images/icons/plus.svg);
+  filter: sepia(1) hue-rotate(200deg) saturate(8);
 }
 
 .draggable-block-menu:active {
