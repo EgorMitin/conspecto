@@ -1,7 +1,7 @@
 'use server';
 
 import { initializeAIService } from '@/services/AIService';
-import { AiReviewDifficulty, AiReviewMode, AiReviewQuestionType } from '@/types/AiReviewSession';
+import { AiReviewDifficulty, AiReviewMode, AiReviewQuestionType, AiReviewSourceType } from '@/types/AiReviewSession';
 import { logger } from '@/utils/logger';
 
 
@@ -11,6 +11,7 @@ import { logger } from '@/utils/logger';
 export async function generateQuestionsForSession(
   sessionId: string,
   sourceId: string,
+  sourceType: AiReviewSourceType,
   difficulty: AiReviewDifficulty,
   questionCount: number,
   mode: AiReviewMode,
@@ -19,7 +20,7 @@ export async function generateQuestionsForSession(
   try {
     const aiService = initializeAIService();
 
-    const noteContent = await aiService.getNoteContent(sessionId, sourceId);
+    const noteContent = await aiService.getNoteContent(sourceType, sourceId);
     
     const result = await aiService.generateQuestionsForSession(
       sessionId,
@@ -103,11 +104,11 @@ export async function evaluateAnswer(
 /**
  * Server action to generate content insights (summary and key takeaways)
  */
-export async function generateContentInsights(sourceId: string) {
+export async function generateContentInsights(sourceType: string, sourceId: AiReviewSourceType) {
   try {
     const aiService = initializeAIService();
     
-    const result = await aiService.generateContentInsights(sourceId);
+    const result = await aiService.generateContentInsights(sourceType, sourceId);
 
     if (!result.success) {
       return {

@@ -41,7 +41,7 @@ export async function generateAISummary(noteId: string): Promise<SummaryResult> 
       };
     }
 
-    const result = await generateContentInsights(noteId);
+    const result = await generateContentInsights(noteId, 'note');
 
     if (result.error || !result.data) {
       return {

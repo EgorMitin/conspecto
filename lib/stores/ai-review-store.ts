@@ -73,6 +73,7 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
       generateQuestionsForSession(
         createdSession.id,
         params.sourceId,
+        createdSession.sourceType,
         params.difficulty,
         params.questionCount,
         params.mode,
