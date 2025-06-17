@@ -29,7 +29,7 @@ export default function AiReviewConfig() {
   const [questionCount, setQuestionCount] = useState(10);
   const [urlError, setUrlError] = useState<string | null>(null);
   const currentFolder = state.folders.find(f => f.id === folderId);
-  const sourceType = noteId ? 'note' : 'folder';
+  const sourceType = 'note';
   const source = sourceType === 'note' ? currentNote : currentFolder;
 
   useEffect(() => {
