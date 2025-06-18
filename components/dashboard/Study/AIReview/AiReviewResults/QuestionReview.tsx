@@ -70,7 +70,6 @@ export default function QuestionReview({ question, index }: QuestionReviewProps)
     <Card className={`transition-all duration-200 hover:shadow-md ${getStatusColor()}`}>
       <CardContent className="p-6">
         <div className="space-y-4">
-          {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
               {getStatusIcon()}
@@ -92,11 +91,9 @@ export default function QuestionReview({ question, index }: QuestionReviewProps)
             {getStatusBadge()}
           </div>
 
-          {/* Question */}
           <div className="bg-white/70 rounded-lg p-4 border border-gray-100 dark:bg-gray-800/70 dark:border-gray-700">
             <p className="text-gray-800 font-medium mb-3 dark:text-gray-200">{question.question}</p>
-            
-            {/* User's Answer */}
+
             {question.answer && question.status !== 'skipped' && (
               <div className="space-y-2">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Your Answer:</p>
@@ -107,13 +104,11 @@ export default function QuestionReview({ question, index }: QuestionReviewProps)
             )}
           </div>
 
-          {/* AI Feedback */}
           {question.aiMessage && question.status !== 'skipped' && (
             <div className="bg-white/70 rounded-lg p-4 border border-gray-100 dark:bg-gray-800/70 dark:border-gray-700">
               <p className="text-sm font-medium text-gray-600 mb-2 dark:text-gray-400">AI Feedback:</p>
               <p className="text-sm text-gray-700 dark:text-gray-300">{question.aiMessage}</p>
-              
-              {/* Correct Answer */}
+
               {question.correctAnswer && question.evaluation !== 'correct' && (
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                   <p className="text-sm font-medium text-gray-600 mb-1 dark:text-gray-400">Correct Answer:</p>
@@ -123,7 +118,6 @@ export default function QuestionReview({ question, index }: QuestionReviewProps)
                 </div>
               )}
 
-              {/* Suggestions */}
               {question.suggestions && question.suggestions.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                   <p className="text-sm font-medium text-gray-600 mb-2 dark:text-gray-400">Suggestions for Improvement:</p>
@@ -140,7 +134,6 @@ export default function QuestionReview({ question, index }: QuestionReviewProps)
             </div>
           )}
 
-          {/* Skipped Message */}
           {question.status === 'skipped' && (
             <div className="bg-orange-50 rounded-lg p-4 border border-orange-200 dark:bg-orange-950/30 dark:border-orange-800">
               <p className="text-sm text-orange-700 dark:text-orange-300">

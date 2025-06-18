@@ -94,7 +94,6 @@ export default function AiReviewResults() {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto space-y-6">
 
-        {/* Header */}
         <Card className="bg-gradient-to-r from-purple-50 via-blue-50 to-indigo-50 dark:from-purple-950/30 dark:via-blue-950/30 dark:to-indigo-950/30 border-0 shadow-lg">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -127,7 +126,6 @@ export default function AiReviewResults() {
           </CardHeader>
         </Card>
 
-        {/* Score Overview */}
         <Card className="relative overflow-hidden">
           <div className={`absolute inset-0 bg-gradient-to-br ${scoreMessage.gradient} opacity-5`}></div>
           <CardContent className="p-8 relative">
@@ -193,7 +191,6 @@ export default function AiReviewResults() {
           </CardContent>
         </Card>
 
-        {/* Performance Insights */}
         <Card className="border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -298,7 +295,6 @@ export default function AiReviewResults() {
           </CardContent>
         </Card>
 
-        {/* Question Review */}
         <Card className="shadow-lg pt-0">
           <CardHeader className="rounded-t-xl pt-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30">
             <CardTitle className="text-xl flex items-center gap-3">
@@ -324,7 +320,6 @@ export default function AiReviewResults() {
           </CardContent>
         </Card>
 
-        {/* Actions */}
         <Card className="rounded-b-none bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 border-2 border-b-0 border-dashed border-gray-300 dark:border-gray-600">
           <CardContent className="p-8">
             <div className="text-center space-y-6">

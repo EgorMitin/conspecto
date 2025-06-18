@@ -120,8 +120,7 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
   return (
     <div className="flex-1 overflow-auto">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
-        
-        {/* Header Section */}
+
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-4">
             <Button
@@ -179,7 +178,6 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
           )}
         </div>
 
-        {/* Error Display */}
         {error && (
           <Alert variant="destructive">
             <AlertDescription>
@@ -188,9 +186,7 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
           </Alert>
         )}
 
-        {/* Content */}
         {isGenerating ? (
-          /* Loading State */
           <Card className="text-center py-12">
             <CardContent className="space-y-6">
               <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">

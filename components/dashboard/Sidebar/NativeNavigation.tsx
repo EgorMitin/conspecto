@@ -16,30 +16,6 @@ export default function NativeNavigation({ folderId, user }: NativeNavigationPro
   return (
     <nav className='my-2'>
       <ul className="flex flex-col gap-2">
-        <li>
-          {folderId
-            ?
-            <Link
-              className="group/native flex text-Neutrals/neutrals-7 transition-all gap-2"
-              href={`/dashboard/`}
-            >
-              <HomeIcon />
-              <span>To Dashboard</span>
-            </Link>
-            :
-            <CustomDialogTrigger
-              header="Create A Folder"
-              content={<FolderCreator user={user} />}
-              description="Create a new folder to never get lost in your konwledge again."
-            >
-              <div className="flex transition-all hover:bg-muted justify-center items-center gap-2 p-2 w-full">
-                <Plus />
-                Create folder
-              </div>
-            </CustomDialogTrigger>
-          }
-        </li>
-
         <Settings>
           <li className="group/native flex text-Neutrals/neutrals-7 transition-all gap-2 cursor-pointer">
             <SettingsIcon />

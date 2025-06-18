@@ -84,7 +84,6 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
         </DialogContent>
       ) : (
         <DialogContent className="max-w-2xl mx-auto p-0 overflow-hidden">
-          {/* Header Section */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 px-8 pt-8 pb-6">
             <DialogHeader className="text-center space-y-3">
               <div className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
@@ -101,7 +100,6 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
             </DialogHeader>
           </div>
 
-          {/* Pricing Cards */}
           <div className="px-8 py-6 space-y-4">
             {products.length ? (
               products.map((product) => (
@@ -111,7 +109,6 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
                       key={price.id}
                       className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-blue-100/20 dark:hover:shadow-blue-900/10 hover:border-blue-200 dark:hover:border-blue-800 hover:-translate-y-1"
                     >
-                      {/* Popular Badge */}
                       {price.interval === 'month' && (
                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                           <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
@@ -121,7 +118,6 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
                       )}
 
                       <div className="flex items-center justify-between">
-                        {/* Price Section */}
                         <div className="flex-1">
                           <div className="flex items-baseline space-x-2 mb-2">
                             <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -132,12 +128,10 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
                             </span>
                           </div>
                           
-                          {/* Billing Period */}
                           <p className="text-gray-600 dark:text-gray-400 text-sm">
                             {price.interval === 'month' ? 'Billed monthly' : 'Billed annually'}
                           </p>
 
-                          {/* Features Preview */}
                           <div className="mt-4 space-y-2">
                             {['Unlimited projects', 'Advanced analytics', 'Priority support'].map((feature, index) => (
                               <div key={index} className="flex items-center space-x-2">
@@ -150,7 +144,6 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
                           </div>
                         </div>
 
-                        {/* CTA Button */}
                         <div className="ml-6">
                           <button
                             onClick={() => onClickContinue(price)}
@@ -194,7 +187,6 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
             )}
           </div>
 
-          {/* Footer */}
           <div className="bg-gray-50 dark:bg-gray-900/50 px-8 py-4 border-t border-gray-200 dark:border-gray-800">
             <p className="text-center text-xs text-gray-500 dark:text-gray-400">
               Secure payment powered by Stripe • Cancel anytime

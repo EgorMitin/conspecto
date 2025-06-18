@@ -164,7 +164,6 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
           </CardHeader>
         </Card>
 
-        {/* Note Display */}
         <Card className='gap-0'>
           <CardHeader>
             <CardTitle className="text-base flex items-center justify-between">
@@ -179,7 +178,6 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
           </CardContent>
         </Card>
 
-        {/* Answer Card */}
         <Card
           className="fixed bottom-4 left-1/2 z-30 transform -translate-x-1/2 w-full max-w-xl shadow-xl border border-muted bg-amber-100/10 backdrop-blur py-2 rounded-2xl px-0 sm:px-2 transition-all"
           style={{ boxShadow: '0 8px 32px 0 rgba(0,0,0,0.12)' }}

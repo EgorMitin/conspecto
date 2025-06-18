@@ -59,7 +59,6 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
   return (
     <div className="space-y-6">
 
-      {/* AI Summary Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -101,7 +100,6 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
         </CardContent>
       </Card>
 
-      {/* Key Takeaways Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -167,7 +165,6 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
         </Button>
       </div>
 
-      {/* Original Note Section */}
       <Card>
         <CardHeader>
           <Button

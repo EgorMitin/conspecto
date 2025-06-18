@@ -15,18 +15,19 @@ import { calculateDashboardStatistics } from "@/utils/dashboard-statistics";
 import { useAppState } from "@/lib/providers/app-state-provider";
 import { Loader2 } from "lucide-react";
 
+
 export default function Dashboard() {
   const user = useUser();
   const router = useRouter();
   const { state, isLoading } = useAppState();
 
-  if (!user) {
-    console.log("No user found, redirecting to landing page");
-    router.replace("/");
-    return null;
-  }
-
   useEffect(() => {
+    if (!user) {
+      console.log("No user found, redirecting to landing page");
+      router.replace("/");
+      return;
+    }
+
     const currentUrl = new URL(window.location.href);
     const verified = currentUrl.searchParams.get("verified");
 
@@ -34,18 +35,26 @@ export default function Dashboard() {
       toast.success("Your email has been verified successfully!");
       currentUrl.searchParams.delete("verified");
 
-      const newPath = currentUrl.pathname + (currentUrl.searchParams.toString() ? `?${currentUrl.searchParams.toString()}` : '');
+      const newPath =
+        currentUrl.pathname +
+        (currentUrl.searchParams.toString()
+          ? `?${currentUrl.searchParams.toString()}`
+          : "");
       router.replace(newPath);
     }
-  }, [router]);
+  }, [user, router]);
 
   // Calculate dashboard statistics from app state
   const stats = useMemo(() => {
-    if (isLoading || !state.folders) {
+    if (isLoading || state.folders.length === 0) {
       return null;
     }
     return calculateDashboardStatistics(state.folders);
   }, [state.folders, isLoading]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">
@@ -54,7 +63,7 @@ export default function Dashboard() {
           <Breadcrumbs />
         </div>
       </header>
-      
+
       <div className="flex-1 p-6">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
@@ -65,7 +74,6 @@ export default function Dashboard() {
           </div>
         ) : stats ? (
           <div className="space-y-6">
-            {/* Welcome Section */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-foreground mb-2">
                 Welcome back! 👋
@@ -75,36 +83,22 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* Stats Overview */}
             <div id="dashboard-stats">
               <DashboardStatsOverview stats={stats} />
             </div>
 
-            {/* Charts and Activity Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <WeeklyActivityChart stats={stats} />
               <RecentActivity stats={stats} />
             </div>
 
-            {/* Quick Actions */}
             <QuickActions stats={stats} />
-
-            {/* Folder Creator */}
-            <div className="border-t pt-6">
-              <h2 className="text-xl font-semibold mb-4">Organize Your Content</h2>
-              <FolderCreator user={user} />
-            </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <p className="text-muted-foreground">Failed to load dashboard data</p>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="mt-2 text-primary hover:underline"
-              >
-                Try again
-              </button>
+          <div className="flex items-center justify-center mt-30">
+            <div>
+              <h1 className="text-3xl font-semibold mb-4 text-center">To start taking notes create your first folder</h1>
+              <FolderCreator user={user} />
             </div>
           </div>
         )}

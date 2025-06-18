@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Star } from 'lucide-react'
 import { PRICING_PLANS, PRICING_CARDS } from '@/lib/constants'
 import Diamond from '/public/icons/diamond.svg'
@@ -13,60 +12,37 @@ import CheckIcon from '/public/icons/check.svg'
 
 export default function PricingSection() {
   return (
-    <section className="py-24 bg-white dark:bg-gray-900">
+    <section className="py-24 bg-gray-50 dark:bg-gray-950">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 dark:border-green-700 dark:bg-green-900 dark:text-green-300 mb-6">
-            Pricing
-          </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            The Perfect Plan
-            <span className="block bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              For You
-            </span>
+            The Perfect Plan For You
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Experience all the benefits of our platform. Select a plan that suits your needs 
-            and take your productivity to new heights.
+            Experience all the benefits of our platform. Select a plan that
+            suits your needs and take your productivity to new heights.
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 justify-center items-stretch max-w-5xl mx-auto">
           {PRICING_CARDS.map((card) => {
             const isProPlan = card.planType === PRICING_PLANS.proplan
-            
+
             return (
-              <Card 
+              <Card
                 key={card.planType}
-                className={`relative flex-1 max-w-md mx-auto transition-all duration-300 hover:scale-105 ${
-                  isProPlan 
-                    ? 'border-2 border-amber-200 shadow-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20' 
-                    : 'border border-gray-200 hover:shadow-xl dark:border-gray-700'
+                className={`relative flex-1 max-w-md mx-auto transition-all duration-300 hover:shadow-xl ${
+                  isProPlan
+                    ? 'border-2 border-blue-500'
+                    : 'border border-gray-200 dark:border-gray-800'
                 }`}
               >
                 {isProPlan && (
-                  <>
-                    {/* Glow effect for pro plan */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-amber-600 to-orange-600 rounded-lg blur opacity-25"></div>
-                    
-                    {/* Popular badge */}
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-1 flex items-center space-x-1">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span>Most Popular</span>
-                      </Badge>
-                    </div>
-
-                    {/* Diamond icon */}
-                    <Image
-                      src={Diamond}
-                      alt="Pro Plan Icon"
-                      className="absolute top-6 right-6 w-8 h-8"
-                    />
-
-                    {/* Background glow */}
-                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-amber-100/80 to-orange-100/80 blur-3xl rounded-full dark:from-amber-400/20 dark:to-orange-400/20"></div>
-                  </>
+                  <Image
+                    src={Diamond}
+                    alt="Pro Plan Icon"
+                    className="absolute top-6 right-6 w-8 h-8"
+                  />
                 )}
 
                 <CardHeader className="relative">
@@ -90,10 +66,10 @@ export default function PricingSection() {
 
                 <CardContent className="relative">
                   <Link href="/signup">
-                    <Button 
+                    <Button
                       className={`w-full mb-8 py-3 text-lg font-semibold ${
                         isProPlan
-                          ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white'
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
                           : 'bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100'
                       }`}
                     >
@@ -112,7 +88,10 @@ export default function PricingSection() {
 
                     <ul className="space-y-4">
                       {card.freatures.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start space-x-3">
+                        <li
+                          key={featureIndex}
+                          className="flex items-start space-x-3"
+                        >
                           <div className="flex-shrink-0 mt-1">
                             <Image
                               src={CheckIcon}
@@ -133,7 +112,6 @@ export default function PricingSection() {
           })}
         </div>
 
-        {/* FAQ section */}
         <div className="mt-20 text-center">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
             Frequently Asked Questions
@@ -144,7 +122,8 @@ export default function PricingSection() {
                 Is there a free trial?
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Our Free Plan lets you explore core features. Pro features are now available for all users.
+                Our Free Plan lets you explore core features. Pro features are
+                now available for all users.
               </p>
             </div>
             <div className="text-left">
@@ -152,7 +131,8 @@ export default function PricingSection() {
                 What payment methods do you accept?
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                We accept all major credit cards and PayPal. All payments are processed securely.
+                We accept all major credit cards and PayPal. All payments are
+                processed securely.
               </p>
             </div>
             <div className="text-left">
@@ -160,7 +140,8 @@ export default function PricingSection() {
                 Can I cancel anytime?
               </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Absolutely! You can cancel your subscription at any time with no cancellation fees.
+                Absolutely! You can cancel your subscription at any time with no
+                cancellation fees.
               </p>
             </div>
           </div>

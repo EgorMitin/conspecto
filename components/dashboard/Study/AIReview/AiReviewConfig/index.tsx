@@ -122,7 +122,6 @@ export default function AiReviewConfig() {
           ← Back to Study
         </Button>
 
-        {/* Header */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -139,10 +138,8 @@ export default function AiReviewConfig() {
           </CardHeader>
         </Card>
 
-        {/* Configuration */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-          {/* Difficulty Selection */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -182,7 +179,6 @@ export default function AiReviewConfig() {
             </CardContent>
           </Card>
 
-          {/* Mode & Count Selection */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -192,7 +188,6 @@ export default function AiReviewConfig() {
             </CardHeader>
             <CardContent className="space-y-6">
 
-              {/* Review Mode */}
               <div className="space-y-3">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   Review Mode
@@ -252,7 +247,6 @@ export default function AiReviewConfig() {
                 </p>
               </div>
 
-              {/* Question Count */}
               <div className="space-y-3">
                 <Label className="text-sm font-medium">Number of Questions</Label>
                 <Select
@@ -280,7 +274,6 @@ export default function AiReviewConfig() {
           </Card>
         </div>
 
-        {/* Summary & Start */}
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">

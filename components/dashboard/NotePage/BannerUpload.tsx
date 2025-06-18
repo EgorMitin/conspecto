@@ -114,7 +114,6 @@ export default function BannerUpload() {
 
   return (
     <div className="relative w-full">
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -135,7 +134,6 @@ export default function BannerUpload() {
             />
           </div>
 
-          {/* Overlay with actions */}
           <div className="absolute inset-0 bg-gradient-to-t p-4 from-black/10 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-end justify-end gap-2">
             <Button
               variant="secondary"

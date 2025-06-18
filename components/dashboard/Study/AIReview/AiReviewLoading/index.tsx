@@ -77,7 +77,6 @@ export default function AiReviewLoading() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-6">
 
-        {/* Header */}
         <Card>
           <CardHeader className="text-center">
             <div className="mx-auto p-3 bg-purple-100 dark:bg-purple-900 rounded-full w-fit mb-4">
@@ -90,7 +89,6 @@ export default function AiReviewLoading() {
           </CardHeader>
           <CardContent className="space-y-6">
 
-            {/* Progress */}
             <div className="space-y-2">
               <Progress
                 value={progress}
@@ -101,7 +99,6 @@ export default function AiReviewLoading() {
               </p>
             </div>
 
-            {/* Current Step */}
             <div className="space-y-4">
               {GENERATION_STEPS.map((step, index) => (
                 <div
@@ -128,7 +125,6 @@ export default function AiReviewLoading() {
               ))}
             </div>
 
-            {/* Additional Info */}
             <div className="text-center space-y-2">
               <p className="text-xs text-muted-foreground dark:text-gray-400">
                 This usually takes 30-60 seconds

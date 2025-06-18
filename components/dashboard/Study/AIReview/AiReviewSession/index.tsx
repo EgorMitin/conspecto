@@ -184,7 +184,6 @@ export default function AiReviewSession() {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto space-y-6">
 
-        {/* Header */}
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -229,14 +228,12 @@ export default function AiReviewSession() {
           </CardHeader>
         </Card>
 
-        {/* Question Card */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <QuestionTypeInfo type={currentQuestion.question_type} />
 
               <div className="flex items-center gap-2">
-                {/* Submit Session Button */}
                 {!allQuestionsAnswered && (
                   <div className="flex justify-end">
                     <Button
@@ -285,7 +282,6 @@ export default function AiReviewSession() {
               )}
             </div>
 
-            {/* Answer Input */}
             <div className="space-y-3">
               <div className="flex relative justify-center">
                 <div className="relative z-10 m-[2px] w-full bg-background rounded-md">
@@ -345,7 +341,6 @@ export default function AiReviewSession() {
               </div>
             </div>
 
-            {/* Evaluation Result */}
             <EvaluationDisplay question={currentQuestion} />
             {(!isLastQuestion && currentQuestion.status === 'evaluated' && currentQuestion.evaluation) && (
               <div className="flex justify-end mt-2">
@@ -363,7 +358,6 @@ export default function AiReviewSession() {
           </CardContent>
         </Card>
 
-        {/* Navigation & Completion */}
         {allQuestionsAnswered && (
           <Card>
             <CardContent className="p-6">

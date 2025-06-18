@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@/lib/context/UserContext'
 
 import HeroSection from '@/components/landing-page/hero-section'
-import FeaturesSection from '@/components/landing-page/features-section'
 import DemoSection from '@/components/landing-page/demo-section'
 import PricingSection from '@/components/landing-page/pricing-section'
-import TestimonialsSection from '@/components/landing-page/testimonials-section'
 import CTASection from '@/components/landing-page/cta-section'
 
 export default function Landing() {
@@ -24,10 +22,8 @@ export default function Landing() {
   return (
     <div className="min-h-screen">
       <HeroSection />
-      <FeaturesSection />
       <DemoSection />
       <PricingSection />
-      <TestimonialsSection />
       <CTASection />
     </div>
   );

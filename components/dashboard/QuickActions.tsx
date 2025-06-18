@@ -74,7 +74,6 @@ export default function QuickActions({ stats }: QuickActionsProps) {
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          {/* Start Studying */}
           <Card 
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group border-dashed border-2 border-primary/20 hover:border-primary/40"
             onClick={handleStartStudying}
@@ -97,7 +96,6 @@ export default function QuickActions({ stats }: QuickActionsProps) {
             </CardContent>
           </Card>
 
-          {/* Create New Note */}
           <Card 
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
             onClick={handleCreateNote}
@@ -120,7 +118,6 @@ export default function QuickActions({ stats }: QuickActionsProps) {
             </CardContent>
           </Card>
 
-          {/* AI Review Session */}
           <Card 
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
             onClick={handleAIReview}
@@ -143,7 +140,6 @@ export default function QuickActions({ stats }: QuickActionsProps) {
             </CardContent>
           </Card>
 
-          {/* View Progress */}
           <Card 
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
             onClick={handleViewProgress}
@@ -168,7 +164,6 @@ export default function QuickActions({ stats }: QuickActionsProps) {
 
         </div>
 
-        {/* Today's Focus */}
         {(todayReviews > 0 || stats.studyStreak > 0) && (
           <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 rounded-lg border">
             <div className="flex items-center justify-between">

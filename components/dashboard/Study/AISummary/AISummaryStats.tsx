@@ -14,8 +14,7 @@ export default function AISummaryStats({ summaryData }: AISummaryStatsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      
-      {/* Word Count */}
+
       <Card>
         <CardContent>
           <div className="flex items-center space-x-2">
@@ -28,7 +27,6 @@ export default function AISummaryStats({ summaryData }: AISummaryStatsProps) {
         </CardContent>
       </Card>
 
-      {/* Reading Time */}
       <Card>
         <CardContent>
           <div className="flex items-center space-x-2">
@@ -41,7 +39,6 @@ export default function AISummaryStats({ summaryData }: AISummaryStatsProps) {
         </CardContent>
       </Card>
 
-      {/* Key Takeaways */}
       <Card>
         <CardContent>
           <div className="flex items-center space-x-2">
@@ -54,7 +51,6 @@ export default function AISummaryStats({ summaryData }: AISummaryStatsProps) {
         </CardContent>
       </Card>
 
-      {/* Note Info */}
       <Card>
         <CardContent>
           <div className="flex items-center space-x-2">

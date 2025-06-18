@@ -199,7 +199,6 @@ export default function ActionsPlugin({
         <FiDownload />
       </button>
 
-      {/* Save button */}
       <button
         className={`action-button save ${isSaving ? 'active' : ''}`}
         onClick={handleForceSave}

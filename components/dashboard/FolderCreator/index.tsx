@@ -78,6 +78,13 @@ export default function FolderCreator({ user }: { user: User }) {
         bannerUrl: '',
         notes: [],
         createdAt: new Date(),
+        repetition: 0,
+        interval: 0,
+        easeFactor: 2.5,
+        nextReview: new Date(),
+        lastReview: new Date(),
+        history: [],
+        updatedAt: new Date(),
       };
 
       const error = await createNewFolder(newFolder);
@@ -87,7 +94,7 @@ export default function FolderCreator({ user }: { user: User }) {
       }
       dispatch({
         type: 'ADD_FOLDER',
-        payload: { folder: { ...newFolder, notes: [] } },
+        payload: { folder: { ...newFolder, notes: [], aiReviews: [] } },
       });
 
       toast.success('Folder Created', {
@@ -108,12 +115,6 @@ export default function FolderCreator({ user }: { user: User }) {
 
   return (
       <Card className="w-full max-w-2xl mx-auto my-8 sm:h-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold">Create a New Folder</CardTitle>
-          <CardDescription>
-            Organize your notes by creating a new folder.
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">

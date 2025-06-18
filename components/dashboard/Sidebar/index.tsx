@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import FoldersDropdown from './FoldersDropdown';
+import FolderList from './FolderList';
 import PlanUsage from './PlanUsage';
 import NotesDropdownList from './NotesDropdownList';
 import UserCard from './UserCard';
@@ -13,6 +13,10 @@ import { Folder } from '@/types/Folder';
 import { Note } from '@/types/Note';
 import { ResizableSidebar } from './ResizableSidebar';
 import { useAppState } from '@/lib/providers/app-state-provider';
+import Link from 'next/link';
+import { HomeIcon, Plus } from 'lucide-react';
+import CustomDialogTrigger from '@/components/CustomDialogTrigger';
+import FolderCreator from '../FolderCreator';
 
 interface SidebarProps {
   user: User;
@@ -32,16 +36,32 @@ function SidebarComponent({ user, folderId, folders, notes, className }: Sidebar
       )}
     >
       <div>
-        <FoldersDropdown
-          user={user}
-          folders={folders}
-          defaultValue={folders.find((folder) => folder.id === folderId)}
-        />
         <PlanUsage
           foldersLength={folders?.length || 0}
           subscription={user.subscriptionPlan}
         />
-        <NativeNavigation folderId={folderId} user={user} />
+        {folderId
+          ?
+          <Link
+            className="flex transition-all hover:bg-muted items-center gap-2 p-2 w-full"
+            href={`/dashboard/`}
+          >
+            <HomeIcon />
+            To Dashboard
+          </Link>
+          :
+          <CustomDialogTrigger
+            header="Create A Folder"
+            content={<FolderCreator user={user} />}
+            description="Create a new folder to never get lost in your konwledge again."
+          >
+            <div className="flex transition-all hover:bg-muted items-center gap-2 p-2 w-full">
+              <Plus />
+              Create folder
+            </div>
+          </CustomDialogTrigger>
+        }
+        <FolderList user={user} folders={folders} folderId={folderId} />
         <ScrollArea className="overflow-scroll relative h-[450px]">
           {folderId
             ? <NotesDropdownList
@@ -49,10 +69,13 @@ function SidebarComponent({ user, folderId, folders, notes, className }: Sidebar
               notes={notes}
               folderId={folderId}
             />
-            : "No notes yet. Select a folder to get started."}
+            : <div className='text-primary/80 p-2 text-sm mt-4'>Select a folder to  view notes</div>}
         </ScrollArea>
       </div>
-      <UserCard user={user} />
+      <div>
+        <NativeNavigation folderId={folderId} user={user} />
+        <UserCard user={user} />
+      </div>
     </aside>
   );
 };

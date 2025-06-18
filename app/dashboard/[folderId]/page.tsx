@@ -7,6 +7,7 @@ import { useAppState } from "@/lib/providers/app-state-provider";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import FolderHeader from "@/components/dashboard/FolderPageContent/FolderHeader";
 
 
 export default function FolderPage() {
@@ -42,6 +43,7 @@ export default function FolderPage() {
       <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4 w-full">
         <div className="flex flex-col gap-4 w-full px-2">
           <Breadcrumbs folderName={folderName} folderId={folderId} page="folder" />
+          <FolderHeader folder={currentFolder} />
         </div>
       </header>
 

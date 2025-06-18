@@ -39,7 +39,6 @@ export default function StudyTools({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        {/* Review All Questions */}
         <Card className="relative overflow-hidden hover:shadow-md transition-shadow flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center justify-between">
@@ -76,7 +75,6 @@ export default function StudyTools({
           </CardFooter>
         </Card>
 
-        {/* AI Summary */}
         <Card className="relative overflow-hidden hover:shadow-md transition-shadow flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center justify-between">

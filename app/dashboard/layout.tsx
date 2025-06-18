@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PRODUCTS } from '@/config';
 import { SubscriptionModalProvider } from '@/lib/providers/subscription-modal-provider';
 import AppStateProvider from '@/lib/providers/app-state-provider';
 import { useUser } from '@/lib/context/UserContext';
 import Sidebar from '@/components/dashboard/Sidebar';
+import { useRouter } from 'next/navigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,13 +14,17 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const user = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      console.log("No user found, redirecting to landing page");
+      router.replace("/");
+    }
+  }, [user, router]);
 
   if (!user) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg">Loading...</p>
-      </div>
-    );
+    return null;
   }
 
   return (

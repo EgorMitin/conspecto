@@ -80,12 +80,6 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
     if (isMounted && isMobile) {
       collapse();
     }
-  }, [isMounted, isMobile, collapse]);
-
-  useEffect(() => {
-    if (isMounted && isMobile) {
-      collapse();
-    }
   }, [pathname, isMounted, isMobile, collapse]);
 
   if (!isMounted) {
@@ -133,7 +127,7 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
         >
           <ChevronsLeft className="h-6 w-6" />
         </div>
-        {children}
+        {(!isCollapsed && !isResetting) && children}
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}

@@ -48,8 +48,6 @@ export default function DashboardStatsOverview({ stats }: DashboardStatsOverview
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      
-      {/* Total Content */}
       <Card className="relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Your Library</CardTitle>
@@ -73,7 +71,6 @@ export default function DashboardStatsOverview({ stats }: DashboardStatsOverview
         </CardContent>
       </Card>
 
-      {/* Study Progress */}
       <Card className="relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Study Progress</CardTitle>
@@ -101,7 +98,6 @@ export default function DashboardStatsOverview({ stats }: DashboardStatsOverview
         </CardContent>
       </Card>
 
-      {/* Study Streak */}
       <Card className="relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Study Streak</CardTitle>
@@ -128,7 +124,6 @@ export default function DashboardStatsOverview({ stats }: DashboardStatsOverview
         </CardContent>
       </Card>
 
-      {/* This Week Activity */}
       <Card className="relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">This Week</CardTitle>
