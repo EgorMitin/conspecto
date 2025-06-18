@@ -40,7 +40,7 @@ A next-generation AI-powered note-taking application that transforms learning th
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/conspecto.git
+   git clone https://github.com/EgorMitin/conspecto.git
    cd conspecto
    ```
 
