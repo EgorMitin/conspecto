@@ -4,6 +4,8 @@
 
 A next-generation AI-powered note-taking application that transforms learning through intelligent questioning, spaced repetition, ai-review sessions and advanced editing capabilities.
 
+> I am a serious web developer, so you can easily find demo on my localhost. I mean, literally: www.mylocalhost.at
+
 ## Features
 
 ### AI-Powered Learning
