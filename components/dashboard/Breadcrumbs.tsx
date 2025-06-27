@@ -20,11 +20,9 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
   const { state, folderId: contextFolderId, noteId: contextNoteId, currentNote } = useAppState();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  // Use props if provided, otherwise determine from context and pathname
   const folderId = props?.folderId || contextFolderId;
   const noteId = props?.noteId || contextNoteId;
 
-  // Determine current page type from pathname or props
   const getCurrentPageInfo = () => {
     if (props?.page) {
       return { page: props.page };
@@ -62,11 +60,10 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
 
   const { page } = getCurrentPageInfo();
 
-  // Get folder and note data - use props if available, otherwise from context
   const currentFolder = folderId ? state.folders.find(f => f.id === folderId) : null;
   const folderName = props?.folderName || currentFolder?.name || '';
   const noteTitle = props?.noteTitle || currentNote?.title || '';
-  const breadCrumbStyle = "flex items-center text-sm text-muted-foreground" + isMobile ? " ml-10" : "";
+  const breadCrumbStyle = "flex items-center text-sm text-muted-foreground" + (isMobile ? " ml-10" : "");
 
   return (
     <Breadcrumb className={breadCrumbStyle}>
@@ -76,7 +73,6 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
         </BreadcrumbLink>
       </BreadcrumbItem>
 
-      {/* Folder breadcrumb */}
       {(page === "folder" && folderName) && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
@@ -86,7 +82,6 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
         </>
       )}
 
-      {/* Folder breadcrumb for note and study pages */}
       {((page === "note" || page === "study" || page === "aiSummary") && folderName && folderId) && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
@@ -101,7 +96,6 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
         </>
       )}
 
-      {/* Note breadcrumb */}
       {page === "note" && noteTitle && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
@@ -111,7 +105,6 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
         </>
       )}
 
-      {/* Note breadcrumb for study and ai summary pages */}
       {((page === "study" || page === "aiSummary") && noteTitle && noteId && folderId) && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
@@ -126,7 +119,6 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
         </>
       )}
 
-      {/* Study breadcrumb */}
       {(page === "study" || page === "aiSummary") && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
@@ -151,7 +143,6 @@ export default function Breadcrumbs(props?: BreadcrumbsProps) {
         </>
       )}
 
-      {/* AI Summary breadcrumb */}
       {page === "aiSummary" && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
