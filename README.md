@@ -146,7 +146,7 @@ Create intelligent study sessions with 20+ configured question types including:
 ### Advanced Note Organization
 - **Folders & Nested Structure** - Organize notes hierarchically*
 - **Tags & Search** - Full-text search with PostgreSQL FTS
-- **Status Management** - Draft, active, and archived states
+- **Status Management** - active and archived states
 
 ## Responsive Design
 

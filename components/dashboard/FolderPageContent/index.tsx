@@ -43,7 +43,7 @@ export default function FolderPageContent({ notes: initialNotes, user }: FolderP
       isPublic: false,
       iconId: '📄',
       bannerUrl: '',
-      status: 'draft',
+      status: 'active',
       repetition: 0,
       interval: 0,
       easeFactor: 2.5,

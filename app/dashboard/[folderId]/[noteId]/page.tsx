@@ -16,7 +16,7 @@ import { getStatistics } from "@/utils/statistics";
 export default function NotePage() {
   const user = useUser();
   const router = useRouter();
-  const { state, folderId, isLoading, currentNote } = useAppState();
+  const { state, folderId, currentNote } = useAppState();
 
   useEffect(() => {
     if (!user) {

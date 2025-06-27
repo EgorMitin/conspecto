@@ -254,7 +254,7 @@ export class DatabaseService {
           is_public BOOLEAN DEFAULT FALSE,
           icon_id VARCHAR(50),
           banner_url TEXT,
-          status VARCHAR(50) DEFAULT 'active', -- e.g., 'active', 'archived', 'draft'
+          status VARCHAR(50) DEFAULT 'active', -- e.g., 'active', 'archived'
           metadata JSONB, -- Additional metadata for the note
           -- SRS fields for the note itself
           repetition INTEGER DEFAULT 0,

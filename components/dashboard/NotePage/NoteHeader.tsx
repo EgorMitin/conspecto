@@ -18,9 +18,8 @@ interface NoteHeaderProps {
   note: Note;
 }
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: 'active' | 'archived') => {
   switch (status) {
-    case 'draft': return 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100';
     case 'active': return 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
     case 'archived': return 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100';
     default: return 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100';
@@ -32,7 +31,7 @@ export default function NoteHeader({ note }: NoteHeaderProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [localTitle, setLocalTitle] = useState(note.title);
   const [isConfirmingStatus, setIsConfirmingStatus] = useState(false);
-  const [statusToConfirm, setStatusToConfirm] = useState<"draft" | "active" | "archived" | null>(null);
+  const [statusToConfirm, setStatusToConfirm] = useState<"active" | "archived" | null>(null);
   const lastUpdated = formatDistanceToNow(note.updatedAt, { addSuffix: true });
   const router = useRouter();
   const pathname = usePathname();
@@ -88,12 +87,12 @@ export default function NoteHeader({ note }: NoteHeaderProps) {
     }
   };
 
-  const confirmStatusChange = (newStatus: "draft" | "active" | "archived") => {
+  const confirmStatusChange = (newStatus: "active" | "archived") => {
     setStatusToConfirm(newStatus);
     setIsConfirmingStatus(true);
   };
 
-  const handleStatusChange = async (newStatus: "draft" | "active" | "archived") => {
+  const handleStatusChange = async (newStatus: "active" | "archived") => {
     if (!folderId) return;
     toast.loading(`Changing note status to ${newStatus}...`, { duration: 1000 });
     setIsConfirmingStatus(false)
@@ -190,8 +189,7 @@ export default function NoteHeader({ note }: NoteHeaderProps) {
             className={`${getStatusColor(note.status)} self-start px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-default shadow-sm`}
           >
             <div className="flex items-center gap-1.5">
-              <div className={`w-2 h-2 rounded-full ${note.status === 'draft' ? 'bg-amber-400' :
-                note.status === 'active' ? 'bg-emerald-400' :
+              <div className={`w-2 h-2 rounded-full ${note.status === 'active' ? 'bg-emerald-400' :
                   'bg-slate-400'
                 }`} />
               {note.status.charAt(0).toUpperCase() + note.status.slice(1)}
@@ -211,7 +209,7 @@ export default function NoteHeader({ note }: NoteHeaderProps) {
               Back to Note
             </Button>
           )}
-          {note.status === 'draft' && (
+          {note.status === 'archived' && (
             <Button
               variant="ghost"
               size="default"
@@ -219,7 +217,7 @@ export default function NoteHeader({ note }: NoteHeaderProps) {
               onClick={() => confirmStatusChange('active')}
             >
               <Save className="w-4 h-4 mr-2" />
-              Save
+              Restore
             </Button>
           )}
 

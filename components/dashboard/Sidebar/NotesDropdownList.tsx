@@ -47,7 +47,7 @@ export default function NotesDropdownList({ user, notes, folderId }: NotesDropdo
       isPublic: false,
       iconId: '📄',
       bannerUrl: '',
-      status: 'draft',
+      status: 'active',
       repetition: 0,
       interval: 0,
       easeFactor: 2.5,

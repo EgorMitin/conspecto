@@ -11,7 +11,7 @@ export interface Note {
   isPublic: boolean;
   iconId: string;
   bannerUrl?: string;
-  status: 'active' | 'archived' | 'draft';
+  status: 'active' | 'archived';
   metadata?: Record<string, any>;
   repetition: number;
   interval: number;
