@@ -11,7 +11,7 @@ import CTASection from '@/components/landing-page/cta-section'
 
 export default function Landing() {
   const router = useRouter()
-  const user = useUser()
+  const { user } = useUser()
 
   useEffect(() => {
     if (user) {

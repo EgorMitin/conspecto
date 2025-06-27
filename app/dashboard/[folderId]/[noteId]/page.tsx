@@ -13,7 +13,7 @@ import { getStatistics } from "@/utils/statistics";
 
 
 export default function NotePage() {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const { state, folderId, currentNote } = useAppState();
 
@@ -30,7 +30,6 @@ export default function NotePage() {
     return ("LOADING...");
   }
 
-  const folderName = currentFolder.name;
   const { questions, aiReviews } = currentNote;
   const statisticsData = getStatistics(questions, aiReviews);
 

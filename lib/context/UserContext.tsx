@@ -3,34 +3,42 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import type { User } from '@/types/User';
 
-interface UserContextType {
+type UserContextType = {
   user: User | null;
-}
+  isLoading: boolean;
+};
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children, userPromise }: { children: ReactNode; userPromise: Promise<User | null> }) {
   const [user, setUser] = useState<User | null>(null);
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchUser = async () => {
+      setIsLoading(true);
       const user = await userPromise;
-      setUser(user);
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
     }
     fetchUser();
   }, [userPromise]);
 
   return (
-    <UserContext.Provider value={{ user: user }}>
+    <UserContext.Provider value={{ user, isLoading }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = (): User | null => {
+export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
-  return context.user;
+  return context;
 };

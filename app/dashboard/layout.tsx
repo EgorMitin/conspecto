@@ -8,24 +8,25 @@ import { useUser } from '@/lib/context/UserContext';
 import Sidebar from '@/components/dashboard/Sidebar';
 import { useRouter } from 'next/navigation';
 import Breadcrumbs from '@/components/dashboard/Breadcrumbs';
+import Loader from '@/components/Loader';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const user = useUser();
+  const { user, isLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    if (!isLoading && !user) {
       console.log("No user found, redirecting to landing page");
       router.replace("/");
     }
-  }, [user, router]);
+  }, [user, router, isLoading]);
 
-  if (!user) {
-    return null;
+  if (isLoading || !user) {
+    return <Loader />;
   }
 
   return (

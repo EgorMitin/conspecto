@@ -13,7 +13,7 @@ const EditorApp = dynamic(
 );
 
 export default function Editor({ note }: { note: AppNoteType }) {
-  const user = useUser()
+  const { user } = useUser()
   const { dispatch } = useAppState();
   if (!user) return;
 

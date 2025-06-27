@@ -10,7 +10,7 @@ import FolderHeader from "@/components/dashboard/FolderPageContent/FolderHeader"
 
 
 export default function FolderPage() {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const { state, folderId, isLoading } = useAppState();
 

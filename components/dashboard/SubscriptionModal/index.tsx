@@ -23,7 +23,7 @@ interface SubscriptionModalProps {
 
 export default function SubscriptionModal ({ products }: SubscriptionModalProps) {
   const { open, setOpen } = useSubscriptionModal();
-  const user = useUser();
+  const { user } = useUser();
   const subscription = user?.subscriptionPlan;
 
   const [isLoading, setIsLoading] = useState(false);

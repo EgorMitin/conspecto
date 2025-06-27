@@ -58,7 +58,7 @@ function PollOptionComponent({
     onSelect?: () => void,
   ) => void;
 }): JSX.Element {
-  const user = useUser()
+  const { user } = useUser()
   const clientID = hashUUIDToNumber(user?.id);
   const checkboxRef = useRef(null);
   const votesArray = option.votes;

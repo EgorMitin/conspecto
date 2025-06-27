@@ -5,7 +5,7 @@ import { useUser } from '@/lib/context/UserContext'
 import React from 'react'
 
 export default function LandingLayout ({ children }: { children: React.ReactNode }) {
-  const user = useUser()
+  const { user } = useUser()
 
   return (
     <main className='bg-background'>

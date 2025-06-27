@@ -34,7 +34,7 @@ export default function Login() {
   const [submitError, setSubmitError] = useState('');
   const oauthError = searchParams.get('oauthError');
   const verificationError = searchParams.get('error');
-  const user = useUser();
+  const { user } = useUser();
 
   if (user !== null) {
     console.log(user)

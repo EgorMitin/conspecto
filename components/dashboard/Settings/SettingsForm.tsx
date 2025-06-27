@@ -32,7 +32,7 @@ import { uploadFile } from '@/lib/firebase/storage';
 
 
 export default function SettingsForm () {
-  const user = useUser();
+  const { user } = useUser();
   const { setOpen } = useSubscriptionModal();
   const router = useRouter();
   const { state, folderId, dispatch } = useAppState();

@@ -13,7 +13,7 @@ import { getStatistics, getTodayNoteData } from "@/utils/statistics";
 
 
 export default function StudyPage() {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const { state, folderId, isLoading, noteId, currentNote } = useAppState();
 

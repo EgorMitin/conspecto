@@ -16,7 +16,7 @@ import { Loader2 } from "lucide-react";
 
 
 export default function Dashboard() {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

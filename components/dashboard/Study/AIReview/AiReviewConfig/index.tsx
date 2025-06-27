@@ -21,7 +21,7 @@ export default function AiReviewConfig() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { noteId, folderId, currentNote, dispatch, state } = useAppState();
-  const user = useUser();
+  const { user } = useUser();
   const { startAiReview, isLoading, error: aiReviewError } = useAiReviewStore();
 
   const [difficulty, setDifficulty] = useState<AiReviewDifficulty>('medium');

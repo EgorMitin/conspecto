@@ -325,7 +325,7 @@ function QuestionInputBox({
     [],
   );
   const selectionRef = useRef<RangeSelection | null>(null);
-  const user = useUser();
+  const { user } = useUser();
 
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -493,7 +493,7 @@ function QuestionEditBox({
     [],
   );
   const selectionRef = useRef<RangeSelection | null>(null);
-  const user = useUser();
+  const { user } = useUser();
   const question = questions.find(q => activeIDs.includes(q.id))
 
   const updateLocation = useCallback(() => {

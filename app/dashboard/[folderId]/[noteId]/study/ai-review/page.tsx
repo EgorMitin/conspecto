@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 export default function AiReviewPage() {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const { state, folderId, isLoading, noteId, currentNote } = useAppState();
 

@@ -14,7 +14,7 @@ import FolderHeader from "@/components/dashboard/FolderPageContent/FolderHeader"
 
 
 export default function StudyPage() {
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const { state, folderId, isLoading } = useAppState();
 
