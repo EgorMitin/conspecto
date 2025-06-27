@@ -10,6 +10,7 @@ import { useAppState } from "@/lib/providers/app-state-provider";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { getStatistics, getTodayNoteData } from "@/utils/statistics";
+import { Loader2 } from "lucide-react";
 
 
 export default function StudyPage() {
@@ -34,7 +35,13 @@ export default function StudyPage() {
   }, [user, currentNote, router, isLoading, folderId, currentFolder]);
 
   if (!user || !currentNote || !currentFolder) {
-    return ("LOADING...");
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading your study data...</p>
+        </div>
+      </div>);
   }
 
   const folderName = currentFolder.name;

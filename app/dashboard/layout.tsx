@@ -23,7 +23,7 @@ export default function Layout({ children }: LayoutProps) {
       console.log("No user found, redirecting to landing page");
       router.replace("/");
     }
-  }, [user, router, isLoading]);
+  }, [user, isLoading]);
 
   if (isLoading || !user) {
     return <Loader />;

@@ -3,6 +3,7 @@
 import NoteHeader from "@/components/dashboard/NotePage/NoteHeader";
 import AISummaryContent from "@/components/dashboard/Study/AISummary/AISummaryContent";
 import { useAppState } from "@/lib/providers/app-state-provider";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -20,7 +21,13 @@ export default function AISummaryPage() {
   }, [currentNote, router, isLoading]);
 
   if (!currentNote) {
-    return ("LOADING...");
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading your folder data...</p>
+        </div>
+      </div>);
   }
 
   return (

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getStatistics } from "@/utils/statistics";
+import { Loader2 } from "lucide-react";
 
 
 export default function NotePage() {
@@ -27,7 +28,14 @@ export default function NotePage() {
   const currentFolder = state.folders.find(f => f.id === folderId);
 
   if (!user || !currentNote || !currentFolder) {
-    return ("LOADING...");
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading your note...</p>
+        </div>
+      </div>
+    );
   }
 
   const { questions, aiReviews } = currentNote;

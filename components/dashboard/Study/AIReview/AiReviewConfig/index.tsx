@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Settings, ArrowRight, Clock, Target, Zap, Info } from 'lucide-react';
+import { Brain, Settings, ArrowRight, Clock, Target, Zap, Info, Loader2 } from 'lucide-react';
 import { useAppState } from '@/lib/providers/app-state-provider';
 import { useAiReviewStore } from '@/lib/stores/ai-review-store';
 import { AiReviewDifficulty, AiReviewMode } from '@/types/AiReviewSession';
@@ -44,7 +44,14 @@ export default function AiReviewConfig() {
   }, [searchParams]);
 
   if (!source) {
-    return ("LOADING...");
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading your AI Review...</p>
+        </div>
+      </div>
+    );
   }
 
   const recommendedMode = useMemo(() => {
