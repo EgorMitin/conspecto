@@ -31,7 +31,7 @@ function SidebarComponent({ user, folderId, folders, notes, className }: Sidebar
   return (
     <aside
       className={cn(
-        'sm:flex sm:flex-col p-4 md:gap-4 !justify-between h-full',
+        'flex flex-col p-4 md:gap-4 !justify-between h-full',
         className
       )}
     >

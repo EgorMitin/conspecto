@@ -68,10 +68,15 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
 
   const collapse = useCallback(() => {
     if (sidebarRef.current) {
-      setIsCollapsed(true);
       setIsResetting(true);
 
-      sidebarRef.current.style.width = "0";
+      setTimeout(() => {
+        setIsCollapsed(true);
+        if (sidebarRef.current) {
+          sidebarRef.current.style.width = "0";
+        }
+      }, 0);
+      
       setTimeout(() => setIsResetting(false), 300);
     }
   }, []);
@@ -109,25 +114,39 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
 
   return (
     <>
+      {isMobile && (!isCollapsed || isResetting) && (
+        <div
+          onClick={collapse}
+          className="bg-black/60 fixed inset-0 z-10"
+        />
+      )}
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-64 flex-col z-20",
+          "group/sidebar h-full bg-secondary flex flex-col z-20 overflow-hidden",
           isResetting && "transition-all ease-in-out duration-300",
-          isMobile ? (isCollapsed ? "w-0" : "w-full") : "w-64"
+          isMobile ? (isCollapsed ? "w-0" : "w-full") : "w-64",
+          isMobile ? "fixed" : "relative"
         )}
       >
-        <div
-          onClick={collapse}
-          role="button"
+        <div 
           className={cn(
-            "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
-            isMobile && "opacity-100"
+            "flex flex-col h-full overflow-y-auto transition-opacity duration-200",
+            (isCollapsed || isResetting) && "opacity-0 pointer-events-none"
           )}
         >
-          <ChevronsLeft className="h-6 w-6" />
+          <div
+            onClick={collapse}
+            role="button"
+            className={cn(
+              "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition z-10",
+              isMobile && "opacity-100"
+            )}
+          >
+            <ChevronsLeft className="h-6 w-6" />
+          </div>
+          {children}
         </div>
-        {(!isCollapsed && !isResetting) && children}
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}
@@ -135,11 +154,24 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
         />
       </aside>
       {isCollapsed && (
-        <MenuIcon
-          onClick={resetWidth}
-          role="button"
-          className="h-6 w-6 text-muted-foreground"
-        />)}
+        <div className="fixed top-4 left-4 z-30 md:relative md:top-auto md:left-auto">
+          <button
+            onClick={resetWidth}
+            className={cn(
+              "flex items-center justify-center rounded-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border shadow-sm transition-all duration-200 hover:shadow-md",
+              isMobile 
+                ? "h-10 w-10 hover:scale-105" 
+                : "h-8 w-8"
+            )}
+            aria-label="Open sidebar"
+          >
+            <MenuIcon className={cn(
+              "text-muted-foreground",
+              isMobile ? "h-5 w-5" : "h-4 w-4"
+            )} />
+          </button>
+        </div>
+      )}
     </>
   )
 }

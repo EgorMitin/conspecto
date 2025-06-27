@@ -17,7 +17,7 @@ export default function UserCard ({ user }: UserCardProps) {
   const { setOpen } = useSubscriptionModal();
 
   return (
-    <article className="hidden sm:flex justify-between items-center px-4 py-2 dark:bg-Neutrals/neutrals-12 rounded-3xl z-45">
+    <article className="flex justify-between items-center px-4 py-2 dark:bg-Neutrals/neutrals-12 rounded-3xl z-45">
       <aside className="flex justify-center items-center gap-2">
         <Avatar>
           <AvatarImage src={user.profilePhotoUrl || ""} />

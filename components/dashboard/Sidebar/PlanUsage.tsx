@@ -29,7 +29,7 @@ export default function PlanUsage({ foldersLength, subscription }: PlanUsageProp
   }, [state]);
 
   return (
-    <article className="mb-4">
+    <article className="mb-4 max-w-[200px]">
       {!['active', 'trailing'].includes(subscription?.status || "") && (
         <div
           className="flex gap-2 text-muted-foreground mb-2 items-center">
