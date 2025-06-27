@@ -139,11 +139,12 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
             onClick={collapse}
             role="button"
             className={cn(
-              "h-6 w-6 text-muted-foreground cursor-pointer rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute flex justify-center items-center top-2 right-2 opacity-0 group-hover/sidebar:opacity-100 transition z-10",
-              isMobile && "opacity-100"
+              "text-muted-foreground cursor-pointer rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute flex justify-center items-center top-2 right-2 opacity-0 group-hover/sidebar:opacity-100 transition z-10",
+              isMobile && "opacity-100",
+              isMobile ? "h-10 w-10" : "h-6 w-6"
             )}
           >
-            <ChevronsLeft className="h-6 w-6" />
+            <ChevronsLeft className={isMobile ? "h-10 w-10" : "h-6 w-6"} />
           </div>
           {children}
         </div>
@@ -167,7 +168,7 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
           >
             <MenuIcon className={cn(
               "text-muted-foreground",
-              isMobile ? "h-10 w-10" : "h-10 w-10"
+              isMobile ? "h-10 w-10" : "h-6 w-6"
             )} />
           </button>
         </div>

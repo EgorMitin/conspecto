@@ -114,8 +114,8 @@ function AddQuestionBox({
     if (boxElem !== null && rootElement !== null && anchorElement !== null) {
       const { right } = rootElement.getBoundingClientRect();
       const { top } = anchorElement.getBoundingClientRect();
-      boxElem.style.left = `${right - 20}px`;
-      boxElem.style.top = `${top - 30}px`;
+      boxElem.style.left = `${right - 50}px`;
+      boxElem.style.top = `${top - 100}px`;
     }
   }, [anchorKey, editor]);
 

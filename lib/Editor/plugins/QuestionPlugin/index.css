@@ -2,11 +2,11 @@
   display: block;
   position: fixed;
   border-radius: 20px;
-  background-color: white;
+  background-color: rgba(255, 215, 0, 0.18);
   width: 40px;
-  height: 60px;
+  height: 40px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  z-index: 15;
 }
 
 .CommentPlugin_AddCommentBox_button {
@@ -14,15 +14,16 @@
   border: 0;
   background: none;
   width: 40px;
-  height: 60px;
+  height: 40px;
   position: absolute;
   top: 0;
   left: 0;
   cursor: pointer;
+  background-color: rgba(255, 215, 0, 0.18);
 }
 
 .CommentPlugin_AddCommentBox_button:hover {
-  background-color: #f6f6f6;
+  background-color: var(--color-muted);
 }
 
 i.add-comment {
@@ -30,14 +31,8 @@ i.add-comment {
   display: inline-block;
   height: 20px;
   width: 20px;
-  vertical-align: -10px;
+  vertical-align: -5px;
   background-image: url(../../images/icons/chat-left-text.svg);
-}
-
-@media (max-width: 600px) {
-  .CommentPlugin_AddCommentBox {
-    display: none;
-  }
 }
 
 .CommentPlugin_CommentInputBox {
