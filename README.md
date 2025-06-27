@@ -181,6 +181,6 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 </div>
 
 
-\* - comming soon
-\*\* - not yet fully implemented
+\* - comming soon  
+\*\* - not yet fully implemented  
 \*\*\* - some editor components may not be fully adjustet for dark theme
