@@ -36,7 +36,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ prov
 
     try {
       const oAuthUser = client.convertToUser(data as OAuthUserData);
-      console.log("OAuth user data:", oAuthUser);
       const user = await connectUserToAccount(oAuthUser, provider);
       await createUserSession(user.id);
     } catch (error) {

@@ -12,8 +12,8 @@ export class UserRepository extends BaseRepository {
     return this.executeInTransaction(async (client) => {
       const now = new Date();
       const { rows } = await client.query(
-        `INSERT INTO users (email, username, hashed_password, salt, profile_photo_url, preferences, user_tags, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `INSERT INTO users (email, username, hashed_password, salt, profile_photo_url, preferences, user_tags, is_verified, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
           RETURNING id, email, username, profile_photo_url as "profilePhotoUrl",
               preferences, user_tags as "userTags",
               created_at as "createdAt", updated_at as "updatedAt"`,
@@ -25,6 +25,7 @@ export class UserRepository extends BaseRepository {
           userData.profilePhotoUrl,
           userData.preferences || {},
           userData.userTags,
+          userData.isVerified,
           now,
           now
         ]
