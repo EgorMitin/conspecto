@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { useUser } from "@/lib/context/UserContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import FolderCreator from "@/components/dashboard/FolderCreator";
@@ -19,30 +19,29 @@ import { Loader2 } from "lucide-react";
 export default function Dashboard() {
   const user = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { state, isLoading } = useAppState();
 
   useEffect(() => {
     if (!user) {
       console.log("No user found, redirecting to landing page");
-      router.replace("/");
+      router.push("/");
       return;
     }
+  }, [user, router]);
 
-    const currentUrl = new URL(window.location.href);
-    const verified = currentUrl.searchParams.get("verified");
-
-    if (verified) {
+  useEffect(() => {
+    const verified = searchParams.get("verified");
+    if (verified && !isLoading) {
       toast.success("Your email has been verified successfully!");
-      currentUrl.searchParams.delete("verified");
-
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("verified");
       const newPath =
-        currentUrl.pathname +
-        (currentUrl.searchParams.toString()
-          ? `?${currentUrl.searchParams.toString()}`
-          : "");
+        pathname + (params.toString() ? `?${params.toString()}` : "");
       router.replace(newPath);
     }
-  }, [user, router]);
+  }, [searchParams, isLoading, pathname, router]);
 
   // Calculate dashboard statistics from app state
   const stats = useMemo(() => {

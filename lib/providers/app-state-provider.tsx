@@ -481,41 +481,23 @@ export default function AppStateProvider({ children, user }: AppStateProviderPro
       try {
         const folders = await getAppStateByUserId(user.id)
         dispatch({ type: 'SET_FOLDERS', payload: { folders } });
-        const currentFolder = folders.find(folder => folder.id === folderId);
-        if (currentFolder) {
-          const note = currentFolder.notes.find(note => note.id === noteId);
-          if (note) {
-            dispatch({ type: 'SET_CURRENT_NOTE', payload: { note } });
-          }
-        }
       }
       catch (error) {
         toast.error('Error fetching folders:');
         console.error('Error fetching folders:', error);
-        throw error;
+      } finally {
+        setIsLoading(false);
       }
     }
-    fetchFolders().then(() => {
-      setIsLoading(false);
-    }).catch((error) => {
-      console.error('Error fetching folders:', error);
-      setIsLoading(false);
-    });
-  }, []);
+    fetchFolders();
+  }, [user.id]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || state.folders.length === 0) {
       return;
     }
 
     if (!noteId || !folderId) {
-      if (state.currentNote !== null) { // Only dispatch if changed
-        dispatch({ type: 'SET_CURRENT_NOTE', payload: { note: null } });
-      }
-      return;
-    }
-
-    if (state.folders.length === 0) {
       if (state.currentNote !== null) {
         dispatch({ type: 'SET_CURRENT_NOTE', payload: { note: null } });
       }
@@ -525,12 +507,13 @@ export default function AppStateProvider({ children, user }: AppStateProviderPro
     const currentFolder = state.folders.find(folder => folder.id === folderId);
     if (currentFolder) {
       const note = currentFolder.notes.find(note => note.id === noteId);
-      if (note) {
+      if (note && note.id !== state.currentNote?.id) {
         dispatch({ type: 'SET_CURRENT_NOTE', payload: { note } });
+      } else if (!note && state.currentNote !== null) {
+        dispatch({ type: 'SET_CURRENT_NOTE', payload: { note: null } });
       }
     }
-    setIsLoading(false);
-  }, [noteId, folderId, state.folders]);
+  }, [noteId, folderId, state.folders, state.currentNote?.id, isLoading]);
 
   const contextValue = useMemo(() => ({
     state,
