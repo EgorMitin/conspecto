@@ -139,7 +139,7 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
             onClick={collapse}
             role="button"
             className={cn(
-              "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition z-10",
+              "h-6 w-6 text-muted-foreground cursor-pointer rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute flex justify-center items-center top-2 right-2 opacity-0 group-hover/sidebar:opacity-100 transition z-10",
               isMobile && "opacity-100"
             )}
           >
@@ -158,16 +158,16 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
           <button
             onClick={resetWidth}
             className={cn(
-              "flex items-center justify-center rounded-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border shadow-sm transition-all duration-200 hover:shadow-md",
+              "flex items-center justify-center cursor-pointer rounded-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border shadow-sm transition-all duration-200 hover:shadow-md",
               isMobile 
                 ? "h-10 w-10 hover:scale-105" 
-                : "h-8 w-8"
+                : "h-10 w-10"
             )}
             aria-label="Open sidebar"
           >
             <MenuIcon className={cn(
               "text-muted-foreground",
-              isMobile ? "h-5 w-5" : "h-4 w-4"
+              isMobile ? "h-10 w-10" : "h-10 w-10"
             )} />
           </button>
         </div>

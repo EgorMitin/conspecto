@@ -2,41 +2,94 @@
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 import { cn } from "@/utils/global";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useAppState } from "@/lib/providers/app-state-provider";
+import { useMediaQuery } from "usehooks-ts";
 
 interface BreadcrumbsProps {
   folderName?: string;
   folderId?: string;
-  noteTitle?: string;
   noteId?: string;
-  page?: "folder" | "note" | "study" | "aiSummary";
+  noteTitle?: string;
+  page?: string;
 }
 
-export default function Breadcrumbs({
-  folderName,
-  folderId,
-  noteTitle,
-  noteId,
-  page,
-}: BreadcrumbsProps) {
+export default function Breadcrumbs(props?: BreadcrumbsProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { state, folderId: contextFolderId, noteId: contextNoteId, currentNote } = useAppState();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Use props if provided, otherwise determine from context and pathname
+  const folderId = props?.folderId || contextFolderId;
+  const noteId = props?.noteId || contextNoteId;
+
+  // Determine current page type from pathname or props
+  const getCurrentPageInfo = () => {
+    if (props?.page) {
+      return { page: props.page };
+    }
+
+    if (!pathname) return { page: 'dashboard' };
+
+    const segments = pathname.split('/').filter(Boolean);
+
+    // Dashboard home
+    if (segments.length === 1 && segments[0] === 'dashboard') {
+      return { page: 'dashboard' };
+    }
+
+    // Folder page
+    if (segments.length === 2 && segments[0] === 'dashboard') {
+      return { page: 'folder' };
+    }
+
+    // Note page
+    if (segments.length === 3 && segments[0] === 'dashboard') {
+      return { page: 'note' };
+    }
+
+    // Study pages
+    if (segments.includes('study')) {
+      if (segments.includes('ai-summary')) {
+        return { page: 'aiSummary' };
+      }
+      return { page: 'study' };
+    }
+
+    return { page: 'dashboard' };
+  };
+
+  const { page } = getCurrentPageInfo();
+
+  // Get folder and note data - use props if available, otherwise from context
+  const currentFolder = folderId ? state.folders.find(f => f.id === folderId) : null;
+  const folderName = props?.folderName || currentFolder?.name || '';
+  const noteTitle = props?.noteTitle || currentNote?.title || '';
+  const breadCrumbStyle = "flex items-center text-sm text-muted-foreground" + isMobile ? " ml-10" : "";
+
   return (
-    <Breadcrumb className="flex items-center text-sm text-muted-foreground">
+    <Breadcrumb className={breadCrumbStyle}>
       <BreadcrumbItem className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
         <BreadcrumbLink onClick={() => router.push(`/dashboard/`)} className="hover:text-foreground transition-colors flex items-center">
           <span>Dashboard</span>
         </BreadcrumbLink>
       </BreadcrumbItem>
-      {page === "folder" ? (<>
-        <span className="mx-1 text-muted-foreground">/</span>
-        <BreadcrumbItem className="overflow-hidden cursor-text text-ellipsis whitespace-nowrap max-w-[200px] font-medium text-foreground">
-          <BreadcrumbLink className="pointer-events-none">{folderName}</BreadcrumbLink>
-        </BreadcrumbItem>
-      </>
-      ) : (!!page &&
+
+      {/* Folder breadcrumb */}
+      {(page === "folder" && folderName) && (
         <>
           <span className="mx-1 text-muted-foreground">/</span>
+          <BreadcrumbItem className="overflow-hidden cursor-text text-ellipsis whitespace-nowrap max-w-[200px] font-medium text-foreground">
+            <BreadcrumbLink className="pointer-events-none">{folderName}</BreadcrumbLink>
+          </BreadcrumbItem>
+        </>
+      )}
 
+      {/* Folder breadcrumb for note and study pages */}
+      {((page === "note" || page === "study" || page === "aiSummary") && folderName && folderId) && (
+        <>
+          <span className="mx-1 text-muted-foreground">/</span>
           <BreadcrumbItem className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
             <BreadcrumbLink
               onClick={() => router.push(`/dashboard/${folderId}/`)}
@@ -45,15 +98,23 @@ export default function Breadcrumbs({
               {folderName}
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <span className="mx-1 text-muted-foreground">/</span>
         </>
       )}
-      {page === "note" ? (
-        <BreadcrumbItem className="overflow-hidden cursor-text text-ellipsis whitespace-nowrap max-w-[200px] font-medium text-foreground">
-          <BreadcrumbLink className="pointer-events-none">{noteTitle}</BreadcrumbLink>
-        </BreadcrumbItem>
-      ) : (!!page && noteId &&
+
+      {/* Note breadcrumb */}
+      {page === "note" && noteTitle && (
         <>
+          <span className="mx-1 text-muted-foreground">/</span>
+          <BreadcrumbItem className="overflow-hidden cursor-text text-ellipsis whitespace-nowrap max-w-[200px] font-medium text-foreground">
+            <BreadcrumbLink className="pointer-events-none">{noteTitle}</BreadcrumbLink>
+          </BreadcrumbItem>
+        </>
+      )}
+
+      {/* Note breadcrumb for study and ai summary pages */}
+      {((page === "study" || page === "aiSummary") && noteTitle && noteId && folderId) && (
+        <>
+          <span className="mx-1 text-muted-foreground">/</span>
           <BreadcrumbItem className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
             <BreadcrumbLink
               onClick={() => router.push(`/dashboard/${folderId}/${noteId}`)}
@@ -62,39 +123,45 @@ export default function Breadcrumbs({
               {noteTitle}
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <span className="mx-1 text-muted-foreground">/</span>
         </>
       )}
-      {
-        (page === "study" || page === "aiSummary") && (
-          <>
-            <BreadcrumbItem className={cn("overflow-hidden text-ellipsis whitespace-nowrap max-w-[100px]", { "font-medium text-foreground cursor-text": page === "study" })}>
-              {page === "aiSummary" ? (
-                <BreadcrumbLink
-                  onClick={() => router.push(`/dashboard/${folderId}/${noteId}/study`)}
-                  className="hover:text-foreground transition-colors"
-                >
-                  Study
-                </BreadcrumbLink>
-              ) : (
-                <BreadcrumbLink className="pointer-events-none">Study</BreadcrumbLink>
-              )}
-            </BreadcrumbItem>
-          </>
-        )
-      }
-      {
-        page === "aiSummary" && (
-          <>
-            <span className="mx-1 text-muted-foreground">/</span>
-            <BreadcrumbItem className={cn("overflow-hidden text-ellipsis whitespace-nowrap max-w-[100px]", { "font-medium text-foreground cursor-text": page === "aiSummary" })}>
-              <BreadcrumbLink className="pointer-events-none">
-                AI Summary
+
+      {/* Study breadcrumb */}
+      {(page === "study" || page === "aiSummary") && (
+        <>
+          <span className="mx-1 text-muted-foreground">/</span>
+          <BreadcrumbItem className={cn("overflow-hidden text-ellipsis whitespace-nowrap max-w-[100px]", { "font-medium text-foreground cursor-text": page === "study" })}>
+            {page === "aiSummary" ? (
+              <BreadcrumbLink
+                onClick={() => {
+                  if (noteId && folderId) {
+                    router.push(`/dashboard/${folderId}/${noteId}/study`);
+                  } else if (folderId) {
+                    router.push(`/dashboard/${folderId}/study`);
+                  }
+                }}
+                className="hover:text-foreground transition-colors"
+              >
+                Study
               </BreadcrumbLink>
-            </BreadcrumbItem>
-          </>
-        )
-      }
-    </Breadcrumb >
+            ) : (
+              <BreadcrumbLink className="pointer-events-none">Study</BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+        </>
+      )}
+
+      {/* AI Summary breadcrumb */}
+      {page === "aiSummary" && (
+        <>
+          <span className="mx-1 text-muted-foreground">/</span>
+          <BreadcrumbItem className={cn("overflow-hidden text-ellipsis whitespace-nowrap max-w-[100px]", { "font-medium text-foreground cursor-text": page === "aiSummary" })}>
+            <BreadcrumbLink className="pointer-events-none">
+              AI Summary
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </>
+      )}
+    </Breadcrumb>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import FolderPageContent from "@/components/dashboard/FolderPageContent";
-import Breadcrumbs from "@/components/dashboard/Breadcrumbs";
 import { useUser } from "@/lib/context/UserContext";
 import { useAppState } from "@/lib/providers/app-state-provider";
 import { toast } from "sonner";
@@ -40,9 +39,8 @@ export default function FolderPage() {
 
   return (
     <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">
-      <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4 w-full">
-        <div className="flex flex-col gap-4 w-full px-2">
-          <Breadcrumbs folderName={folderName} folderId={folderId} page="folder" />
+      <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b pb-4 px-4 pt-4 w-full">
+        <div className="w-full px-2">
           <FolderHeader folder={currentFolder} />
         </div>
       </header>

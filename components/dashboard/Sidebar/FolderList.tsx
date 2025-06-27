@@ -17,8 +17,8 @@ interface FolderListProps {
 export default function FolderList({ folders, user, folderId }: FolderListProps) {
   return (
     <div className='border-l-2 mb-4 mt-4'>
-      <div className="flex justify-between items-center px-4 py-2">
-        <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+      <div className="flex justify-start items-center px-4 py-2">
+        <h2 className="text-lg font-semibold mr-3 text-neutral-800 dark:text-neutral-200">
           <span className='flex items-center gap-2'>
             <FolderIcon />
             Folders

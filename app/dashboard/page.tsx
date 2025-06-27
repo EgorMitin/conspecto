@@ -6,7 +6,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import FolderCreator from "@/components/dashboard/FolderCreator";
-import Breadcrumbs from "@/components/dashboard/Breadcrumbs";
 import DashboardStatsOverview from "@/components/dashboard/DashboardStatsOverview";
 import WeeklyActivityChart from "@/components/dashboard/WeeklyActivityChart";
 import RecentActivity from "@/components/dashboard/RecentActivity";
@@ -57,12 +56,6 @@ export default function Dashboard() {
 
   return (
     <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">
-      <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4 w-full">
-        <div className="flex flex-col gap-4 w-full px-2">
-          <Breadcrumbs />
-        </div>
-      </header>
-
       <div className="flex-1 p-6">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">

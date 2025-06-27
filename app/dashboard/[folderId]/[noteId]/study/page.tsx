@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import Breadcrumbs from "@/components/dashboard/Breadcrumbs";
 import NoteHeader from "@/components/dashboard/NotePage/NoteHeader";
 import NoteStatistics from "@/components/dashboard/Statistics";
 import TodaySection from "@/components/dashboard/Study/TodaySection";
@@ -48,7 +47,6 @@ export default function StudyPage() {
     <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">
       <header className="z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b p-4 w-full">
         <div className="flex flex-col gap-4 w-full px-2">
-          <Breadcrumbs folderName={folderName} folderId={folderId} noteId={noteId} noteTitle={currentNote.title} page="study" />
           <NoteHeader note={currentNote} />
           <NoteStatistics statisticsData={statisticsData} />
         </div>
