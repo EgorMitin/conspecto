@@ -496,6 +496,13 @@ function QuestionEditBox({
   const { user } = useUser();
   const question = questions.find(q => activeIDs.includes(q.id))
 
+  useEffect(() => {
+    const currentQuestion = questions.find(q => activeIDs.includes(q.id));
+    if (currentQuestion) {
+      setNewQuestion(currentQuestion.question);
+    }
+  }, [activeIDs, questions]);
+
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
       const selection = $getSelection();
@@ -968,10 +975,6 @@ export default function QuestionPlugin(): JSX.Element {
           if (!hasAnchorKey) {
             setActiveAnchorKey(null);
           }
-          if ($isRangeSelection(selection)) {
-            setShowQuestionInput(false);
-            setShowEditQuestion(false);
-          }
         });
       }),
       editor.registerCommand(
@@ -1002,16 +1005,54 @@ export default function QuestionPlugin(): JSX.Element {
             current = current.parentElement;
           }
 
-          if (isQuestionNode) {
-            setShowEditQuestion(true);
-          }
+          setShowEditQuestion(isQuestionNode);
 
           return true;
         },
         COMMAND_PRIORITY_EDITOR,
       ),
     );
-  }, [editor, markNodeMap]);
+  }, [editor, markNodeMap, dispatch, folderId, questionStore]);
+
+  useEffect(() => {
+    const onTouchEnd = (event: TouchEvent) => {
+      const target = event.target as HTMLElement;
+      let markElement: HTMLElement | null = target;
+
+      // Find the parent mark element
+      while (markElement && !markElement.classList.contains('PlaygroundEditorTheme__mark')) {
+        markElement = markElement.parentElement;
+      }
+
+      if (markElement) {
+        let ids: string[] | null = null;
+        editor.update(() => {
+          const { $getNearestNodeFromDOMNode } = require('lexical');
+          const node = $getNearestNodeFromDOMNode(markElement as HTMLElement);
+          if ($isMarkNode(node)) {
+            ids = node.getIDs();
+          }
+        });
+
+        if (ids) {
+          setActiveIDs(ids);
+          setShowEditQuestion(true);
+        } else {
+          setShowEditQuestion(false);
+        }
+      } else {
+        setShowEditQuestion(false);
+      }
+    };
+
+    const rootElement = editor.getRootElement();
+    if (rootElement) {
+      rootElement.addEventListener('touchend', onTouchEnd, { passive: true });
+      return () => {
+        rootElement.removeEventListener('touchend', onTouchEnd);
+      };
+    }
+  }, [editor]);
 
   const onAddQuestion = () => {
     editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined);

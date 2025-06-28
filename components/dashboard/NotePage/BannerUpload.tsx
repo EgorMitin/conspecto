@@ -13,9 +13,26 @@ import Image from 'next/image';
 export default function BannerUpload() {
   const { dispatch, folderId, currentNote: note } = useAppState();
   const [isUploading, setIsUploading] = useState(false);
+  const [optionsVisible, setOptionsVisible] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!note) return null;
+
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined' && 'ontouchstart' in window) return;
+    setOptionsVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (typeof window !== 'undefined' && 'ontouchstart' in window) return;
+    setOptionsVisible(false);
+  };
+
+  const handleClick = () => {
+    if (typeof window !== 'undefined' && 'ontouchstart' in window) {
+      setOptionsVisible((prev) => !prev);
+    }
+  };
 
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!folderId || !note) return;
@@ -123,7 +140,12 @@ export default function BannerUpload() {
       />
 
       {note.bannerUrl ? (
-        <div className="relative group">
+        <div
+          className="relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
+        >
           <div className="relative w-full h-48 md:h-64 overflow-hidden rounded-lg">
             <Image
               src={note.bannerUrl}
@@ -134,7 +156,8 @@ export default function BannerUpload() {
             />
           </div>
 
-          <div className="absolute inset-0 bg-gradient-to-t p-4 from-black/10 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-end justify-end gap-2">
+          <div
+            className={`absolute inset-0 bg-gradient-to-t p-4 from-black/10 via-black/10 to-transparent rounded-lg flex items-end justify-end gap-2 transition-opacity duration-200 ${optionsVisible ? 'opacity-100' : 'opacity-0'}`}>
             <Button
               variant="secondary"
               size="sm"
@@ -148,7 +171,10 @@ export default function BannerUpload() {
             <Button
               variant="destructive"
               size="sm"
-              onClick={handleRemoveBanner}
+              onClick={() => {
+                handleRemoveBanner();
+                setOptionsVisible(false);
+              }}
               disabled={isUploading}
               className="bg-red-600/90 hover:bg-red-700 text-white"
             >
