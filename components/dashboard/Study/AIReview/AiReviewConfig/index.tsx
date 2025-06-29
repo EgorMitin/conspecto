@@ -22,7 +22,8 @@ export default function AiReviewConfig() {
   const searchParams = useSearchParams();
   const { noteId, folderId, currentNote, dispatch, state } = useAppState();
   const { user } = useUser();
-  const { startAiReview, isLoading, error: aiReviewError } = useAiReviewStore();
+  const { startAiReview, error: aiReviewError } = useAiReviewStore();
+  const [isLoadingStart, setIsLoadingStart] = useState(false);
 
   const [difficulty, setDifficulty] = useState<AiReviewDifficulty>('medium');
   const [mode, setMode] = useState<AiReviewMode>('separate_questions');
@@ -62,6 +63,7 @@ export default function AiReviewConfig() {
 
   const handleStartReview = async () => {
     if (!source || !user?.id) return;
+    setIsLoadingStart(true)
 
     try {
       const sessionId = await startAiReview({
@@ -102,6 +104,7 @@ export default function AiReviewConfig() {
     } catch (error) {
       console.error('Failed to start AI review:', error);
       setUrlError("Failed to start the review. Please try again.");
+      setIsLoadingStart(false)
     }
   };
 
@@ -305,11 +308,11 @@ export default function AiReviewConfig() {
 
               <Button
                 onClick={handleStartReview}
-                disabled={isLoading}
+                disabled={isLoadingStart}
                 size="lg"
                 className="flex items-center gap-2"
               >
-                {isLoading ? (
+                {isLoadingStart ? (
                   <>
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                     Generating...
