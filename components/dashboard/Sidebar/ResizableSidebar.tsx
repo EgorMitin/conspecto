@@ -123,7 +123,7 @@ export function ResizableSidebar({ children }: { children: ReactNode }) {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary flex flex-col z-20 overflow-hidden",
+          "group/sidebar h-full bg-sidebar flex flex-col z-20 overflow-hidden",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile ? (isCollapsed ? "w-0" : "w-full") : "w-64",
           isMobile ? "fixed" : "relative"
