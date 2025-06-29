@@ -10,11 +10,18 @@ import {
   Zap,
   PlayCircle,
   Clock,
-  Plus
+  Plus,
+  FolderPlus,
+  FileQuestion,
+  Sparkles
 } from "lucide-react";
 import { DashboardStats } from "@/utils/dashboard-statistics";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAppState } from "@/lib/providers/app-state-provider";
+import { useUser } from "@/lib/context/UserContext";
+import CustomDialogTrigger from "@/components/CustomDialogTrigger";
+import FolderCreator from "@/components/dashboard/FolderCreator";
 
 interface QuickActionsProps {
   stats: DashboardStats;
@@ -22,27 +29,82 @@ interface QuickActionsProps {
 
 export default function QuickActions({ stats }: QuickActionsProps) {
   const router = useRouter();
+  const { state } = useAppState();
+  const { user } = useUser();
   const todayReviews = stats.questionsReviewedToday;
   const hasUpcomingReviews = stats.nextReviewDate !== null;
   
   const isNextReviewToday = stats.nextReviewDate && 
     new Date(stats.nextReviewDate).toDateString() === new Date().toDateString();
 
-  // Navigation handlers
+  const findFirstUnfinishedReview = () => {
+    const unfinishedReviews: Array<{
+      review: any;
+      sourceType: 'note' | 'folder';
+      sourceTitle: string;
+      folderId: string;
+      noteId?: string;
+    }> = [];
+
+    state.folders.forEach(folder => {
+      if (folder.aiReviews) {
+        folder.aiReviews
+          .filter(review => review.status !== 'completed' && review.status !== 'failed')
+          .forEach(review => {
+            unfinishedReviews.push({
+              review,
+              sourceType: 'folder',
+              sourceTitle: folder.name,
+              folderId: folder.id,
+            });
+          });
+      }
+
+      folder.notes.forEach(note => {
+        if (note.aiReviews) {
+          note.aiReviews
+            .filter(review => review.status !== 'completed' && review.status !== 'failed')
+            .forEach(review => {
+              unfinishedReviews.push({
+                review,
+                sourceType: 'note',
+                sourceTitle: note.title,
+                folderId: folder.id,
+                noteId: note.id,
+              });
+            });
+        }
+      });
+    });
+
+    unfinishedReviews.sort((a, b) => {
+      const dateA = new Date(a.review.requestedAt || 0);
+      const dateB = new Date(b.review.requestedAt || 0);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    return unfinishedReviews[0] || null;
+  };
+
   const handleStartStudying = () => {
-    toast.info("Quick actions are not yet implemented. Stay tuned!");
+    const firstUnfinishedReview = findFirstUnfinishedReview();
+
+    if (firstUnfinishedReview) {
+      const baseUrl = `/dashboard/${firstUnfinishedReview.folderId}`;
+      const noteSegment = firstUnfinishedReview.noteId ? `/${firstUnfinishedReview.noteId}` : '';
+      const sessionUrl = `${baseUrl}${noteSegment}/study/ai-review/session?sessionId=${firstUnfinishedReview.review.id}`;
+      router.push(sessionUrl);
+    } else {
+      toast.info("No unfinished AI reviews found. Create some notes and start a review session!");
+    }
   };
 
-  const handleCreateNote = () => {
-    toast.info("Quick actions are not yet implemented. Stay tuned!");
+  const handleAISummary = () => {
+    toast.info("AI Summary feature is coming soon! This will generate summaries for all your notes.");
   };
 
-  const handleAIReview = () => {
-    toast.info("Quick actions are not yet implemented. Stay tuned!");
-  };
-
-  const handleViewProgress = () => {
-    document.getElementById('dashboard-stats')?.scrollIntoView({ behavior: 'smooth' });
+  const handleReviewQuestions = () => {
+    toast.info("Review Questions feature is coming soon! This will help you practice with your saved questions.");
   };
 
   return (
@@ -86,55 +148,60 @@ export default function QuickActions({ stats }: QuickActionsProps) {
                 <div>
                   <h3 className="font-semibold text-sm">Start Studying</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {hasUpcomingReviews ? 'Continue your reviews' : 'Begin your learning journey'}
+                    {findFirstUnfinishedReview() ? 'Continue unfinished AI review' : 'Begin your learning journey'}
                   </p>
                 </div>
                 <Button size="sm" className="w-full">
-                  {isNextReviewToday ? 'Review Now' : 'Study Mode'}
+                  {findFirstUnfinishedReview() ? 'Continue Review' : 'Study Mode'}
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          <Card 
-            className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
-            onClick={handleCreateNote}
+          <CustomDialogTrigger
+            header="Create A Folder"
+            content={user ? <FolderCreator user={user} /> : <div>Loading...</div>}
+            description="Create a new folder to organize your knowledge."
           >
-            <CardContent className="p-4">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/20 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/40 transition-colors">
-                  <Plus className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Card
+              className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
+            >
+              <CardContent className="p-4">
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/20 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/40 transition-colors">
+                    <FolderPlus className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">New Folder</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Create and organize knowledge
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Create Folder
+                  </Button>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-sm">New Note</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Create and organize knowledge
-                  </p>
-                </div>
-                <Button variant="outline" size="sm" className="w-full">
-                  Create Note
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </CustomDialogTrigger>
 
           <Card 
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
-            onClick={handleAIReview}
+            onClick={handleAISummary}
           >
             <CardContent className="p-4">
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/20 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/40 transition-colors">
-                  <Brain className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                  <Sparkles className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">AI Review</h3>
+                  <h3 className="font-semibold text-sm">AI Summary</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Test your knowledge with AI
+                    Summarize all your notes with AI
                   </p>
                 </div>
                 <Button variant="outline" size="sm" className="w-full">
-                  Start Review
+                  Generate Summary
                 </Button>
               </div>
             </CardContent>
@@ -142,21 +209,21 @@ export default function QuickActions({ stats }: QuickActionsProps) {
 
           <Card 
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
-            onClick={handleViewProgress}
+            onClick={handleReviewQuestions}
           >
             <CardContent className="p-4">
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/20 group-hover:bg-green-200 dark:group-hover:bg-green-900/40 transition-colors">
-                  <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  <FileQuestion className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">View Progress</h3>
+                  <h3 className="font-semibold text-sm">Review Questions</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Track your learning journey
+                    Practice with your saved questions
                   </p>
                 </div>
                 <Button variant="outline" size="sm" className="w-full">
-                  View Stats
+                  Start Review
                 </Button>
               </div>
             </CardContent>

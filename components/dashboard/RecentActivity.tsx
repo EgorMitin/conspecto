@@ -1,11 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Activity,
   BookOpen,
   Brain,
   FileText,
-  Trophy,
   Clock
 } from "lucide-react";
 import { DashboardStats } from "@/utils/dashboard-statistics";
@@ -14,84 +13,85 @@ interface RecentActivityProps {
   stats: DashboardStats;
 }
 
-export default function RecentActivity({ stats }: RecentActivityProps) {
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'ai-review':
-        return <Brain className="h-4 w-4 text-purple-500" />;
-      case 'question':
-        return <BookOpen className="h-4 w-4 text-blue-500" />;
-      case 'note-created':
-        return <FileText className="h-4 w-4 text-green-500" />;
-      default:
-        return <Activity className="h-4 w-4 text-gray-500" />;
+const getActivityIcon = (type: string) => {
+  switch (type) {
+    case 'ai-review':
+      return <Brain className="h-4 w-4 text-purple-500" />;
+    case 'question':
+      return <BookOpen className="h-4 w-4 text-blue-500" />;
+    case 'note-created':
+      return <FileText className="h-4 w-4 text-green-500" />;
+    default:
+      return <Activity className="h-4 w-4 text-gray-500" />;
+  }
+};
+
+const getActivityColor = (type: string) => {
+  switch (type) {
+    case 'ai-review':
+      return "border-l-purple-500 bg-purple-50 dark:bg-purple-900/10";
+    case 'question':
+      return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10";
+    case 'note-created':
+      return "border-l-green-500 bg-green-50 dark:bg-green-900/10";
+    default:
+      return "border-l-gray-500 bg-gray-50 dark:bg-gray-900/10";
+  }
+};
+
+const formatTimeAgo = (date: Date) => {
+  const now = new Date();
+  const diffInMs = now.getTime() - date.getTime();
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays === 0) {
+    if (diffInHours === 0) {
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+      return diffInMinutes < 1 ? 'Just now' : `${diffInMinutes}m ago`;
     }
-  };
+    return `${diffInHours}h ago`;
+  } else if (diffInDays === 1) {
+    return 'Yesterday';
+  } else if (diffInDays < 7) {
+    return `${diffInDays}d ago`;
+  } else {
+    return date.toLocaleDateString();
+  }
+};
 
-  const getActivityColor = (type: string) => {
-    switch (type) {
-      case 'ai-review':
-        return "border-l-purple-500 bg-purple-50 dark:bg-purple-900/10";
-      case 'question':
-        return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10";
-      case 'note-created':
-        return "border-l-green-500 bg-green-50 dark:bg-green-900/10";
-      default:
-        return "border-l-gray-500 bg-gray-50 dark:bg-gray-900/10";
-    }
-  };
+const getScoreBadge = (score?: number) => {
+  if (score === undefined) return null;
 
-  const formatTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInHours / 24);
+  let variant: "default" | "secondary" | "destructive" | "outline" = "secondary";
+  let className = "";
 
-    if (diffInDays === 0) {
-      if (diffInHours === 0) {
-        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-        return diffInMinutes < 1 ? 'Just now' : `${diffInMinutes}m ago`;
-      }
-      return `${diffInHours}h ago`;
-    } else if (diffInDays === 1) {
-      return 'Yesterday';
-    } else if (diffInDays < 7) {
-      return `${diffInDays}d ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
-  };
-
-  const getScoreBadge = (score?: number) => {
-    if (score === undefined) return null;
-    
-    let variant: "default" | "secondary" | "destructive" | "outline" = "secondary";
-    let className = "";
-    
-    if (score >= 90) {
-      variant = "default";
-      className = "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
-    } else if (score >= 70) {
-      variant = "secondary";
-      className = "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
-    } else if (score >= 50) {
-      variant = "outline";
-      className = "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
-    } else {
-      variant = "destructive";
-      className = "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
-    }
-
-    return (
-      <Badge variant={variant} className={`ml-auto ${className}`}>
-        {score}%
-      </Badge>
-    );
-  };
+  if (score >= 90) {
+    variant = "default";
+    className = "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400";
+  } else if (score >= 70) {
+    variant = "secondary";
+    className = "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
+  } else if (score >= 50) {
+    variant = "outline";
+    className = "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400";
+  } else {
+    variant = "destructive";
+    className = "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400";
+  }
 
   return (
-    <Card className="col-span-full lg:col-span-1">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Badge variant={variant} className={`ml-auto ${className}`}>
+      {score}%
+    </Badge>
+  );
+};
+
+
+export default function RecentActivity({ stats }: RecentActivityProps) {
+  return (
+    <Card className="max-h-92 @[700px]:max-h-[700px] flex flex-col gap-0">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 flex-shrink-0">
         <div>
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Activity className="h-5 w-5 text-green-500" />
@@ -102,7 +102,7 @@ export default function RecentActivity({ stats }: RecentActivityProps) {
           </p>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 overflow-y-auto mb-0 pb-0">
         <div className="space-y-3">
           {stats.recentActivity.length === 0 ? (
             <div className="text-center py-8">
@@ -150,9 +150,10 @@ export default function RecentActivity({ stats }: RecentActivityProps) {
             ))
           )}
         </div>
-
+      </CardContent>
+      <CardFooter>
         {stats.recentActivity.length > 0 && (
-          <div className="mt-4 pt-4 border-t">
+          <div className="border-t">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Keep up the great work! 🎉</span>
               <Badge variant="outline" className="text-xs">
@@ -161,7 +162,7 @@ export default function RecentActivity({ stats }: RecentActivityProps) {
             </div>
           </div>
         )}
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 }

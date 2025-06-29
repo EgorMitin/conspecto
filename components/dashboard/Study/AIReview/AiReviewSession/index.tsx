@@ -32,6 +32,8 @@ export default function AiReviewSession() {
   const { folderId, noteId, dispatch } = useAppState();
   const {
     currentSession,
+    isLoading,
+    error,
     submitAnswer,
     skipQuestion,
     nextQuestion,
@@ -61,7 +63,7 @@ export default function AiReviewSession() {
   ) || false;
 
   useEffect(() => {
-    if (!currentSession) {
+    if (!currentSession && !isLoading) {
       router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/ai-review`);
       return;
     }

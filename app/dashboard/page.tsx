@@ -10,6 +10,8 @@ import DashboardStatsOverview from "@/components/dashboard/DashboardStatsOvervie
 import WeeklyActivityChart from "@/components/dashboard/WeeklyActivityChart";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import QuickActions from "@/components/dashboard/QuickActions";
+import AllFolders from "@/components/dashboard/AllFolders";
+import UnfinishedAiReviews from "@/components/dashboard/UnfinishedAiReviews";
 import { calculateDashboardStatistics } from "@/utils/dashboard-statistics";
 import { useAppState } from "@/lib/providers/app-state-provider";
 import { Loader2 } from "lucide-react";
@@ -42,7 +44,6 @@ export default function Dashboard() {
     }
   }, [searchParams, isLoading, pathname, router]);
 
-  // Calculate dashboard statistics from app state
   const stats = useMemo(() => {
     if (isLoading || state.folders.length === 0) {
       return null;
@@ -75,14 +76,28 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div id="dashboard-stats">
-              <DashboardStatsOverview stats={stats} />
+            <div className="@container">
+              <div className="grid grid-cols-1 @[700px]:grid-cols-7 @[900px]:grid-cols-3 gap-6 h-fit">
+                <div id="dashboard-stats" className="@[700px]:col-span-4 @[900px]:col-span-2">
+                  <DashboardStatsOverview stats={stats} />
+                </div>
+                <div className="@[700px]:row-span-2 @[1120px]:row-span-2 @[700px]:col-span-3 @[900px]:col-span-1">
+                  <RecentActivity stats={stats} />
+                </div>
+
+                <div className="@[700px]:col-span-4 @[900px]:col-span-2">
+                  <WeeklyActivityChart stats={stats} />
+                </div>
+              </div>
+            </div>
+            <div className="@container">
+              <div className="grid grid-cols-1 @[900px]:grid-cols-2 gap-6">
+                <AllFolders folders={state.folders} />
+                <UnfinishedAiReviews folders={state.folders} />
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <WeeklyActivityChart stats={stats} />
-              <RecentActivity stats={stats} />
-            </div>
+
 
             <QuickActions stats={stats} />
           </div>

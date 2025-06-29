@@ -29,7 +29,7 @@ export default function AiReviewConfig() {
   const [questionCount, setQuestionCount] = useState(10);
   const [urlError, setUrlError] = useState<string | null>(null);
   const currentFolder = state.folders.find(f => f.id === folderId);
-  const sourceType = 'note';
+  const sourceType = noteId ? 'note' : 'folder';
   const source = sourceType === 'note' ? currentNote : currentFolder;
 
   useEffect(() => {
@@ -101,6 +101,7 @@ export default function AiReviewConfig() {
       router.push(`${window.location.href}/loading?sessionId=${sessionId}`);
     } catch (error) {
       console.error('Failed to start AI review:', error);
+      setUrlError("Failed to start the review. Please try again.");
     }
   };
 

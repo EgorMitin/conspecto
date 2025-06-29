@@ -22,10 +22,9 @@ export default function AiReviewLoading() {
 
   useEffect(() => {
     if (!sessionId) {
-      router.push(`/dashboard/${folderId}/${noteId}/study/ai-review`);
+      router.push(`/dashboard/${folderId}/${noteId ? noteId+"/" : ""}study/ai-review`);
       return;
     }
-
     loadSession(sessionId);
   }, [sessionId, loadSession, router, folderId, noteId]);
 
@@ -59,16 +58,17 @@ export default function AiReviewLoading() {
 
   // Jump to 100% when session is ready
   useEffect(() => {
+    console.log(currentSession)
     if (currentSession && currentSession.status === 'ready_for_review') {
       setProgress(100);
       setTimeout(() => {
-        router.push(`/dashboard/${folderId}/${noteId}/study/ai-review/session`);
+        router.push(`/dashboard/${folderId}/${currentSession.sourceType === "note" ? noteId+"/" : ""}/study/ai-review/session`);
         return;
       }, 500);
     }
 
     if (error) {
-      router.push(`/dashboard/${folderId}/${noteId}/study/ai-review?error=${encodeURIComponent(error)}`);
+      router.push(`/dashboard/${folderId}/${noteId ? noteId+"/" : ""}study/ai-review?error=${encodeURIComponent(error)}`);
       return;
     }
   }, [currentSession, error, router, folderId, noteId]);

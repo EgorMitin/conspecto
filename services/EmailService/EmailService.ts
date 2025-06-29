@@ -204,7 +204,7 @@ class EmailService {
               <td style="vertical-align: top;">
                 <h3 style="color: #1d1d1f; margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">Start Your Study Session</h3>
                 <p style="color: #86868b; margin: 0; font-size: 15px; line-height: 1.4;">
-                  Go to your note's study mode by clicking "Study Now" and choose your preferred study regime - spaced repetition or AI-powered questions.
+                  Go to your note's study mode by clicking "Study Note" and choose your preferred study regime - spaced repetition or AI-powered questions.
                 </p>
               </td>
             </tr>

@@ -23,7 +23,7 @@ export default function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className='relative'>
           {mounted ? (
             theme === 'system' ? (
               <Monitor className="h-[1.2rem] w-[1.2rem]" />

@@ -5,6 +5,7 @@ import { AiReviewSession } from "@/types/AiReviewSession";
 
 export async function createAiReviewSession(session: Omit<AiReviewSession, 'id'>): Promise<{ data: AiReviewSession; error: null } | { data: null; error: string }>  {
   try {
+    console.log(session)
     const createdSession = await DatabaseService.createAiReviewSession(session);
     if (!createdSession) {
       throw new Error('Failed to create AI review session');

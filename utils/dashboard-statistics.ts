@@ -1,6 +1,4 @@
-import { AppFolderType, AppNoteType } from '@/lib/providers/app-state-provider';
-import { Question } from '@/types/Question';
-import { AiReviewSession } from '@/types/AiReviewSession';
+import { AppFolderType } from '@/lib/providers/app-state-provider';
 
 export interface DashboardStats {
   totalFolders: number;
@@ -24,9 +22,53 @@ export interface DashboardStats {
     title: string;
     date: Date;
     score?: number;
-    noteId?: string;
+    sourceId?: string;
     folderId?: string;
   }>;
+}
+
+export function calculateStreak(folders: AppFolderType[]): number {
+  try {
+    const allNotes = folders.flatMap(folder => folder.notes);
+    const allQuestions = allNotes.flatMap(note => note.questions || []);
+    const allAiReviews = [
+      ...allNotes.flatMap(note => note.aiReviews || []),
+      ...folders.flatMap(folder => folder.aiReviews || [])
+    ];
+
+    let studyStreak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkDate = new Date(today);
+
+    while (true) {
+      const hasQuestionActivity = allQuestions.some(question =>
+        question.history.some((entry: any) => {
+          const entryDate = new Date(entry.date);
+          entryDate.setHours(0, 0, 0, 0);
+          return entryDate.getTime() === checkDate.getTime();
+        })
+      );
+
+      const hasAiReviewActivity = allAiReviews.some(review => {
+        const reviewDate = new Date(review.completedAt || review.requestedAt || new Date());
+        reviewDate.setHours(0, 0, 0, 0);
+        return reviewDate.getTime() === checkDate.getTime();
+      });
+
+      if (hasQuestionActivity || hasAiReviewActivity) {
+        studyStreak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return studyStreak;
+  } catch (error) {
+    console.error('Error calculating study streak:', error);
+    return 0;
+  }
 }
 
 export function calculateDashboardStatistics(folders: AppFolderType[]): DashboardStats {
@@ -34,7 +76,10 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
     // Get all notes and data
     const allNotes = folders.flatMap(folder => folder.notes);
     const allQuestions = allNotes.flatMap(note => note.questions || []);
-    const allAiReviews = allNotes.flatMap(note => note.aiReviews || []);
+    const allAiReviews = [
+      ...allNotes.flatMap(note => note.aiReviews || []),
+      ...folders.flatMap(folder => folder.aiReviews || [])
+    ];
 
     // Calculate basic stats
     const totalFolders = folders.length;
@@ -113,18 +158,57 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
       }
     }
 
-    // Find next review date
-    const upcomingQuestions = allQuestions.filter(question => {
-      const nextReview = new Date(question.nextReview);
+    // Check notes with nextReview dates
+    const dueNotes = allNotes.filter(note => {
+      if (!note.nextReview) return false;
+      const nextReview = new Date(note.nextReview);
+      return nextReview <= today;
+    });
+
+    const upcomingNotes = allNotes.filter(note => {
+      if (!note.nextReview) return false;
+      const nextReview = new Date(note.nextReview);
       return nextReview > today;
     });
+
+    // Check folders with nextReview dates
+    const dueFolders = folders.filter(folder => {
+      if (!folder.nextReview) return false;
+      const nextReview = new Date(folder.nextReview);
+      return nextReview <= today;
+    });
+
+    const upcomingFolders = folders.filter(folder => {
+      if (!folder.nextReview) return false;
+      const nextReview = new Date(folder.nextReview);
+      return nextReview > today;
+    });
+
+    // If there are any items due today/overdue, next review is today
+    // Otherwise, find the earliest upcoming review date
+    const hasDueItems = dueNotes.length > 0 || dueFolders.length > 0;
     
-    const nextReviewDate = upcomingQuestions.length > 0 
-      ? upcomingQuestions.reduce((earliest, question) => {
-          const questionDate = new Date(question.nextReview);
-          return questionDate < earliest ? questionDate : earliest;
-        }, new Date(upcomingQuestions[0].nextReview))
-      : null;
+    let nextReviewDate: Date | null = null;
+
+    if (hasDueItems) {
+      nextReviewDate = today;
+    } else {
+      const allUpcomingDates: Date[] = [];
+
+      upcomingNotes.forEach(n => {
+        if (n.nextReview) allUpcomingDates.push(new Date(n.nextReview));
+      });
+
+      upcomingFolders.forEach(f => {
+        if (f.nextReview) allUpcomingDates.push(new Date(f.nextReview));
+      });
+
+      if (allUpcomingDates.length > 0) {
+        nextReviewDate = allUpcomingDates.reduce((earliest, date) =>
+          date < earliest ? date : earliest
+        );
+      }
+    }
 
     // Calculate mastery progress
     let masteryProgress = 0;
@@ -135,7 +219,7 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
           const dateB = new Date(b.completedAt || b.requestedAt || new Date());
           return dateB.getTime() - dateA.getTime();
         })
-        .slice(0, 5); // Last 5 reviews
+        .slice(0, 5);
       
       const totalScore = recentReviews.reduce((sum, review) => {
         if (review.result) {
@@ -182,7 +266,7 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
       title: string;
       date: Date;
       score?: number;
-      noteId?: string;
+      sourceId?: string;
       folderId?: string;
     }> = [];
     
@@ -193,21 +277,36 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
         const dateA = new Date(a.completedAt!);
         const dateB = new Date(b.completedAt!);
         return dateB.getTime() - dateA.getTime();
-      })
-      .slice(0, 3);
+      });
 
     recentAiReviews.forEach(review => {
-      const note = allNotes.find(n => n.id === review.sourceId);
-      const folder = folders.find(f => f.notes.some(n => n.id === review.sourceId));
-      if (note && folder && review.result) {
-        recentActivity.push({
-          type: 'ai-review' as const,
-          title: `AI Review: ${note.title}`,
-          date: new Date(review.completedAt!),
-          score: Math.round((review.result.correctAnswers / review.result.totalQuestions) * 100),
-          noteId: note.id,
-          folderId: folder.id
-        });
+      if (review.result) {
+        if (review.sourceType === 'note') {
+          const note = allNotes.find(n => n.id === review.sourceId);
+          const folder = folders.find(f => f.notes.some(n => n.id === review.sourceId));
+          if (note && folder) {
+            recentActivity.push({
+              type: 'ai-review' as const,
+              title: `AI Review: ${note.title}`,
+              date: new Date(review.completedAt!),
+              score: Math.round((review.result.correctAnswers / review.result.totalQuestions) * 100),
+              sourceId: note.id,
+              folderId: folder.id
+            });
+          }
+        } else if (review.sourceType === 'folder') {
+          const folder = folders.find(f => f.id === review.sourceId);
+          if (folder) {
+            recentActivity.push({
+              type: 'ai-review' as const,
+              title: `AI Review: ${folder.name}`,
+              date: new Date(review.completedAt!),
+              score: Math.round((review.result.correctAnswers / review.result.totalQuestions) * 100),
+              sourceId: folder.id,
+              folderId: folder.id
+            });
+          }
+        }
       }
     });
 
@@ -231,7 +330,7 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
           title: `Question Review: ${note.title}`,
           date: new Date(lastReview.date),
           score: lastReview.quality > 1 ? 100 : 0,
-          noteId: note.id,
+          sourceId: note.id,
           folderId: folder.id
         });
       }
@@ -250,7 +349,7 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
           type: 'note-created' as const,
           title: `Created: ${note.title}`,
           date: new Date(note.createdAt),
-          noteId: note.id,
+          sourceId: note.id,
           folderId: folder.id
         });
       }
@@ -272,7 +371,7 @@ export function calculateDashboardStatistics(folders: AppFolderType[]): Dashboar
       nextReviewDate,
       masteryProgress: Math.round(masteryProgress * 10) / 10,
       weeklyActivity,
-      recentActivity: recentActivity.slice(0, 5)
+      recentActivity: recentActivity.slice(0, 50)
     };
 
   } catch (error) {

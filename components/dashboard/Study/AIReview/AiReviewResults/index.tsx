@@ -15,7 +15,8 @@ import {
   TrendingUp,
   RotateCcw,
   Home,
-  Clock
+  Clock,
+  FolderOpen
 } from 'lucide-react';
 import { useAppState } from '@/lib/providers/app-state-provider';
 import { useAiReviewStore } from '@/lib/stores/ai-review-store';
@@ -31,7 +32,7 @@ export default function AiReviewResults() {
 
   useEffect(() => {
     if (!currentSession || currentSession.status !== 'completed') {
-      router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/ai-review`);
+      router.push(`/dashboard/${folderId}/${noteId ? noteId + '/' : ''}study/ai-review`);
     }
   }, [currentSession, router, folderId, noteId]);
 
@@ -82,13 +83,17 @@ export default function AiReviewResults() {
 
   const handleRetryReview = () => {
     endSession();
-    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/ai-review`);
+    router.push(`/dashboard/${folderId}/${noteId ? noteId + '/' : ''}study/ai-review`);
   };
 
   const handleBackToStudy = () => {
     endSession();
-    router.push(`/dashboard/${folderId}/${noteId ? noteId+'/' : ''}study/`);
+    router.push(`/dashboard/${folderId}/${noteId ? noteId + '/' : ''}study/`);
   };
+
+  const handleToStudyFolder = () => {
+    router.push(`/dashboard/${folderId}/study`)
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -331,23 +336,41 @@ export default function AiReviewResults() {
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button
-                  onClick={handleRetryReview}
-                  variant="outline"
-                  size="lg"
-                  className="flex items-center gap-3 px-6 py-3 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200"
-                >
-                  <RotateCcw className="h-5 w-5" />
-                  <div className="text-left">
-                    <div className="font-medium">Try Again</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">New set of questions</div>
-                  </div>
-                </Button>
+                <div className='flex flex-row items-center justify-center gap-4'>
+                  <Button
+                    onClick={handleRetryReview}
+                    variant="outline"
+                    size="lg"
+                    className="flex items-center gap-3 px-6 py-3 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200"
+                  >
+                    <RotateCcw className="h-5 w-5" />
+                    <div className="text-left">
+                      <div className="font-medium">Try Again</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">New set of questions</div>
+                    </div>
+                  </Button>
 
-                <button
+                  {noteId &&
+                    <Button
+                      onClick={handleToStudyFolder}
+                      variant="outline"
+                      size="lg"
+                      className="flex items-center gap-3 px-6 py-3 hover:bg-green-50 dark:hover:bg-green-950/30 hover:border-green-300 dark:hover:border-green-600 transition-all duration-200"
+                    >
+                      <FolderOpen className="h-5 w-5" />
+                      <div className="text-left">
+                        <div className="font-medium">Study Folder</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">All notes at once</div>
+                      </div>
+                    </Button>
+                  }
+                </div>
+
+                <Button
                   onClick={handleBackToStudy}
                   type="button"
-                  className="flex items-center gap-3 px-2 py-1 border border-transparent hover:border-blue-700 dark:hover:border-indigo-700 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg text-primary font-medium"
+                  size="lg"
+                  className="flex items-center gap-3 px-2 py-1 border border-transparent hover:border-blue-700 dark:hover:border-indigo-700 rounded-lg bg-gradient-to-r bg-indigo-600 hover:bg-blue-700 transition-all duration-200 shadow-lg text-primary font-medium"
                   style={{ minWidth: 0 }}
                 >
                   <Home className="h-5 w-5" />
@@ -355,7 +378,7 @@ export default function AiReviewResults() {
                     <div className="font-medium text-xs">Back to Study</div>
                     <div className="text-xs opacity-90">Continue learning</div>
                   </div>
-                </button>
+                </Button>
               </div>
             </div>
           </CardContent>

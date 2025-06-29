@@ -50,7 +50,7 @@ export class DatabaseService {
   private _sessionRepository: SessionRepository | null = null;
   private _subscriptionRepository: SubscriptionRepository | null = null;
 
-  private constructor() {}
+  private constructor() { }
 
   /**
    * Get singleton instance of DatabaseService
@@ -154,9 +154,9 @@ export class DatabaseService {
    */
   private ensureRepositoriesInitialized(): void {
     // Check if all repositories are initialized using the private backing fields
-    if (!this._userRepository || !this._noteRepository || !this._questionRepository || 
-        !this._folderRepository || !this._aiReviewSessionRepository || 
-        !this._sessionRepository || !this._subscriptionRepository) {
+    if (!this._userRepository || !this._noteRepository || !this._questionRepository ||
+      !this._folderRepository || !this._aiReviewSessionRepository ||
+      !this._sessionRepository || !this._subscriptionRepository) {
       if (!this.pool) {
         logger.error('Database pool is not initialized. Cannot initialize repositories.');
         throw new Error('Database pool is not initialized. Cannot initialize repositories.');
@@ -257,7 +257,7 @@ export class DatabaseService {
           user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           status VARCHAR(50),
           metadata JSONB,
-          price INTEGER,
+          price_id INTEGER,
           quantity INTEGER,
           cancel_at_period_end BOOLEAN,
           created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -289,6 +289,13 @@ export class DatabaseService {
           in_trash BOOLEAN DEFAULT FALSE,
           logo TEXT,
           banner_url TEXT,
+          metadata JSONB,
+          repetition INTEGER DEFAULT 0,
+          interval INTEGER DEFAULT 0,
+          ease_factor FLOAT DEFAULT 2.5,
+          next_review TIMESTAMP WITH TIME ZONE,
+          last_review TIMESTAMP WITH TIME ZONE,
+          history JSONB,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           CONSTRAINT uq_user_folder_name UNIQUE (user_id, name)
@@ -354,7 +361,8 @@ export class DatabaseService {
         CREATE TABLE IF NOT EXISTS ai_review_sessions (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-          note_id UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
+          source_id UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
+          source_type VARCHAR(50),
           status VARCHAR(50) NOT NULL DEFAULT 'pending',
           mode VARCHAR(50),
           difficulty VARCHAR(50),
@@ -369,11 +377,10 @@ export class DatabaseService {
           session_started_at TIMESTAMP WITH TIME ZONE,
           completed_at TIMESTAMP WITH TIME ZONE,
           CONSTRAINT fk_ai_session_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-          CONSTRAINT fk_ai_session_note FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
         );
       `);
       await client.query(`CREATE INDEX IF NOT EXISTS idx_ai_review_sessions_user_id ON ai_review_sessions(user_id);`);
-      await client.query(`CREATE INDEX IF NOT EXISTS idx_ai_review_sessions_note_id ON ai_review_sessions(note_id);`);
+      await client.query(`CREATE INDEX IF NOT EXISTS idx_ai_review_sessions_source_id ON ai_review_sessions(source_id);`);
       await client.query(`CREATE INDEX IF NOT EXISTS idx_ai_review_sessions_status ON ai_review_sessions(status);`);
 
       await client.query(`

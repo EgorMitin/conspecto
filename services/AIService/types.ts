@@ -44,10 +44,10 @@ export interface AIServiceConfig {
   provider: AIProviderName;
   apiKey: string;
   model: string;
+  retryAttempts?: number;
   temperature?: number;
   maxTokens?: number;
   timeout?: number;
-  retryAttempts?: number;
 }
 
 export interface QuestionTypeConfig {

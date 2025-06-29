@@ -47,7 +47,7 @@ interface AiReviewStore {
 
 export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
   currentSession: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
 
   startAiReview: async (params: StartAiReviewParams) => {
@@ -79,15 +79,17 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
         params.mode,
       ).then(({ data: updatedSession, error: AIServiceError }) => {
         if (AIServiceError === null && updatedSession) {
-          set((state) => ({
-            currentSession: {
-              ...state.currentSession,
-              ...updatedSession,
-              currentQuestionIndex: 0,
-              sessionElapsedTime: 0,
-            },
-            isLoading: false,
-          }));
+          set((state) => {
+            return ({
+              currentSession: {
+                ...state.currentSession,
+                ...updatedSession,
+                currentQuestionIndex: 0,
+                sessionElapsedTime: 0,
+              },
+              isLoading: false,
+            })
+          });
         } else {
           set({ error: 'Failed to generate questions', isLoading: false });
         }
@@ -121,6 +123,67 @@ export const useAiReviewStore = create<AiReviewStore>((set, get) => ({
       const { data: session, error } = await getAiReviewSession(sessionId);
       if (error !== null) {
         throw new Error('Session not found');
+      }
+
+      if (session.status === 'pending') {
+        const sessionState: AiReviewSessionState = {
+          ...session,
+          currentQuestionIndex: 0,
+          sessionElapsedTime: 0,
+        };
+
+        set({
+          currentSession: sessionState,
+          isLoading: true,
+        });
+
+        // We need to decide ourselves at this point how many questions, because we don't store it
+        const defaultQuestionCount = 5;
+
+        try {
+          const { data: updatedSession, error: AIServiceError } = await generateQuestionsForSession(
+            sessionId,
+            session.sourceId,
+            session.sourceType,
+            session.difficulty || 'medium',
+            defaultQuestionCount,
+            session.mode || 'separate_questions',
+          );
+
+          if (AIServiceError === null && updatedSession) {
+            await updateAiReviewSession(
+              sessionId,
+              {
+                status: 'in_progress',
+                sessionStartedAt: new Date()
+              }
+            );
+
+            const finalSessionState: AiReviewSessionState = {
+              ...updatedSession,
+              status: 'in_progress',
+              sessionStartedAt: new Date(),
+              currentQuestionIndex: 0,
+              sessionElapsedTime: 0,
+            };
+
+            set({
+              currentSession: finalSessionState,
+              isLoading: false,
+            });
+          } else {
+            set({
+              error: 'Failed to generate questions',
+              isLoading: false
+            });
+          }
+        } catch (generationError) {
+          set({
+            error: generationError instanceof Error ? generationError.message : 'Failed to generate questions',
+            isLoading: false
+          });
+        }
+        return;
       }
 
       if (session.status === 'ready_for_review') {

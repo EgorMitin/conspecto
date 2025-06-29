@@ -1,6 +1,7 @@
 import { Pool, PoolClient, QueryResult } from 'pg';
 import { logger } from '@/utils/logger';
 import config from '@/config/database';
+import DatabaseService from '.';
 
 export abstract class BaseRepository {
   protected pool: Pool;

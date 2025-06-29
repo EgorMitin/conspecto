@@ -43,7 +43,6 @@ export default function FolderPage() {
   }
 
   const notes = currentFolder.notes;
-  const folderName = currentFolder.name;
 
   return (
     <div className="dark:border-Neutrals-12/70 border-l-[1px] relative overflow-auto flex-1 h-full flex flex-col">

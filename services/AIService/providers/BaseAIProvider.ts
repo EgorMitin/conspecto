@@ -1,17 +1,17 @@
 import { logger } from '@/utils/logger';
-import { 
-  AIProvider, 
-  QuestionGenerationParams, 
-  AnswerEvaluationParams, 
+import {
+  AIProvider,
+  QuestionGenerationParams,
+  AnswerEvaluationParams,
   AnswerEvaluation,
-  AIServiceConfig 
+  AIServiceConfig
 } from '../types';
 import { AiReviewQuestion } from '@/types/AiReviewSession';
 import { DIFFICULTY_DESCRIPTIONS, QUESTION_TYPE_CONFIGS, selectRandomQuestionTypes } from '../config';
 
 export abstract class BaseAIProvider implements AIProvider {
   abstract name: string;
-  protected config: AIServiceConfig;
+  protected config: AIServiceConfig & { retryAttempts: number };
 
   protected static SUMMARY_PROMPT = `You are an expert at creating concise, comprehensive summaries of educational content.
 Create a clear, well-structured summary that captures the main points and key concepts.
@@ -41,38 +41,68 @@ Return the takeaways as a JSON array of strings.`;
   }
 
   async generateQuestions(params: QuestionGenerationParams): Promise<AiReviewQuestion[]> {
-    try {
-      const selectedTypes = params.questionTypes || 
-        selectRandomQuestionTypes(params.difficulty, params.questionCount);
+    let lastError: Error;
 
-      const questionTypePrompts = selectedTypes.map(type => {
-        const config = QUESTION_TYPE_CONFIGS[type];
-        return `- ${config.name} (${type}): ${config.description}`;
-      }).join('\n');
+    for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
+      try {
+        const selectedTypes = params.questionTypes ||
+          selectRandomQuestionTypes(params.difficulty, params.questionCount);
 
-      const systemPrompt = this.buildQuestionGenerationPrompt(params, questionTypePrompts);
-      const response = await this.callAPI(systemPrompt, params.noteContent);
-      return this.parseQuestionResponse(response, selectedTypes);
-    } catch (error) {
-      logger.error(`${this.name} question generation failed:`, error);
-      throw error;
+        const questionTypePrompts = selectedTypes.map(type => {
+          const config = QUESTION_TYPE_CONFIGS[type];
+          return `- ${config.name} (${type}): ${config.description}`;
+        }).join('\n');
+
+        const systemPrompt = this.buildQuestionGenerationPrompt(params, questionTypePrompts);
+        const response = await this.callAPI(systemPrompt, params.noteContent);
+        return this.parseQuestionResponse(response, selectedTypes);
+      } catch (error) {
+        lastError = error as Error;
+        logger.warn(`${this.name} question generation attempt ${attempt}/${this.config.retryAttempts} failed:`, error);
+
+        if (attempt === this.config.retryAttempts) {
+          logger.error(`${this.name} question generation failed after ${this.config.retryAttempts} attempts:`, error);
+          throw error;
+        }
+
+        await this.delay(Math.pow(2, attempt - 1) * 1000);
+      }
     }
+
+    throw lastError!;
   }
 
   async evaluateAnswer(params: AnswerEvaluationParams): Promise<AnswerEvaluation> {
-    try {
-      const systemPrompt = this.buildEvaluationPrompt(params);
-      const userMessage = `Question: ${params.question}\nStudent's Answer: ${params.userAnswer}`;
-      const response = await this.callAPI(systemPrompt, userMessage);
-      return this.parseEvaluationResponse(response);
-    } catch (error) {
-      logger.error(`${this.name} answer evaluation failed:`, error);
-      return {
-        evaluation: 'incorrect',
-        message: 'Unable to evaluate answer automatically. Please review your response.',
-        suggestions: ['Try to provide more specific details', 'Review the source material']
-      };
+    let lastError: Error;
+
+    for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
+      try {
+        const systemPrompt = this.buildEvaluationPrompt(params);
+        const userMessage = `Question: ${params.question}\nStudent's Answer: ${params.userAnswer}`;
+        const response = await this.callAPI(systemPrompt, userMessage);
+        return this.parseEvaluationResponse(response);
+      } catch (error) {
+        lastError = error as Error;
+        logger.warn(`${this.name} answer evaluation attempt ${attempt}/${this.config.retryAttempts} failed:`, error);
+
+        if (attempt === this.config.retryAttempts) {
+          logger.error(`${this.name} answer evaluation failed after ${this.config.retryAttempts} attempts:`, error);
+          return {
+            evaluation: 'incorrect',
+            message: 'Unable to evaluate answer automatically. Please review your response.',
+            suggestions: ['Try to provide more specific details', 'Review the source material']
+          };
+        }
+
+        await this.delay(Math.pow(2, attempt - 1) * 1000);
+      }
     }
+
+    return {
+      evaluation: 'incorrect',
+      message: 'Unable to evaluate answer automatically. Please review your response.',
+      suggestions: ['Try to provide more specific details', 'Review the source material']
+    };
   }
 
   async summarizeContent(content: string): Promise<string> {
@@ -102,7 +132,7 @@ Return the takeaways as a JSON array of strings.`;
   }
 
   protected buildQuestionGenerationPrompt(
-    params: QuestionGenerationParams, 
+    params: QuestionGenerationParams,
     questionTypePrompts: string
   ): string {
     const difficultyDescription = DIFFICULTY_DESCRIPTIONS[params.difficulty];
@@ -217,8 +247,8 @@ ${params.context.noteContent}}`;
         evaluation.evaluation = 'incorrect';
       }
       if (typeof evaluation.score !== 'number' || evaluation.score < 0 || evaluation.score > 100) {
-        evaluation.score = evaluation.evaluation === 'correct' ? 100 : 
-                           evaluation.evaluation === 'partial' ? 50 : 0;
+        evaluation.score = evaluation.evaluation === 'correct' ? 100 :
+          evaluation.evaluation === 'partial' ? 50 : 0;
       }
       return {
         evaluation: evaluation.evaluation,
@@ -232,7 +262,7 @@ ${params.context.noteContent}}`;
       if (jsonMatch) {
         try {
           return this.parseEvaluationResponse(jsonMatch[0]);
-        } catch (e) {}
+        } catch (e) { }
       }
       logger.error('Failed to parse evaluation response:', parseError);
       return {
@@ -244,9 +274,13 @@ ${params.context.noteContent}}`;
     }
   }
 
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   // Provider-specific API call must be implemented by subclasses
   protected abstract callAPI(
-    systemPrompt: string, 
+    systemPrompt: string,
     userMessage: string,
     overrides?: Partial<AIServiceConfig>
   ): Promise<string>;

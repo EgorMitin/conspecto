@@ -49,7 +49,7 @@ export class SubscriptionRepository extends BaseRepository {
    */
   public async getSubscriptionById(id: string): Promise<Subscription | null> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", status, metadata, price, quantity,
+      `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
               cancel_at_period_end as "cancelAtPeriodEnd", created,
               current_period_start as "currentPeriodStart",
               current_period_end as "currentPeriodEnd",
@@ -69,7 +69,7 @@ export class SubscriptionRepository extends BaseRepository {
    */
   public async getSubscriptionsByUserId(userId: string): Promise<Subscription[]> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", status, metadata, price, quantity,
+      `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
               cancel_at_period_end as "cancelAtPeriodEnd", created,
               current_period_start as "currentPeriodStart",
               current_period_end as "currentPeriodEnd",

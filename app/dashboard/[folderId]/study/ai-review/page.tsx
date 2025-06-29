@@ -9,12 +9,12 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 export default function AiReviewPage() {
-  const { user } = useUser();
+  const { user, isLoading: isLoadingUser } = useUser();
   const router = useRouter();
   const { state, folderId, isLoading } = useAppState();
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !isLoadingUser || !folderId && !isLoading) {
       toast.error("No user found, redirecting to landing page");
       router.push('/');
     }

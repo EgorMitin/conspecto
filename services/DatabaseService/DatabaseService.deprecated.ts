@@ -822,7 +822,7 @@ export class DatabaseService {
     const client = await this.getClient();
     try {
       const { rows } = await client.query(
-        `SELECT id, user_id as "userId", status, metadata, price, quantity,
+        `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
                 cancel_at_period_end as "cancelAtPeriodEnd", created,
                 current_period_start as "currentPeriodStart",
                 current_period_end as "currentPeriodEnd",
@@ -1995,7 +1995,7 @@ export class DatabaseService {
     const client = await this.getClient();
     try {
       const { rows } = await client.query(
-        `SELECT id, user_id as "userId", status, metadata, price, quantity,
+        `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
                 cancel_at_period_end as "cancelAtPeriodEnd", created,
                 current_period_start as "currentPeriodStart",
                 current_period_end as "currentPeriodEnd",
@@ -2023,7 +2023,7 @@ export class DatabaseService {
     const client = await this.getClient();
     try {
       const { rows } = await client.query(
-        `SELECT id, user_id as "userId", status, metadata, price, quantity,
+        `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
                 cancel_at_period_end as "cancelAtPeriodEnd", created,
                 current_period_start as "currentPeriodStart",
                 current_period_end as "currentPeriodEnd",

@@ -1,10 +1,11 @@
 'use client';
 
 import { Card } from "@/components/ui/card";
-import { BookOpen, RotateCcw, Target, BookOpenCheck } from "lucide-react";
+import { BookOpen, RotateCcw, Target, BookOpenCheck, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { formatNextReviewDate } from "@/utils/global";
+import { useAppState } from "@/lib/providers/app-state-provider";
 
 interface StudyProgressProps {
   questions: number;
@@ -14,10 +15,15 @@ interface StudyProgressProps {
 
 export function StudyProgress({ questions, reviewed, nextReview }: StudyProgressProps) {
   const router = useRouter();
-  
+  const { folderId } = useAppState()
+
   const handleStudyClick = () => {
     router.push(`${window.location.pathname}/study`);
   };
+
+  const handleStudyFolderClick = () => {
+    router.push(`/dashboard/${folderId}/study`)
+  }
 
   return (
     <Card className="p-5 bg-muted/30">
@@ -32,7 +38,7 @@ export function StudyProgress({ questions, reviewed, nextReview }: StudyProgress
               <p className="text-muted-foreground">{reviewed || 0}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-100 rounded-full">
               <Target className="w-4 h-4 text-green-600" />
@@ -42,7 +48,7 @@ export function StudyProgress({ questions, reviewed, nextReview }: StudyProgress
               <p className="text-muted-foreground">{questions || 0}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <div className="p-2 bg-purple-100 rounded-full">
               <BookOpen className="w-4 h-4 text-purple-600" />
@@ -53,14 +59,22 @@ export function StudyProgress({ questions, reviewed, nextReview }: StudyProgress
             </div>
           </div>
         </div>
-        
-        <div className="flex items-center">
-          <Button 
-            onClick={handleStudyClick} 
-            className="w-full sm:w-auto flex items-center gap-2"
+
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={handleStudyFolderClick}
+            className="sm:w-auto flex items-center gap-2"
+            variant="outline"
+          >
+            <FolderOpen className="h-5 w-5" />
+            Study Folder
+          </Button>
+          <Button
+            onClick={handleStudyClick}
+            className="sm:w-auto flex items-center gap-2"
           >
             <BookOpenCheck className="w-4 h-4" />
-            Study Now
+            Study Note
           </Button>
         </div>
       </div>

@@ -39,7 +39,7 @@ export class UserRepository extends BaseRepository {
    */
   public async getUserActiveSubscription(userId: string): Promise<Subscription | null> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", status, metadata, price, quantity,
+      `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
               cancel_at_period_end as "cancelAtPeriodEnd", created,
               current_period_start as "currentPeriodStart",
               current_period_end as "currentPeriodEnd",
@@ -383,7 +383,7 @@ export class UserRepository extends BaseRepository {
             WHERE ar.source_id = f.id
           ),
           '[]'::json
-        ) AS aiReviews
+        ) AS "aiReviews"
       FROM
         folders f
       WHERE
