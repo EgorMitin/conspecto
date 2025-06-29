@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Brain,
   TrendingUp,
   Target,
@@ -33,8 +33,8 @@ export default function QuickActions({ stats }: QuickActionsProps) {
   const { user } = useUser();
   const todayReviews = stats.questionsReviewedToday;
   const hasUpcomingReviews = stats.nextReviewDate !== null;
-  
-  const isNextReviewToday = stats.nextReviewDate && 
+
+  const isNextReviewToday = stats.nextReviewDate &&
     new Date(stats.nextReviewDate).toDateString() === new Date().toDateString();
 
   const findFirstUnfinishedReview = () => {
@@ -100,11 +100,11 @@ export default function QuickActions({ stats }: QuickActionsProps) {
   };
 
   const handleAISummary = () => {
-    toast.info("AI Summary feature is coming soon! This will generate summaries for all your notes.");
+    router.push(`/dashboard/user-summary`);
   };
 
   const handleReviewQuestions = () => {
-    toast.info("Review Questions feature is coming soon! This will help you practice with your saved questions.");
+    router.push('/dashboard/review');
   };
 
   return (
@@ -135,8 +135,8 @@ export default function QuickActions({ stats }: QuickActionsProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <Card 
+
+          <Card
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group border-dashed border-2 border-primary/20 hover:border-primary/40"
             onClick={handleStartStudying}
           >
@@ -151,9 +151,9 @@ export default function QuickActions({ stats }: QuickActionsProps) {
                     {findFirstUnfinishedReview() ? 'Continue unfinished AI review' : 'Begin your learning journey'}
                   </p>
                 </div>
-                <Button size="sm" className="w-full">
+                <div className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm font-medium text-center transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   {findFirstUnfinishedReview() ? 'Continue Review' : 'Study Mode'}
-                </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -177,15 +177,15 @@ export default function QuickActions({ stats }: QuickActionsProps) {
                       Create and organize knowledge
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <div className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm font-medium text-center transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                     Create Folder
-                  </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </CustomDialogTrigger>
 
-          <Card 
+          <Card
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
             onClick={handleAISummary}
           >
@@ -200,14 +200,14 @@ export default function QuickActions({ stats }: QuickActionsProps) {
                     Summarize all your notes with AI
                   </p>
                 </div>
-                <Button variant="outline" size="sm" className="w-full">
+                <div className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm font-medium text-center transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   Generate Summary
-                </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card 
+          <Card
             className="relative overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
             onClick={handleReviewQuestions}
           >
@@ -217,14 +217,14 @@ export default function QuickActions({ stats }: QuickActionsProps) {
                   <FileQuestion className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">Review Questions</h3>
+                  <h3 className="font-semibold text-sm">Review All Notes</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Practice with your saved questions
+                    Practice questions from all your notes
                   </p>
                 </div>
-                <Button variant="outline" size="sm" className="w-full">
+                <div className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm font-medium text-center transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   Start Review
-                </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -239,7 +239,7 @@ export default function QuickActions({ stats }: QuickActionsProps) {
                 <div>
                   <h4 className="font-medium text-sm">Today's Focus</h4>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {todayReviews > 0 
+                    {todayReviews > 0
                       ? `Great job! You've reviewed ${todayReviews} questions today.`
                       : `Keep your ${stats.studyStreak}-day streak going!`
                     }

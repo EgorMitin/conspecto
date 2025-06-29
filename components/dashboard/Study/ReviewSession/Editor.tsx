@@ -6,5 +6,5 @@ const EditorApp = dynamic(
 );
 
 export default function ReviewEditor({ content = '' }: { content?: string; }) {
-  return <EditorApp content={content} />;
+  return <EditorApp key={content} content={content} />;
 }

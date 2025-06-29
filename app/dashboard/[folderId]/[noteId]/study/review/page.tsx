@@ -31,7 +31,7 @@ export default function ReviewPage() {
 
   return (
     <main className="flex-1 flex flex-col overflow-auto">
-      <ReviewSession noteContent={currentNote.content} noteTitle={currentNote.title} />
+      <ReviewSession sourceType="note" sourceId={currentNote.id} mode="due" />
     </main>
   );
 }

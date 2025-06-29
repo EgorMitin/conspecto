@@ -8,17 +8,18 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function ReviewPage() {
-  const { isLoading, currentNote } = useAppState()
+  const { isLoading, state, folderId } = useAppState()
   const router = useRouter()
+  const currentFolder = state.folders.find(f => f.id === folderId);
 
   useEffect(() => {
-    if (!currentNote && !isLoading) {
-      toast.error("Note not found");
+    if (!currentFolder && !isLoading) {
+      toast.error("Folder not found");
       router.push('/dashboard');
     }
-  }, [currentNote, router, isLoading]);
+  }, [currentFolder, router, isLoading]);
 
-  if (!currentNote) {
+  if (!currentFolder) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
@@ -31,7 +32,7 @@ export default function ReviewPage() {
 
   return (
     <main className="flex-1 flex flex-col overflow-auto">
-      <ReviewSession noteContent={currentNote.content} noteTitle={currentNote.title} />
+      <ReviewSession sourceType="folder" sourceId={folderId!} mode="due" />
     </main>
   );
 }

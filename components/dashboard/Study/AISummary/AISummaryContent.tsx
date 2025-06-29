@@ -13,7 +13,6 @@ import {
   Save, 
   ArrowLeft, 
   Loader2,
-  Brain
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -21,13 +20,15 @@ import { generateAISummary, saveAISummary, type SummaryData } from "./actions";
 import AISummaryDisplay from "./AISummaryDisplay";
 import AISummaryStats from "./AISummaryStats";
 import AISummaryActions from "./AISummaryActions";
-import { useAppState } from '@/lib/providers/app-state-provider';
+import {useAppState } from '@/lib/providers/app-state-provider';
+import { AiReviewSourceType } from '@/types/AiReviewSession';
 
 interface AISummaryContentProps {
-  noteId: string;
+  sourceId: string;
+  sourceType: AiReviewSourceType;
 }
 
-export default function AISummaryContent({ noteId }: AISummaryContentProps) {
+export default function AISummaryContent({ sourceId, sourceType }: AISummaryContentProps) {
   const router = useRouter();
   const { folderId } = useAppState();
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
@@ -42,13 +43,13 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
     setError(null);
 
     try {
-      const result = await generateAISummary(noteId);
+      const result = await generateAISummary(sourceId, sourceType);
       
       if (result.success && result.data) {
         setSummaryData(result.data);
         setHasGenerated(true);
         toast.success("AI Summary generated successfully!", {
-          description: "Your note has been analyzed and summarized."
+          description: `Your ${sourceType} has been analyzed and summarized.`
         });
       } else {
         setError(result.error || 'Failed to generate summary');
@@ -72,7 +73,8 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
     setIsSaving(true);
     try {
       const result = await saveAISummary(
-        noteId, 
+        sourceId,
+        sourceType,
         summaryData.summary, 
         summaryData.keyTakeaways
       );
@@ -104,7 +106,17 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
   const handleStartAIReview = async () => {
     setIsStartingReview(true);
     try {
-      router.push(`/dashboard/${folderId}/${noteId}/study/ai-review/`);
+      if (sourceType === 'note') {
+        router.push(`/dashboard/${folderId}/${sourceId}/study/ai-review/`);
+      } else if (sourceType === 'folder') {
+        router.push(`/dashboard/${sourceId}/study/ai-review/`);
+      } else if (sourceType === 'user') {
+        // For user type, we could redirect to a general AI review page or handle differently
+        toast.info("User-wide AI Review coming soon!", {
+          description: "This feature will allow reviewing all your notes together."
+        });
+        return;
+      }
       toast.success("Starting AI Review Session", {
         description: "Preparing your personalized review questions."
       });
@@ -196,7 +208,7 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
               <div className="space-y-3">
                 <h2 className="text-xl font-semibold">Generating Your AI Summary</h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Our AI is analyzing your note content to create a comprehensive summary 
+                  Our AI is analyzing your {sourceType} content to create a comprehensive summary
                   and extract key takeaways. This usually takes just a few seconds.
                 </p>
               </div>
@@ -219,8 +231,10 @@ export default function AISummaryContent({ noteId }: AISummaryContentProps) {
               <div className="space-y-3">
                 <h2 className="text-xl font-semibold">Generate AI Summary</h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Get an intelligent summary of your note with key takeaways and insights 
+                  Get an intelligent summary of your {sourceType !== "user" ? sourceType : "folders"} with key takeaways and insights
                   to help you understand and remember the important concepts.
+                  {sourceType === 'folder' && ' This will analyze all notes within the folder.'}
+                  {sourceType === 'user' && ' This will analyze all notes across all your folders.'}
                 </p>
               </div>
 

@@ -31,7 +31,7 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
   const [copiedTakeaways, setCopiedTakeaways] = useState(false);
   const [showOriginalNote, setShowOriginalNote] = useState(false);
 
-  const { summary, keyTakeaways, noteContent, noteTitle } = summaryData;
+  const { summary, keyTakeaways, sourceContent, sourceTitle, sourceType } = summaryData;
 
   const handleCopySummary = async () => {
     try {
@@ -86,7 +86,7 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
-            AI-generated summary of your note&apos;s main content and concepts
+            AI-generated summary of your {sourceType}&apos;s main content and concepts
           </p>
         </CardHeader>
         <CardContent>
@@ -127,7 +127,7 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">
-            Essential points and insights extracted from your note
+            Essential points and insights extracted from your {sourceType}
           </p>
         </CardHeader>
         <CardContent>
@@ -174,7 +174,7 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
           >
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-slate-500" />
-              Original Note Content
+              Original {sourceType === 'note' ? 'Note' : 'Folder'} Content
             </CardTitle>
             {showOriginalNote ? (
               <ChevronUp className="h-4 w-4" />
@@ -183,7 +183,7 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
             )}
           </Button>
           <p className="text-sm text-muted-foreground text-left">
-            View the original note content that was used to generate this summary
+            View the original {sourceType} content that was used to generate this summary
           </p>
         </CardHeader>
 
@@ -191,9 +191,9 @@ export default function AISummaryDisplay({ summaryData, handleStartAIReview, isS
           <CardContent>
             <Separator className="mb-4" />
             <div className="prose prose-sm max-w-none dark:prose-invert">
-              <h4 className="font-semibold mb-3">{noteTitle}</h4>
+              <h4 className="font-semibold mb-3">{sourceTitle}</h4>
               <div className="text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
-                {noteContent}
+                {sourceContent}
               </div>
             </div>
           </CardContent>

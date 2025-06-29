@@ -17,7 +17,7 @@ interface AISummaryActionsProps {
 export default function AISummaryActions({ summaryData }: AISummaryActionsProps) {
   const handleExportText = () => {
     const content = `
-# AI Summary: ${summaryData.noteTitle}
+# AI Summary: ${summaryData.sourceTitle}
 
 ## Summary
 ${summaryData.summary}
@@ -35,7 +35,7 @@ Estimated Reading Time: ${summaryData.estimatedReadTime} minutes
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${summaryData.noteTitle}_AI_Summary.txt`;
+    a.download = `${summaryData.sourceTitle}_AI_Summary.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -48,7 +48,7 @@ Estimated Reading Time: ${summaryData.estimatedReadTime} minutes
 
   const handleExportMarkdown = () => {
     const content = `
-# AI Summary: ${summaryData.noteTitle}
+# AI Summary: ${summaryData.sourceTitle}
 
 ## 📝 Summary
 ${summaryData.summary}
@@ -66,7 +66,7 @@ ${summaryData.keyTakeaways.map((takeaway, index) => `${index + 1}. ${takeaway}`)
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${summaryData.noteTitle}_AI_Summary.md`;
+    a.download = `${summaryData.sourceTitle}_AI_Summary.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -79,7 +79,7 @@ ${summaryData.keyTakeaways.map((takeaway, index) => `${index + 1}. ${takeaway}`)
 
   const handleShare = async () => {
     const shareData = {
-      title: `AI Summary: ${summaryData.noteTitle}`,
+      title: `AI Summary: ${summaryData.sourceTitle}`,
       text: `${summaryData.summary}\n\nKey Takeaways:\n${summaryData.keyTakeaways.map((takeaway, index) => `${index + 1}. ${takeaway}`).join('\n')}`,
     };
 

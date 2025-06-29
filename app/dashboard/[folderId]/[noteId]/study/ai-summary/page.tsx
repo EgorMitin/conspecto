@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 
 export default function AISummaryPage() {
-  const { isLoading, currentNote, folderId, state } = useAppState()
+  const { isLoading, currentNote } = useAppState()
   const router = useRouter()
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function AISummaryPage() {
         </div>
       </header>
 
-      <AISummaryContent noteId={currentNote.id} />
+      <AISummaryContent sourceId={currentNote.id} sourceType="note" />
     </div>
   );
 }

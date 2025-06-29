@@ -104,11 +104,11 @@ export async function evaluateAnswer(
 /**
  * Server action to generate content insights (summary and key takeaways)
  */
-export async function generateContentInsights(sourceType: string, sourceId: AiReviewSourceType) {
+export async function generateContentInsights(sourceId: string, sourceType: AiReviewSourceType) {
   try {
     const aiService = initializeAIService();
     
-    const result = await aiService.generateContentInsights(sourceType, sourceId);
+    const result = await aiService.generateContentInsights(sourceId, sourceType);
 
     if (!result.success) {
       return {

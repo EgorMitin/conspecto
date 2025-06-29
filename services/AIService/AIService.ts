@@ -143,12 +143,19 @@ export class AIService {
         throw new Error('Note not found for context retrieval');
       }
       return note.contentPlainText;
+    } else if (sourceType === 'folder') {
+      const notes = await DatabaseService.getNotesByFolderId(sourceId);
+      if (!notes || notes.length === 0) {
+        throw new Error('No notes found for folder context retrieval');
+      }
+      return notes.map(note => note.contentPlainText).join('\n\n');
+    } else {
+      const notes = await DatabaseService.getNotesByUserId(sourceId);
+      if (!notes || notes.length === 0) {
+        throw new Error('No notes found for user context retrieval');
+      }
+      return notes.map(note => note.contentPlainText).join('\n\n');
     }
-    const notes = await DatabaseService.getNotesByFolderId(sourceId);
-    if (!notes || notes.length === 0) {
-      throw new Error('No notes found for folder context retrieval');
-    }
-    return notes.map(note => note.contentPlainText).join('\n\n');
   }
 
   /**

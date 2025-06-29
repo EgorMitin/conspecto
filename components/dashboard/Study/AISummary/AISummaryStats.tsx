@@ -10,7 +10,7 @@ interface AISummaryStatsProps {
 }
 
 export default function AISummaryStats({ summaryData }: AISummaryStatsProps) {
-  const { wordCount, estimatedReadTime, keyTakeaways, noteTitle } = summaryData;
+  const { wordCount, estimatedReadTime, keyTakeaways, sourceTitle, sourceType } = summaryData;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -57,11 +57,11 @@ export default function AISummaryStats({ summaryData }: AISummaryStatsProps) {
             <FileText className="h-4 w-4 text-orange-500" />
             <div>
               <p className="text-sm font-medium text-muted-foreground">Source</p>
-              <p className="text-sm font-semibold truncate" title={noteTitle}>
-                {noteTitle}
+              <p className="text-sm font-semibold truncate" title={sourceTitle}>
+                {sourceTitle}
               </p>
               <Badge variant="secondary" className="mt-1">
-                Original Note
+                {sourceType === 'note' ? 'Note' : sourceType === 'folder' ? 'Folder' : 'User'}
               </Badge>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { useReviewStore } from '@/lib/stores/review-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Clock, Eye, X } from 'lucide-react';
+import { Clock, Eye, X, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useAppState } from '@/lib/providers/app-state-provider';
 import { useRouter } from 'next/navigation';
@@ -50,9 +50,18 @@ const FeedbackButton = ({
   );
 };
 
-export default function ReviewSession({ noteContent, noteTitle }: { noteContent: string, noteTitle: string }) {
+export default function ReviewSession({
+  sourceType,
+  sourceId,
+  mode
+}: {
+  sourceType: 'note' | 'folder' | 'user';
+  sourceId: string;
+  mode: 'due' | 'all';
+}) {
   const {
     currentSession,
+    startReviewSession,
     showAnswer,
     submitFeedback,
     endSession,
@@ -63,16 +72,70 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
   const [sessionTime, setSessionTime] = useState(0);
   const [questionTime, setQuestionTime] = useState(0);
   const router = useRouter();
-  const { folderId, noteId } = useAppState();
+  const { folderId, noteId, state } = useAppState();
+
+  // Determine the scope and scope ID based on the provided props
+  const determineScope = (): { scope: 'note' | 'folder' | 'user'; scopeId: string; displayTitle: string; content?: string } => {
+    if (sourceType === 'folder') {
+      const folder = state.folders.find(f => f.id === sourceId);
+      if (!folder) throw Error("folder doesn't exist");
+      return {
+        scope: 'folder',
+        scopeId: sourceId,
+        displayTitle: folder.name
+      };
+    } else if (sourceType === 'note') {
+      const folder = state.folders.find(f => f.id === folderId);
+      const note = folder?.notes.find(n => n.id === sourceId);
+      if (!note) throw Error("note doesn't exist");
+      return {
+        scope: 'note',
+        scopeId: sourceId,
+        displayTitle: note.title,
+        content: note.content
+      };
+    } else if (sourceType === 'user') {
+      return {
+        scope: 'user',
+        scopeId: sourceId,
+        displayTitle: 'All Notes'
+      };
+    }
+    throw Error("Unsupported sourceType")
+  };
+
+  const { scope, scopeId, displayTitle, content } = determineScope();
 
   const handleEndSession = () => {
-    router.push(`/dashboard/${folderId}/${noteId}/study/`);
-    endSession()
-  }
+    if (scope === 'note') {
+      router.push(`/dashboard/${folderId}/${noteId}/study/`);
+    } else if (scope === 'folder') {
+      router.push(`/dashboard/${folderId}/study/`);
+    } else {
+      router.push(`/dashboard/`);
+    }
+    endSession();
+  };
 
   useEffect(() => {
     if (!currentSession) {
-      router.push(`/dashboard/${folderId}/${noteId}/study/`);
+      startReviewSession({
+        mode: mode,
+        scope,
+        scopeId
+      });
+    }
+  }, [currentSession, startReviewSession, scope, scopeId]);
+
+  useEffect(() => {
+    if (!currentSession) {
+      if (scope === 'note') {
+        router.push(`/dashboard/${folderId}/${noteId}/study/`);
+      } else if (scope === 'folder') {
+        router.push(`/dashboard/${folderId}/study/`);
+      } else {
+        router.push(`/dashboard/`);
+      }
     }
     const interval = setInterval(() => {
       setSessionTime(getSessionElapsedTime());
@@ -80,18 +143,30 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [currentSession, getSessionElapsedTime, getCurrentQuestionElapsedTime]);
+  }, [currentSession, getSessionElapsedTime, getCurrentQuestionElapsedTime, router, folderId, noteId, scope]);
 
 
   // Hotkey handler for "Show Answer" (Space) and feedback (1-4)
   useEffect(() => {
     if (!currentSession) {
-      router.push(`/dashboard/${folderId}/${noteId}/study/`);
+      if (scope === 'note') {
+        router.push(`/dashboard/${folderId}/${noteId}/study/`);
+      } else if (scope === 'folder') {
+        router.push(`/dashboard/${folderId}/study/`);
+      } else {
+        router.push(`/dashboard/`);
+      }
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!currentSession) {
-        router.push(`/dashboard/${folderId}/${noteId}/study/`);
+        if (scope === 'note') {
+          router.push(`/dashboard/${folderId}/${noteId}/study/`);
+        } else if (scope === 'folder') {
+          router.push(`/dashboard/${folderId}/study/`);
+        } else {
+          router.push(`/dashboard/`);
+        }
         return
       }
       if (!currentSession.isShowingAnswer) {
@@ -118,12 +193,48 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
   }, [currentSession, showAnswer, submitFeedback]);
 
   if (!currentSession) {
-    return;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Starting your review session...</p>
+        </div>
+      </div>
+    );
   }
 
   const currentQuestion = currentSession.questions.find(q => q.id === currentSession.currentQuestionId) as Question;
-  const answeredQuestionsRation = (currentSession.questions.length - currentSession.questionsToAnswer.size) / currentSession.questions.length
-  const progress = answeredQuestionsRation * 100;
+  const answeredQuestionsRatio = (currentSession.questions.length - currentSession.questionsToAnswer.size) / currentSession.questions.length
+  const progress = answeredQuestionsRatio * 100;
+
+  const getCurrentQuestionNote = () => {
+    if (scope === 'note') {
+      return { title: displayTitle, content };
+    } else if (scope === 'folder') {
+      const folder = state.folders.find(f => f.id === scopeId);
+      if (folder) {
+        for (const note of folder.notes) {
+          if (note.questions.some(q => q.id === currentQuestion.id)) {
+            return { title: note.title, content: note.content };
+          }
+        }
+      }
+      return { title: 'Unknown Note', content: '' };
+    } else {
+      // User scope - search through all folders and notes
+      for (const folder of state.folders) {
+        for (const note of folder.notes) {
+          if (note.questions.some(q => q.id === currentQuestion.id)) {
+            return { title: note.title, content: note.content, folderName: folder.name };
+          }
+        }
+      }
+      return { title: 'Unknown Note', content: '' };
+    }
+  };
+
+  const currentQuestionNote = getCurrentQuestionNote();
+  console.log(currentQuestionNote.content)
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -134,11 +245,23 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <CardTitle className="text-lg">
-                  Review Session - {currentSession.mode === 'due' ? 'Due Questions' : 'All Questions'}
+                  {scope === 'folder' ? `${displayTitle} Review` :
+                   scope === 'user' ? 'All Notes Review' :
+                   'Note Review'} - {currentSession.mode === 'due' ? 'Due Questions' : 'All Questions'}
                 </CardTitle>
                 <Badge variant="outline">
                   {currentSession.questions.length - currentSession.questionsToAnswer.size} / {currentSession.questions.length}
-                </Badge> 
+                </Badge>
+                {scope === 'folder' && (
+                  <Badge variant="secondary">
+                    Folder Mode
+                  </Badge>
+                )}
+                {scope === 'user' && (
+                  <Badge variant="secondary">
+                    User Mode
+                  </Badge>
+                )}
               </div>
               <Button
                 variant="ghost"
@@ -159,6 +282,14 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
                 <Clock className="h-4 w-4" />
                 <span>Question: {formatTime(questionTime)}</span>
               </div>
+              {(scope === 'folder' || scope === 'user') && (
+                <div className="flex items-center gap-2">
+                  <span>From: {currentQuestionNote.title}</span>
+                  {scope === 'user' && currentQuestionNote.folderName && (
+                    <span className="text-xs">({currentQuestionNote.folderName})</span>
+                  )}
+                </div>
+              )}
             </div>
             <Progress value={progress} className="mt-4" />
           </CardHeader>
@@ -167,14 +298,28 @@ export default function ReviewSession({ noteContent, noteTitle }: { noteContent:
         <Card className='gap-0'>
           <CardHeader>
             <CardTitle className="text-base flex items-center justify-between">
-              <span>{noteTitle}</span>
+              <span>{currentQuestionNote.title}</span>
+              {(scope === 'folder' || scope === 'user') && (
+                <div className="flex items-center gap-2">
+                  {scope === 'user' && currentQuestionNote.folderName && (
+                    <Badge variant="outline" className="text-xs">
+                      {currentQuestionNote.folderName}
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="text-xs">
+                    Q {currentSession.questions.findIndex(q => q.id === currentQuestion.id) + 1} of {currentSession.questions.length}
+                  </Badge>
+                </div>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="max-w-none ReviewEditor">
-              <ReviewEditor content={noteContent} />
+              <ReviewEditor
+                key={`${currentQuestion.id}-${currentQuestionNote.title}`}
+                content={currentQuestionNote.content || ''}
+              />
             </div>
-
           </CardContent>
         </Card>
 

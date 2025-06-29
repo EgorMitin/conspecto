@@ -26,7 +26,7 @@ export class SubscriptionRepository extends BaseRepository {
           subscription.userId,
           subscription.status,
           JSON.stringify(subscription.metadata || {}),
-          subscription.price,
+          subscription.priceId,
           subscription.quantity,
           subscription.cancelAtPeriodEnd,
           subscription.created || new Date().toISOString(),
