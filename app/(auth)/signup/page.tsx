@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { FcGoogle } from 'react-icons/fc';
+import { Eye, EyeOff } from 'lucide-react';
 
 import Logo from '@/public/favicon.png';
 import Loader from '@/components/Loader';
@@ -26,11 +27,14 @@ import { MailCheck } from 'lucide-react';
 import { actionSignUpUser } from '@/lib/auth/signUp';
 import { oAuthLogin } from '@/lib/auth/oAuth';
 import { SignUpFormSchema } from './SignUpFormSchema';
+import { PasswordStrengthIndicator } from '@/components/ui/password-strength-indicator';
 
 
 export default function Signup () {
   const [submitError, setSubmitError] = useState('');
   const [confirmation, setConfirmation] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<z.infer<typeof SignUpFormSchema>, unknown, z.output<typeof SignUpFormSchema>>({
     mode: 'onBlur',
@@ -124,13 +128,31 @@ export default function Signup () {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Password"
+                          autoComplete="new-password"
+                          data-form-type="other"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
+                          onClick={() => setShowPassword((v) => !v)}
+                        >
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
+                    {field.value && (
+                      <PasswordStrengthIndicator
+                        password={field.value}
+                        className="mt-2"
+                      />
+                    )}
                   </FormItem>
                 )}
               />
@@ -141,11 +163,22 @@ export default function Signup () {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Confirm Password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          placeholder="Confirm Password"
+                          autoComplete="new-password webauthn"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
+                          onClick={() => setShowConfirmPassword((v) => !v)}
+                        >
+                          {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
