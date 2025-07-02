@@ -14,8 +14,8 @@ import { postData, formatPrice } from '@/utils/global';
 import Loader from '@/components/Loader';
 import { ProductWithPrice, Price } from '@/types/Subscription';
 import { toast } from 'sonner';
-import { getStripe } from '@/lib/stripe/client';
 import { useUser } from '@/lib/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 interface SubscriptionModalProps {
   products: ProductWithPrice[];
@@ -25,6 +25,7 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
   const { open, setOpen } = useSubscriptionModal();
   const { user } = useUser();
   const subscription = user?.subscriptionPlan;
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,15 +46,7 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
         setIsLoading(false);
         return;
       }
-
-      const { sessionId } = await postData({
-        url: '/api/create-checkout-session',
-        data: { price },
-      }) as CheckoutResponse;
-
-      console.log('Getting Checkout for stripe');
-      const stripe = await getStripe();
-      stripe?.redirectToCheckout({ sessionId });
+      router.push("/checkout")
     } catch {
       toast.error('Oppse! Something went wrong.');
     } finally {
