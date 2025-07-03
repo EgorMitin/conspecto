@@ -8,7 +8,7 @@ export const PRODUCTS: ProductWithPrice[] = [
     description: 'Upgrade to Pro for more features',
     prices: [
       {
-        id: 'price_1RgoyiAwejZpHiKn20n44HDB',
+        id: 'price_1RgpS4AwejZpHiKnOarBTHqr',
         productId: 'prod_Sc34jWZUBQyOi9', // 'prod_SbhyXcST5IkiAZ',
         unitAmount: 888,
         currency: 'usd',
@@ -17,7 +17,7 @@ export const PRODUCTS: ProductWithPrice[] = [
         interval: 'month',
       },
       {
-        id: 'price_1RgnzPPmekPUO78tMcrivHgK',
+        id: 'price_1RgpSOAwejZpHiKngcd3GxIL',
         productId: 'prod_SbhyXcST5IkiAZ',
         unitAmount: 8888,
         currency: 'usd',
