@@ -4,21 +4,26 @@ import { headers } from 'next/headers'
 
 import { stripe } from './stripe'
 import { getCurrentUser } from '../auth/auth'
+import { createOrRetrieveCustomer } from './admin_actions'
 
-export async function fetchClientSecret() {
+export async function fetchClientSecret(priceId: string) {
   const origin = (await headers()).get('origin')
   const user = await getCurrentUser();
   if (!user) throw Error("User is required");
+  const customer = await createOrRetrieveCustomer({
+    email: user.email,
+    uuid: user.id
+  })
 
   const session = await stripe.checkout.sessions.create({
     ui_mode: 'embedded',
-    customer_email: user.email,
+    customer,
     // redirect_on_completion: 'if_required',
     billing_address_collection: 'required',
 
     line_items: [
       {
-        price: 'price_1RgUYVPmekPUO78tyeYUIUaX', // TODO: replace with priceId
+        price: priceId,
         quantity: 1
       }
     ],

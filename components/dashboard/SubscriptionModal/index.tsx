@@ -12,7 +12,7 @@ import {
 
 import { postData, formatPrice } from '@/utils/global';
 import Loader from '@/components/Loader';
-import { ProductWithPrice, Price } from '@/types/Subscription';
+import { ProductWithPrice, Price } from '@/types/Subscriptions';
 import { toast } from 'sonner';
 import { useUser } from '@/lib/context/UserContext';
 import { useRouter } from 'next/navigation';
@@ -29,11 +29,7 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
 
   const [isLoading, setIsLoading] = useState(false);
 
-  interface CheckoutResponse {
-    sessionId: string;
-  }
-
-  const onClickContinue = async (price: Price) => {
+  const onClickContinue = async (priceId: string) => {
     try {
       setIsLoading(true);
       if (!user) {
@@ -46,7 +42,7 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
         setIsLoading(false);
         return;
       }
-      router.push("/checkout")
+      router.push(`/checkout?priceId=${priceId}`)
     } catch {
       toast.error('Oppse! Something went wrong.');
     } finally {
@@ -139,7 +135,7 @@ export default function SubscriptionModal ({ products }: SubscriptionModalProps)
 
                         <div className="ml-6">
                           <button
-                            onClick={() => onClickContinue(price)}
+                            onClick={() => onClickContinue(price.id)}
                             disabled={isLoading}
                             className="cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-w-[140px]"
                           >

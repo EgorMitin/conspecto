@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 import SubscriptionModal from '@/components/dashboard/SubscriptionModal';
-import { ProductWithPrice } from '@/types/Subscription';
+import { ProductWithPrice } from '@/types/Subscriptions';
 
 type SubscriptionModalContextType = {
   open: boolean;

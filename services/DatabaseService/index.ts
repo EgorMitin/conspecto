@@ -18,7 +18,7 @@ import type { User, UserData } from '@/types/User';
 import type { AiReviewSession } from '@/types/AiReviewSession';
 import type { Folder } from '@/types/Folder';
 import { Session } from '@/types/Sessions';
-import { Customer, Subscription } from '@/types/Subscription';
+import { Customer, Subscription, Product, Price, ProductWithPrice } from '@/types/Subscriptions';
 import type {
   CreateUserInput,
   UpdateUserInput,
@@ -257,8 +257,7 @@ export class DatabaseService {
           user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           status VARCHAR(50),
           metadata JSONB,
-          price_id INTEGER,
-          quantity INTEGER,
+          price_id VARCHAR(255),
           cancel_at_period_end BOOLEAN,
           created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
           current_period_start TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -279,6 +278,40 @@ export class DatabaseService {
         );
       `);
       await client.query(`CREATE INDEX IF NOT EXISTS idx_customers_stripe_id ON customers(stripe_customer_id);`);
+
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS products (
+          id VARCHAR(255) PRIMARY KEY,
+          active BOOLEAN NOT NULL DEFAULT TRUE,
+          name VARCHAR(255) NOT NULL,
+          description TEXT,
+          image TEXT,
+          metadata JSONB,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      await client.query(`CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);`);
+
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS prices (
+          id VARCHAR(255) PRIMARY KEY,
+          product_id VARCHAR(255) NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+          description TEXT,
+          active BOOLEAN NOT NULL DEFAULT TRUE,
+          unit_amount INTEGER NOT NULL,
+          currency VARCHAR(3) DEFAULT 'USD',
+          type VARCHAR(15) NOT NULL CHECK (type IN ('one_time', 'recurring')),
+          interval VARCHAR(10) CHECK (interval IN ('day', 'week', 'month', 'year')),
+          interval_count INTEGER DEFAULT 1,
+          trial_period_days INTEGER DEFAULT 0,
+          metadata JSONB DEFAULT '{}',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      await client.query(`CREATE INDEX IF NOT EXISTS idx_prices_product_id ON prices(product_id);`);
+      await client.query(`CREATE INDEX IF NOT EXISTS idx_prices_active ON prices(active);`);
 
       await client.query(`
         CREATE TABLE IF NOT EXISTS folders (
@@ -376,7 +409,7 @@ export class DatabaseService {
           questions_generated_at TIMESTAMP WITH TIME ZONE,
           session_started_at TIMESTAMP WITH TIME ZONE,
           completed_at TIMESTAMP WITH TIME ZONE,
-          CONSTRAINT fk_ai_session_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+          CONSTRAINT fk_ai_session_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
       `);
       await client.query(`CREATE INDEX IF NOT EXISTS idx_ai_review_sessions_user_id ON ai_review_sessions(user_id);`);
@@ -638,6 +671,66 @@ export class DatabaseService {
 
   public async deleteCustomer(id: string): Promise<boolean> {
     return this.subscriptionRepository.deleteCustomer(id);
+  }
+
+  // ===== PRODUCT METHODS (delegated to SubscriptionRepository) =====
+  public async createProduct(product: Product): Promise<Product> {
+    return this.subscriptionRepository.createProduct(product);
+  }
+
+  public async getProductById(id: string): Promise<Product | null> {
+    return this.subscriptionRepository.getProductById(id);
+  }
+
+  public async getActiveProducts(): Promise<Product[]> {
+    return this.subscriptionRepository.getActiveProducts();
+  }
+
+  public async updateProduct(id: string, updates: Partial<Product>): Promise<Product | null> {
+    return this.subscriptionRepository.updateProduct(id, updates);
+  }
+
+  public async deleteProduct(id: string): Promise<boolean> {
+    return this.subscriptionRepository.deleteProduct(id);
+  }
+
+  // ===== PRICE METHODS (delegated to SubscriptionRepository) =====
+  public async createPrice(price: Price): Promise<Price> {
+    return this.subscriptionRepository.createPrice(price);
+  }
+
+  public async getPriceById(id: string): Promise<Price | null> {
+    return this.subscriptionRepository.getPriceById(id);
+  }
+
+  public async getPricesByProductId(productId: string): Promise<Price[]> {
+    return this.subscriptionRepository.getPricesByProductId(productId);
+  }
+
+  public async getActivePrices(): Promise<Price[]> {
+    return this.subscriptionRepository.getActivePrices();
+  }
+
+  public async updatePrice(id: string, updates: Partial<Price>): Promise<Price | null> {
+    return this.subscriptionRepository.updatePrice(id, updates);
+  }
+
+  public async deletePrice(id: string): Promise<boolean> {
+    return this.subscriptionRepository.deletePrice(id);
+  }
+
+  /**
+   * Get products with their prices
+   */
+  public async getProductsWithPrices(): Promise<ProductWithPrice[]> {
+    return this.subscriptionRepository.getProductsWithPrices();
+  }
+
+  /**
+   * Get a single product with its prices
+   */
+  public async getProductWithPrices(productId: string): Promise<ProductWithPrice | null> {
+    return this.subscriptionRepository.getProductWithPrices(productId);
   }
 
   /**

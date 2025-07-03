@@ -1,23 +1,30 @@
-import { ProductWithPrice } from "./types/Subscription";
+import { ProductWithPrice } from "./types/Subscriptions";
 
 export const PRODUCTS: ProductWithPrice[] = [
   {
     id: "1",
     name: 'Pro',
+    active: true,
     description: 'Upgrade to Pro for more features',
     prices: [
       {
-        id: 'price_1Hh1Y2L4z8k8k8k8k8k8k8k',
+        id: 'price_1RgoyiAwejZpHiKn20n44HDB',
+        productId: 'prod_Sc34jWZUBQyOi9', // 'prod_SbhyXcST5IkiAZ',
         unitAmount: 888,
         currency: 'usd',
+        active: true,
+        type: 'recurring',
         interval: 'month',
       },
       {
-        id: 'price_1Hh1Y2L4z8k8k8k8k8k8k9',
-        unitAmount: 9999,
+        id: 'price_1RgnzPPmekPUO78tMcrivHgK',
+        productId: 'prod_SbhyXcST5IkiAZ',
+        unitAmount: 8888,
         currency: 'usd',
+        active: true,
+        type: 'recurring',
         interval: 'year',
       },
-    ], // $8.88
+    ],
   },
 ]

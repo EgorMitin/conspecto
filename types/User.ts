@@ -1,4 +1,4 @@
-import { Subscription } from "./Subscription";
+import { Subscription } from "./Subscriptions";
 
 /**
  * Interface for user data (full database record)

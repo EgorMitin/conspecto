@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 import { stripe } from '@/lib/stripe/stripe'
 import { CheckCircle2Icon, XCircleIcon } from 'lucide-react'
 
-export default async function Return({ searchParams }: { searchParams: { session_id: string } }) {
-  const { session_id } = searchParams
+export default async function Return({ searchParams }: { searchParams: Promise<{ session_id: string }> }) {
+  const { session_id } = await searchParams
 
   if (!session_id) {
     redirect('/')

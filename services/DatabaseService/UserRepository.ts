@@ -1,6 +1,6 @@
 import { BaseRepository } from './BaseRepository';
 import type { User, UserData } from '@/types/User';
-import type { Subscription } from '@/types/Subscription';
+import type { Subscription } from '@/types/Subscriptions';
 import type { CreateUserInput, UpdateUserInput } from './types';
 import { AppFolderType } from '@/lib/providers/app-state-provider';
 
@@ -39,7 +39,7 @@ export class UserRepository extends BaseRepository {
    */
   public async getUserActiveSubscription(userId: string): Promise<Subscription | null> {
     const { rows } = await this.executeQuery(
-      `SELECT id, user_id as "userId", status, metadata, price_id as "priceId", quantity,
+      `SELECT id, user_id as "userId", status, metadata, price_id as "priceId",
               cancel_at_period_end as "cancelAtPeriodEnd", created,
               current_period_start as "currentPeriodStart",
               current_period_end as "currentPeriodEnd",
