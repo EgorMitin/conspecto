@@ -5,7 +5,7 @@ import {
   EmbeddedCheckoutProvider
 } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import { redirect, useSearchParams } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 import { fetchClientSecret } from '@/lib/stripe/client_actions'
 import { toast } from 'sonner'
@@ -16,10 +16,7 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
-export default function Checkout() {
-  const searchParams = useSearchParams()
-  const priceId = searchParams.get('priceId')
-
+export default function Checkout({ priceId }: { priceId: string }) {
   const fetchClientSecretWithPrice = async () => {
     if (!priceId) {
       toast.error("This price option is not implemented")
